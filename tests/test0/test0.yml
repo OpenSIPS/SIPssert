@@ -1,0 +1,5 @@
+entities:
+  uas:
+    - network: default
+  uac:
+    - network: default

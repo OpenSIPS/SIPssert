@@ -1,5 +1,14 @@
+---
 entities:
-  uas:
-    - network: default
-  uac:
-    - network: default
+  - type: uas-sipp          # mandatory
+    name: First UAS         # optional - default type
+    image: ctaloi/sipp      # optional - default depends on the type
+    scenario_file: uas.xml  # optional - scenario file in case of needed
+    port: 5080              # optional - default is randomly assigned
+  - type: uac-sipp          # mandatory
+    port: 5070              # optional - default is randomly assigned
+  - type: opensips
+    config_file: opensips.cfg   # optional
+    ip: 127.0.0.1
+    port: 5060              # optional - default is randomly assigned
+    

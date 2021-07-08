@@ -5,6 +5,8 @@ no_tests = 1
 tests_dir = "tests"
 home = os.getcwd()
 os.chdir(tests_dir)
+controller_path = home+"/"+"controller.py"
+controller_run = "sudo python3 " + controller_path
 
 for i in os.listdir():
     os.chdir(home+"/"+tests_dir+"/"+i)
@@ -16,6 +18,6 @@ for i in os.listdir():
             print(exc)
 
     for j in cfg_stream["entities"]:
-        if j == "uas":
-            os.system("sudo python3 /home/liviu/Desktop/proiect/testing-framework/controller.py")
-    
+        for n in j:
+            print(n)
+    #print(cfg_stream["entities"])

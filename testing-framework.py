@@ -30,7 +30,22 @@ class Entity:
         self.scenario_file = scenario_file  # scenario file optional
 
     def run_container(self, client):
-        return client.containers.run(self.image, self.parameters, self.ip, self.port)
+        container = client.containers.run(self.image, self.parameters, detach=True)
+        print(self.image + " " + container.status)
+        while(1):
+            # updateing status
+            container.reload()
+            if container.status == "created":
+                print("container just created, wait for changeing status")
+                continue
+            elif container.status == "exited":
+                print("container terminated")
+                break
+            # container still running
+            else:
+                print("the container will stop")
+                container.stop()
+                container.reload()
 
 controller = Controller()
 client = controller.init_docker()
@@ -72,5 +87,7 @@ for dir in os.listdir(tests_path):
             entities.append(entity)
 
 for e in entities:
-    print("Name: " + e.name + " |Type: " + e.type)
+    if e.type == "uas-sipp":
+        e.parameters = "-sn uas"
+        e.run_container(client)
             

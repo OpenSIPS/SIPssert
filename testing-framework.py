@@ -1,6 +1,12 @@
 import os
 import yaml
 import docker
+import sys
+
+class Ports:
+    def __init__(self, port, type):
+        self.port = port
+        self.type = type
 
 class Controller:
     def __init__(self):
@@ -17,6 +23,13 @@ class Controller:
                 print(exc)
 
         return cfg_stream
+
+    def parse_arguments(self):
+        for i in range(0,len(sys.argv)):
+            if sys.argv[i] == "-t":
+                return sys.argv[i + 1] + "/"
+
+   # metoda pe pentru crearea porturilor (numar, tip)
         
 class Entity:
     def __init__(self, type, name, image, parameters, ip, port, config_file, scenario_file):
@@ -48,9 +61,13 @@ class Entity:
                 container.reload()
 
 controller = Controller()
+
 client = controller.init_docker()
+test_dir = controller.parse_arguments()
+
 scenario = "scenario.yml"
-tests_path = os.getcwd()+"/tests/"
+tests_path = os.getcwd()+"/" + test_dir
+
 entities = []
 
 for dir in os.listdir(tests_path):

@@ -30,7 +30,12 @@ class Controller:
             image = e["image"]
             ip = e["ip"]
             ports = e["port"]
-            print(ports)
+            #print(ports)
+            dict = {}
+            for p in ports:
+                dict[p] = None
+
+            print(dict)
 
             if "parameters" in e.keys():
                 parameters = e["parameters"]
@@ -52,7 +57,7 @@ class Controller:
             else:
                 name = "-"
 
-            entity = Entity(type, name, image, parameters, ip, ports, config_file, scenario_file)
+            entity = Entity(type, name, image, parameters, ip, dict, config_file, scenario_file)
             entities.append(entity)
 
     def create_entities(self, tests_path, entities):
@@ -69,14 +74,21 @@ class Entity:
         self.image = image                  # mandatory
         self.parameters = parameters        # container run parameters optional
         self.ip = ip                        # mandatory
-        self.ports = ports                    # mandatory
+        self.ports = ports                  # mandatory
         self.config_file = config_file      # cfg file optional
         self.scenario_file = scenario_file  # scenario file optional
 
     def run_container(self, client):
         print(self.parameters)
-        container = client.containers.run(self.image, self.parameters, detach=True)
-        print(self.image + " " + container.status)
+        if self.type == "opensips":
+            container = client.containers.run(self.image, detach=True)
+            print(self.image + " " + container.status)
+        elif self.type == "uas-sipp":
+            container = client.containers.run(self.image, self.parameters, detach=True)
+            print(self.image + " " + container.status)
+        else:
+            pass
+        
         while(1):
             # updateing status
             container.reload()
@@ -105,5 +117,8 @@ controller.create_entities(tests_path, entities)
 for e in entities:
     if e.type == "uas-sipp":
         e.parameters = "-sn uas"
+        e.run_container(client)
+    elif e.type == "opensips":
+        e.parameters = ""
         e.run_container(client)
             

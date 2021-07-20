@@ -1,4 +1,4 @@
-import container
+import entity
 import docker
 import argparse
 import parser
@@ -13,7 +13,11 @@ class Controller:
         self.dir_parser = parser.Parser(self.args.tests)
 
 if __name__ == '__main__':
+    entities = []
     controller = Controller()
     dirs = controller.dir_parser.iterateTestsDir()
     for dir in dirs:
         stream = controller.dir_parser.parseScenario(controller.args.tests+"/"+dir)
+        controller.dir_parser.streamToEntities(stream, entities)
+
+    print(entities)

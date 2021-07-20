@@ -1,4 +1,4 @@
-class Container():
+class Entity():
     def __init__(self, name, type, image, ports, ip):
         self.name = name
         self.type = type
@@ -22,21 +22,21 @@ class Container():
         return self.ip
 
 
-class Uas(Container):
+class Entity_uas(Entity):
     def setExtraParams(self, extra_params):
         self.extra_params = extra_params
 
     def getExtraParams(self):
         return self.extra_params
 
-class Uac(Container):
+class Entity_uac(Entity):
     def __init__(self, extra_params):
         self.extra_params = extra_params
     
     def getExtraParams(self):
         return self.extra_params
 
-class Opensips(Container):
+class Entity_opensips(Entity):
     def __init__(self, extra_params, path_cfg, mount_point):
         self.extra_params = extra_params
         self.path_cfg = path_cfg

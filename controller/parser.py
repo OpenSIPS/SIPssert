@@ -1,5 +1,6 @@
 import os
 import yaml
+import entity
 
 SCENARIO = "scenario.yml"
 
@@ -31,4 +32,15 @@ class Parser():
             print("File does not exist!")
         
         return stream
+
+    def streamToEntities(self, stream, entities):
+        for e in stream["entities"]:
+            if e["type"] == "uas-sipp":
+                if "extra_params" in e.keys():
+                    extra_params = e["extra_params"]
+                else:
+                    extra_params = ""
+                container = entity.Entity_uas(e["name"], e["type"], e["image"], e["ports"], e["ip"])
+                container.setExtraParams(extra_params)
+                entities.append(container)
 

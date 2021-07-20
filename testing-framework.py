@@ -24,8 +24,9 @@ class Controller:
 
         return cfg_stream
 
-    def entity_params(self, stream, entities):
+    def entity_params(self, stream, entities, dir_path):
         for e in stream["entities"]:
+            path = dir_path
             type = e["type"]
             image = e["image"]
             ip = e["ip"]
@@ -35,7 +36,10 @@ class Controller:
             for p in ports:
                 dict[p] = None
 
-            print(dict)
+            if "mount" in e.keys():
+                mount = e["mount"]
+            else:
+                mount = ""
 
             if "parameters" in e.keys():
                 parameters = e["parameters"]
@@ -57,7 +61,7 @@ class Controller:
             else:
                 name = "-"
 
-            entity = Entity(type, name, image, parameters, ip, dict, config_file, scenario_file)
+            entity = Entity(type, name, image, parameters, ip, dict, config_file, scenario_file, path, mount)
             entities.append(entity)
 
     def create_entities(self, tests_path, entities):
@@ -65,10 +69,10 @@ class Controller:
             dir_path = tests_path + dir + "/"
             if scenario in os.listdir(dir_path):
                 cfg_stream = controller.parser(dir_path + scenario)
-                controller.entity_params(cfg_stream, entities)
+                controller.entity_params(cfg_stream, entities, dir_path)
         
 class Entity:
-    def __init__(self, type, name, image, parameters, ip, ports, config_file, scenario_file):
+    def __init__(self, type, name, image, parameters, ip, ports, config_file, scenario_file, path, mount):
         self.name = name                    # mandatory
         self.type = type                    # mandatory
         self.image = image                  # mandatory
@@ -77,11 +81,14 @@ class Entity:
         self.ports = ports                  # mandatory
         self.config_file = config_file      # cfg file optional
         self.scenario_file = scenario_file  # scenario file optional
+        self.path = path                    # autocompleted
+        self.mount = mount
 
     def run_container(self, client):
         print(self.parameters)
+        print(self.path)
         if self.type == "opensips":
-            container = client.containers.run(self.image, detach=True)
+            container = client.containers.run(self.image, self.parameters, detach=True)
             print(self.image + " " + container.status)
         elif self.type == "uas-sipp":
             container = client.containers.run(self.image, self.parameters, detach=True)
@@ -119,6 +126,9 @@ for e in entities:
         e.parameters = "-sn uas"
         e.run_container(client)
     elif e.type == "opensips":
-        e.parameters = ""
+        if e.config_file == "default":
+            e.parameters = ""
+        else:
+            e.parameters = "-f /etc/opensips/opensips.cfg"
         e.run_container(client)
             

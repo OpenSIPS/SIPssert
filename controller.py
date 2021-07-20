@@ -2,6 +2,20 @@ import os
 import yaml
 import docker
 
+class controller:
+    def __init__(self):
+        client = docker.from_env()
+        return client
+        
+class container:
+    def __init__(self, image, parameters, ip, port):
+        self.image = image
+        self.parameters = parameters
+        self.ip = ip
+        self.port = port
+
+    def run_container(self, client):
+        container = client.containers.run(self.image, self.parameters, self.ip, self.port)
 
 def parser(file):
     with open(file, 'r') as stream:

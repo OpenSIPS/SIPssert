@@ -24,4 +24,11 @@ class Parser():
         return cfg_stream
 
     def parseScenario(self, dir):
-        print(dir)
+        stream = ""
+        if SCENARIO in os.listdir(dir):
+            stream = self.yamlParser(dir+"/"+SCENARIO)
+        else:
+            print("File does not exist!")
+        
+        return stream
+

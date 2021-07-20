@@ -16,4 +16,4 @@ if __name__ == '__main__':
     controller = Controller()
     dirs = controller.dir_parser.iterateTestsDir()
     for dir in dirs:
-        controller.dir_parser.parseScenario(dir)
+        stream = controller.dir_parser.parseScenario(controller.args.tests+"/"+dir)

@@ -30,9 +30,9 @@ class Entity_uas(Entity):
         return self.extra_params
 
 class Entity_uac(Entity):
-    def __init__(self, extra_params):
+    def setExtraParams(self, extra_params):
         self.extra_params = extra_params
-    
+
     def getExtraParams(self):
         return self.extra_params
 
@@ -42,11 +42,20 @@ class Entity_opensips(Entity):
         self.path_cfg = path_cfg
         self.mount_point = mount_point
 
+    def setExtraParams(self, extra_params):
+        self.extra_params = extra_paramsq
+
     def getExtraParams(self):
         return self.extra_params
 
+    def setPathConfig(self, path_cfg):
+        self.path_cfg = path_cfg
+
     def getPathConfig(self):
         return self.path_cfg
+
+    def setMountPoint(self, mount_point):
+        self.mount_point = mount_point
 
     def getMountPoint(self):
         return self.mount_point

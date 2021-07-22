@@ -18,5 +18,5 @@ entities:
     ip: 192.168.52.4
     ports: [5060/tcp]              # optional - default is randomly assigned
     path_config: /home/liviu/Desktop/proiect/testing-framework/controller/tests/test0
-    mount_point: /mnt/vol/
+    mount_point: /home/
     

@@ -47,11 +47,11 @@ if __name__ == '__main__':
         elif e.type == "opensips":
             mount_point = e.getMountPoint()
             path_config = os.path.abspath(e.getPathConfig())
-            params = "-f " + "/etc/opensips/opensips.cfg" + e.getConfigFile()
+            params = "-f " + "/home/" + e.getConfigFile()
             print(path_config)
             print(mount_point)
             print(params)
-            container = controller.client.containers.create(e.image, detach=True)
+            container = controller.client.containers.create(e.image, detach=True, volumes={path_config:{'bind':mount_point, 'mode':'rw'}})
             controller.client.networks.get("controllerNetwork").connect(container, ipv4_address=e.ip)
             
             container.start()

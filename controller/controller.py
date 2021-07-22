@@ -1,4 +1,4 @@
-from docker import client
+from docker.api import volume
 import entity
 import docker
 import argparse
@@ -39,4 +39,21 @@ if __name__ == '__main__':
     for dir in dirs:
         stream = controller.dir_parser.parseScenario(controller.args.tests+"/"+dir)
         controller.dir_parser.streamToEntities(stream, entities)
+
+    for e in entities:
+        if e.type == "uas-sipp":
+            params = "-sn uas" + e.getExtraParams()
+            container = controller.client.containers.run(e.image, params, detach=True)
+        elif e.type == "opensips":
+            mount_point = e.getMountPoint()
+            path_config = os.path.abspath(e.getPathConfig())
+            params = "-f " + "/etc/opensips/opensips.cfg" + e.getConfigFile()
+            print(path_config)
+            print(mount_point)
+            print(params)
+            container = controller.client.containers.create(e.image, detach=True)
+            controller.client.networks.get("controllerNetwork").connect(container, ipv4_address=e.ip)
+            
+            container.start()
+
 

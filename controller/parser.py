@@ -43,4 +43,25 @@ class Parser():
                 container = entity.Entity_uas(e["name"], e["type"], e["image"], e["ports"], e["ip"])
                 container.setExtraParams(extra_params)
                 entities.append(container)
+            elif e["type"] == "uac-sipp":
+                if "extra_params" in e.keys():
+                    extra_params = e["extra_params"]
+                else:
+                    extra_params = ""
+                container = entity.Entity_uac(e["name"], e["type"], e["image"], e["ports"], e["ip"])
+                container.setExtraParams(extra_params)
+                entities.append(container)
+            elif e["type"] == "opensips":
+                if "extra_params" in e.keys():
+                    extra_params = e["extra_params"]
+                else:
+                    extra_params = ""
+                container = entity.Entity_opensips(e["name"], e["type"], e["image"], e["ports"], e["ip"])
+                container.setExtraParams(extra_params)
+                container.setMountPoint(e["mount_point"])
+                container.setPathConfig(e["path_config"])
+                container.setConfigFile(e["config_file"])
+                entities.append(container)
+            else:
+                pass
 

@@ -1,0 +1,10 @@
+*.pyc
+*.pyo
+*.swp
+__pycach*
+/.pybuild/
+/build/
+/dist/
+/MANIFEST
+*egg-info/
+tags

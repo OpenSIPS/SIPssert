@@ -4,15 +4,19 @@ entities:
     name: First UAS         # optional - default type
     image: ctaloi/sipp      # optional - default depends on the type
     scenario_file: uas.xml  # optional - scenario file in case of needed
-    ip: 127.0.0.2
-    port: [5080/tcp]             # optional - default is randomly assigned
+    ip: 192.168.52.2
+    ports: [5080/tcp]             # optional - default is randomly assigned
   - type: uac-sipp          # mandatory
+    name: First UAC
     image: ctaloi/sipp
-    ip: 127.0.0.3
-    port: [5070/udp]              # optional - default is randomly assigned
+    ip: 192.168.52.3
+    ports: [5070/udp]              # optional - default is randomly assigned
   - type: opensips
+    name: First OPENSIPS
     image: opensips/opensips
     config_file: opensips.cfg   # optional
-    ip: 127.0.0.1
-    port: [5060/tcp]              # optional - default is randomly assigned
+    ip: 192.168.52.4
+    ports: [5060/tcp, 5080/udp]              # optional - default is randomly assigned
+    path_config: /home/liviu/Desktop/proiect/testing-framework/controller/tests/test0
+    mount_point: /etc/opensips/
     

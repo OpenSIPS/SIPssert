@@ -1,37 +1,65 @@
+#!/usr/bin/env python
+##
+## TODO: update project's name
+## (see https://github.com/OpenSIPS/opensips-cli).
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program. If not, see <http://www.gnu.org/licenses/>.
+##
+
 import os
 import yaml
-import entity
+from framework import entity
 
 SCENARIO = "scenario.yml"
 
 class Parser():
+
     def __init__(self, root_path):
         self.root_path = root_path
+        self.scenarios = None
+        self.scenario_files = None
 
-    def iterateTestsDir(self):
-        list_dirs = []
-        for dir in os.listdir(self.root_path):
-            list_dirs.append(dir)
+    def get_scenarios(self):
 
-        return list_dirs
+        if not self.scenario_files:
+            self.scenario_files = []
+            for scenario_dir in os.listdir(self.root_path):
+                test_dir = os.path.join(self.root_path, scenario_dir)
+                if SCENARIO in os.listdir(test_dir):
+                    self.scenario_files.append(os.path.join(test_dir,
+                        SCENARIO))
 
-    def yamlParser(self, file):
-        with open(file, 'r') as stream:
-            try:
-                cfg_stream = yaml.safe_load(stream)
-            except yaml.YAMLError as exc:
-                print(exc)
+        return self.scenario_files
 
-        return cfg_stream
+    def parse_scenarios(self):
 
-    def parseScenario(self, dir):
-        stream = ""
-        if SCENARIO in os.listdir(dir):
-            stream = self.yamlParser(dir+"/"+SCENARIO)
-        else:
-            print("File does not exist!")
-        
-        return stream
+        self.get_scenarios()
+
+        if not self.scenarios:
+            self.scenarios = []
+            for scenario in self.scenario_files:
+                with open(scenario, 'r') as stream:
+                    try:
+                        cfg_stream = yaml.safe_load(stream)
+                        self.scenarios.append(cfg_stream)
+                    except yaml.YAMLError as exc:
+                        print(exc)
+
+        return self.scenarios
+
+
+
 
     def setPorts(self, ports):
         dict = {}

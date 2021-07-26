@@ -43,15 +43,19 @@ if __name__ == '__main__':
     for e in entities:
         if e.type == "uas-sipp":
             params = "-sn uas" + e.getExtraParams()
-            container = controller.client.containers.run(e.image, params, detach=True)
+            e.ports = controller.dir_parser.setPorts(e.ports)
+            container = controller.client.containers.run(e.image, params, detach=True, ports = e.ports)
         elif e.type == "opensips":
             mount_point = e.getMountPoint()
             path_config = os.path.abspath(e.getPathConfig())
-            params = "-f " + "/home/" + e.getConfigFile()
+            params = "-f " + mount_point + e.getConfigFile()
             print(path_config)
             print(mount_point)
             print(params)
-            container = controller.client.containers.create(e.image, detach=True, volumes={path_config:{'bind':mount_point, 'mode':'rw'}})
+            e.ports = controller.dir_parser.setPorts(e.ports)
+            container = controller.client.containers.create(e.image, params, detach=True,
+            volumes={path_config:{'bind':mount_point, 'mode':'ro'}},
+            ports = e.ports)
             controller.client.networks.get("controllerNetwork").connect(container, ipv4_address=e.ip)
             
             container.start()

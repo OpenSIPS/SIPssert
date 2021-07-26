@@ -33,6 +33,15 @@ class Parser():
         
         return stream
 
+    def setPorts(self, ports):
+        dict = {}
+        for p in ports:
+            port, type = p.split("/")
+            dict[p] = port
+
+        return dict
+            
+
     def streamToEntities(self, stream, entities):
         for e in stream["entities"]:
             if e["type"] == "uas-sipp":

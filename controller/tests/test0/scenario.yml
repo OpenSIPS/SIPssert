@@ -16,7 +16,7 @@ entities:
     image: opensips/opensips
     config_file: opensips.cfg   # optional
     ip: 192.168.52.4
-    ports: [5060/tcp]              # optional - default is randomly assigned
+    ports: [5060/tcp, 5080/udp]              # optional - default is randomly assigned
     path_config: /home/liviu/Desktop/proiect/testing-framework/controller/tests/test0
-    mount_point: /home/
+    mount_point: /etc/opensips/
     

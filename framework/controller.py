@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 ##
 ## TODO: update project's name
-## (see https://github.com/OpenSIPS/opensips-cli).
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by

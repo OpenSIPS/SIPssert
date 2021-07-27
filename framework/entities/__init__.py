@@ -16,29 +16,10 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-import os
-import argparse
-from framework import controller
+import pkgutil
 
-arg_parser = argparse.ArgumentParser(description='Testing Framework for OpenSips Solutions')
-
-arg_parser.add_argument('tests',
-                        help='Absolute path of the tests director',
-                        type=os.path.abspath)
-
-# TODO: add a config path
-
-
-def main():
-
-    # Parse all arguments
-    args = arg_parser.parse_args()
-
-    # Open the Controller
-    ctrl = controller.Controller(args.tests)
-    ctrl.run()
-
-if __name__ == '__main__':
-    main()
+__path__ = pkgutil.extend_path(__path__, __name__)
+for importer, modname, ispkg in pkgutil.walk_packages(path=__path__, prefix=__name__+'.'):
+    __import__(modname)
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

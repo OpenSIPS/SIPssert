@@ -16,29 +16,15 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-import os
-import argparse
-from framework import controller
+from framework.entities.entity import Entity
 
-arg_parser = argparse.ArgumentParser(description='Testing Framework for OpenSips Solutions')
+class UasSIPPEntity(Entity):
 
-arg_parser.add_argument('tests',
-                        help='Absolute path of the tests director',
-                        type=os.path.abspath)
+    entity_default_image = "ctaloi/sipp"
 
-# TODO: add a config path
+    def get_entity_args(self):
 
-
-def main():
-
-    # Parse all arguments
-    args = arg_parser.parse_args()
-
-    # Open the Controller
-    ctrl = controller.Controller(args.tests)
-    ctrl.run()
-
-if __name__ == '__main__':
-    main()
+        # TODO: handle custom args in the config
+        return [ "-sn", "uas" ]
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

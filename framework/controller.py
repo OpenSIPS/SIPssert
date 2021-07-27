@@ -16,8 +16,10 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
+import os
 import docker
 from framework import parser
+from framework import scenario
 
 class Controller:
 
@@ -26,36 +28,15 @@ class Controller:
 
         self.parser = parser.Parser(self.tests_dir)
 
-        self.scenarios = self.parser.parse_scenarios()
+        scenario_configs = self.parser.parse_scenario_configs()
 
         self.docker = docker.from_env()
 
+        self.scenarios = []
+        for f, cfg in scenario_configs:
+            self.scenarios.append(scenario.Scenario(f, cfg, self))
+
         self.setup_network()
-
-        # TODO: fix this
-        entities = []
-        for scenario in self.scenarios:
-            self.parser.streamToEntities(scenario, entities)
-
-        for e in entities:
-            if e.type == "uas-sipp":
-                params = "-sn uas" + e.getExtraParams()
-                e.ports = self.parser.setPorts(e.ports)
-                container = self.docker.containers.run(e.image, params, detach=True, ports = e.ports)
-            elif e.type == "opensips":
-                mount_point = e.getMountPoint()
-                path_config = os.path.abspath(e.getPathConfig())
-                params = "-f " + mount_point + e.getConfigFile()
-                print(path_config)
-                print(mount_point)
-                print(params)
-                e.ports = self.parser.setPorts(e.ports)
-                container = self.docker.containers.create(e.image, params, detach=True,
-                volumes={path_config:{'bind':mount_point, 'mode':'ro'}},
-                ports = e.ports)
-                self.docker.networks.get("controllerNetwork").connect(container, ipv4_address=e.ip)
-                
-                container.start()
 
     def __del__(self):
         # destroy the network when the controller is done
@@ -69,6 +50,8 @@ class Controller:
                 print("Network not found!")
             else:
                 print("Something else went wrong!")
+        except ValueError:
+            pass
         finally:
             print("New network can be created!")
 
@@ -82,5 +65,9 @@ class Controller:
             self.docker.networks.create("controllerNetwork", driver="bridge", ipam=ipam_config)
         except docker.errors.APIError as err:
             print(type(err))
+
+    def run(self):
+        for s in self.scenarios:
+            s.run()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

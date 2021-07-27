@@ -26,6 +26,7 @@ class Entity():
         self.controller = controller
         self.config = config
         self.test_dir = test_dir
+        self.container = None
 
         if "name" in self.config:
             self.name = self.config["name"]
@@ -81,8 +82,6 @@ class Entity():
         print("args: {}".format(self.get_args()))
         print("image: {}".format(self.image))
 
-        print(self.test_dir)
-
         volumes = { self.test_dir: {
             "bind": self.get_mount_point(),
             "mode": "ro"
@@ -99,5 +98,17 @@ class Entity():
             self.controller.docker.networks.get("controllerNetwork").\
                     connect(self.container, ipv4_address = self.ip)
         self.container.start()
+
+    def stop(self):
+        self.container.stop()
+
+    def remove(self):
+        self.container.remove()
+        self.container = None
+
+    def __del__(self):
+        if self.container:
+            self.stop()
+            self.remove()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

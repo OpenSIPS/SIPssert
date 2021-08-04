@@ -24,7 +24,22 @@ class UasSIPPEntity(Entity):
 
     def get_entity_args(self):
 
-        # TODO: handle custom args in the config
-        return [ "-sn", "uas" ]
+        args = []
+
+        # handle config
+        if self.config_file:
+            # if an absolute path, leave it as it is
+            if os.path.isabs(self.config_file):
+                cfg = self.config_file
+            else:
+                # path is relative to the mount point
+                cfg = os.path.join(self.get_mount_point(), self.config_file)
+            args.append("-sf")
+            args.append(cfg)
+        else:
+            args.append("-sn")
+            args.append("uas")
+
+        return args
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

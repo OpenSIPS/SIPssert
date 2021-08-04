@@ -43,6 +43,11 @@ class Entity():
         else:
             self.ip = None
 
+        if "config_file" in self.config:
+            self.config_file = self.config["config_file"]
+        else:
+            self.config_file = None
+
         if self.image is None:
             raise Exception("entity {} does not have an image available".
                     format(self.name))

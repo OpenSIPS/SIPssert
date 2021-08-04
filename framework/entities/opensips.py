@@ -24,15 +24,6 @@ class OpenSIPSEntity(Entity):
     entity_default_mount_point = "/etc/opensips"
     entity_default_image = "opensips/opensips"
 
-    def __init__(self, test_dir, config, controller):
-
-        Entity.__init__(self, test_dir, config, controller)
-
-        if "config_file" in self.config:
-            self.config_file = self.config["config_file"]
-        else:
-            self.config_file = None
-
     def get_entity_args(self):
 
         args = []

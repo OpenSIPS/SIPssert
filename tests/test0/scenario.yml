@@ -1,22 +1,22 @@
 ---
 entities:
-  - type: uas-sipp          # mandatory
-    name: First UAS         # optional - default type
-    image: ctaloi/sipp      # optional - default depends on the type
-    scenario_file: uas.xml  # optional - scenario file in case of needed
-    ip: 192.168.52.2
-    ports: [5080/tcp]             # optional - default is randomly assigned
-  - type: uac-sipp          # mandatory
-    name: First UAC
-    image: ctaloi/sipp
-    ip: 192.168.52.3
-    ports: [5070/udp]              # optional - default is randomly assigned
+  - type: uas-sipp          # mandatory, correlates with the Class'es
+    name: First UAS         # mandatory - just a name (as container name)
+    image: ctaloi/sipp      # mandatory - the path/name to the docker image
+    ip: 192.168.52.4
+    ports: [5060/udp]       # optional - default is randomly assigned
+    config_file: uas.xml    # optional - cfg file, specific to container
+    extra_params: -i 192.168.52.4 -p 5060
   - type: opensips
     name: First OPENSIPS
     image: opensips/opensips
     config_file: opensips.cfg   # optional
-    ip: 192.168.52.4
-    ports: [5060/tcp, 5080/udp]              # optional - default is randomly assigned
-    path_config: /home/liviu/Desktop/proiect/testing-framework/controller/tests/test0
-    mount_point: /etc/opensips/
-    
+    ip: 192.168.52.3
+    ports: [5060/udp]       # optional - default is randomly assigned
+  - type: uac-sipp          # mandatory, correlates with the Class'es
+    name: First UAC         # mandatory - just a name (as container name)
+    image: ctaloi/sipp      # mandatory - the path/name to the docker image
+    ip: 192.168.52.2
+    ports: [5060/udp]       # optional - default is randomly assigned
+    config_file: uac.xml    # optional - cfg file, specific to container
+    extra_params: -i 192.168.52.2 -p 5060 -rsa 192.168.52.3:5060 -d 5 192.168.52.4:5060 -m 1

@@ -69,10 +69,10 @@ class Entity():
 
     def get_args(self):
         if "extra_params" in self.config:
-            extra_params = self.config["extra_params"]
+            extra_params = self.config["extra_params"].split(" ")
         else:
             extra_params = []
-        return extra_params + self.get_entity_args()
+        return self.get_entity_args() + extra_params
 
     def get_mount_point(self):
         if "mount_point" in self.config:

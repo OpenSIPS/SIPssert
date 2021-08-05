@@ -69,6 +69,6 @@ class Controller:
     def run(self):
         for s in self.scenarios:
             s.run()
-            s.wait_end(10)  #wait 10 secs (TODO this should come from scenario)
+            s.wait_end()  #wait 10 secs (TODO this should come from scenario)
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

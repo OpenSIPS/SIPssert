@@ -29,6 +29,11 @@ class Scenario():
         self.config = config
         self.file = file
         self.entities = []
+        if "timeout" in config.keys():
+            self.timeout = config["timeout"]
+        else:
+            self.timeout = 0
+
         for e in config["entities"]:
             if "type" in e.keys():
                 entity_type = e["type"].lower()
@@ -79,12 +84,12 @@ class Scenario():
         for e in self.get_entities():
             e.update()
 
-    def wait_end(self, timeout):
+    def wait_end(self):
         wait = True
         counter = 0
-        if timeout != 0:
-            counter = timeout * 10; # 1000 ms / 100 (a cycle) -> 10 cycles per sec
-        while wait or (timeout!=0 and counter==0):
+        if self.timeout != 0:
+            counter = self.timeout * 10; # 1000 ms / 100 (a cycle) -> 10 cycles per sec
+        while wait or (self.timeout!=0 and counter==0):
             wait = False
             # see if we still have "running" "non-daemons"
             for e in self.get_entities():

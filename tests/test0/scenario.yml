@@ -1,4 +1,5 @@
 ---
+timeout: 10
 entities:
   - type: uas-sipp          # mandatory, correlates with the Class'es
     name: First UAS         # mandatory - just a name (as container name)

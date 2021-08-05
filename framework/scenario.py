@@ -18,6 +18,7 @@
 
 import os
 import importlib
+import time
 from framework.entities import entity
 
 class Scenario():
@@ -28,7 +29,6 @@ class Scenario():
         self.config = config
         self.file = file
         self.entities = []
-        self.nondaemons = 0
         for e in config["entities"]:
             if "type" in e.keys():
                 entity_type = e["type"].lower()
@@ -70,41 +70,38 @@ class Scenario():
 
     def get_entities(self):
         return self.entities
-    
-    def get_no_nondaemons(self):
-        count = 0
-        for e in self.get_entities():
-            if e.daemon == False:
-                count += 1
-        self.nondaemons = count
 
     def run(self):
         for e in self.get_entities():
             e.run()
-        self.get_no_nondaemons()
 
     def update(self):
         for e in self.get_entities():
             e.update()
 
-    def end(self):
-        while 1:
-            self.update()
-            if self.nondaemons == self.check_nondaemons():
-                self.stop_daemons()
-                break
+    def wait_end(self, timeout):
+        wait = True
+        counter = 0
+        if timeout!=0
+            counter = timeout * 10; # 1000 ms / 100 (a cycle) -> 10 cycles per sec
+        while wait or (timeout!=0 and counter==0):
+            wait = False
+            # see if we still have "running" "non-daemons"
+            for e in self.get_entities():
+                if e.daemon == False and e.container.status != "exited":
+                    wait = True
+            if wait:
+                time.sleep(0.1)  #sleep 100 ms before rechecking
+                self.update()
+                couter -= 1
+        if wait:
+            print("WARNING: not all entities self-terminated, end-forcing due timeout");
+        # stop all remaining containers
+        self.stop_all()
 
-    def stop_daemons(self):
+    def stop_all(self):
         for e in self.get_entities():
-            if e.daemon == True:
-                e.stop()         
-        
-    def check_nondaemons(self):
-        count = 0
-        for e in self.get_entities():
-            if e.container.status == "exited" and e.daemon == False:
-                count += 1
-
-        return count
+            if e.container.status != "exited":
+                e.stop()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

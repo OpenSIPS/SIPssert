@@ -48,6 +48,11 @@ class Entity():
         else:
             self.config_file = None
 
+        if "daemon" in self.config:
+            self.daemon = self.config["daemon"]
+        else:
+            self.daemon = False
+
         if self.image is None:
             raise Exception("entity {} does not have an image available".
                     format(self.name))
@@ -107,13 +112,14 @@ class Entity():
     def stop(self):
         self.container.stop()
 
+    def update(self):
+        self.container.reload()
+
     def remove(self):
         self.container.remove()
         self.container = None
 
     def __del__(self):
-        if self.container:
-            self.stop()
-            self.remove()
+        pass
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

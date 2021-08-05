@@ -28,6 +28,7 @@ class Scenario():
         self.config = config
         self.file = file
         self.entities = []
+        self.nondaemons = 0
         for e in config["entities"]:
             if "type" in e.keys():
                 entity_type = e["type"].lower()
@@ -69,9 +70,41 @@ class Scenario():
 
     def get_entities(self):
         return self.entities
+    
+    def get_no_nondaemons(self):
+        count = 0
+        for e in self.get_entities():
+            if e.daemon == False:
+                count += 1
+        self.nondaemons = count
 
     def run(self):
         for e in self.get_entities():
             e.run()
+        self.get_no_nondaemons()
+
+    def update(self):
+        for e in self.get_entities():
+            e.update()
+
+    def end(self):
+        while 1:
+            self.update()
+            if self.nondaemons == self.check_nondaemons():
+                self.stop_daemons()
+                break
+
+    def stop_daemons(self):
+        for e in self.get_entities():
+            if e.daemon == True:
+                e.stop()         
+        
+    def check_nondaemons(self):
+        count = 0
+        for e in self.get_entities():
+            if e.container.status == "exited" and e.daemon == False:
+                count += 1
+
+        return count
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

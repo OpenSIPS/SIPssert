@@ -69,5 +69,6 @@ class Controller:
     def run(self):
         for s in self.scenarios:
             s.run()
+            s.end()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

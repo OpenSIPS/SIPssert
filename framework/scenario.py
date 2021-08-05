@@ -82,7 +82,7 @@ class Scenario():
     def wait_end(self, timeout):
         wait = True
         counter = 0
-        if timeout!=0
+        if timeout != 0:
             counter = timeout * 10; # 1000 ms / 100 (a cycle) -> 10 cycles per sec
         while wait or (timeout!=0 and counter==0):
             wait = False
@@ -93,7 +93,7 @@ class Scenario():
             if wait:
                 time.sleep(0.1)  #sleep 100 ms before rechecking
                 self.update()
-                couter -= 1
+                counter -= 1
         if wait:
             print("WARNING: not all entities self-terminated, end-forcing due timeout");
         # stop all remaining containers

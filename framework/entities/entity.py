@@ -16,6 +16,8 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
+import os
+
 class Entity():
 
     entity_default_mount_point = "/home"
@@ -44,7 +46,12 @@ class Entity():
             self.ip = None
 
         if "config_file" in self.config:
-            self.config_file = self.config["config_file"]
+            # if an absolute path, leave it as it is
+            if os.path.isabs(self.config["config_file"]):
+                self.config_file = self.config["config_file"]
+            else:
+                # path is relative to the mount point
+                self.config_file = os.path.join(self.get_mount_point(), self.config["config_file"])
         else:
             self.config_file = None
 

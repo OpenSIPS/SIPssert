@@ -15,7 +15,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
-import os
+
 from framework.entities.entity import Entity
 
 class UacSIPPEntity(Entity):
@@ -28,14 +28,8 @@ class UacSIPPEntity(Entity):
 
         # handle config
         if self.config_file:
-            # if an absolute path, leave it as it is
-            if os.path.isabs(self.config_file):
-                cfg = self.config_file
-            else:
-                # path is relative to the mount point
-                cfg = os.path.join(self.get_mount_point(), self.config_file)
             args.append("-sf")
-            args.append(cfg)
+            args.append(self.config_file)
         else:
             args.append("-sn")
             args.append("uac")

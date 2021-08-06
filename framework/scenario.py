@@ -92,7 +92,8 @@ class Scenario():
         while wait or (self.timeout!=0 and counter==0):
             wait = False
             # see if we still have "running" "non-daemons"
-            for e in self.get_entities():
+            for e in reversed(self.get_entities()):
+                print("terminated: " + e.name)
                 if e.daemon == False and e.container.status != "exited":
                     wait = True
             if wait:
@@ -109,4 +110,10 @@ class Scenario():
             if e.container.status != "exited":
                 e.stop()
 
+    def get_logs(self):
+        client = self.controller.docker
+        containers = client.containers
+        for c in containers.list(all=True):
+            name = self.controller.parser.get_timestamp_int()
+            print(name)
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

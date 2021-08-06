@@ -70,5 +70,6 @@ class Controller:
         for s in self.scenarios:
             s.run()
             s.wait_end()  #wait 10 secs (TODO this should come from scenario)
+            s.get_logs()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

@@ -16,10 +16,13 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
+from framework import scenario
 import os
 import yaml
+from datetime import datetime
 
 SCENARIO = "scenario.yml"
+LOGS_DIR = "logs"
 
 class Parser():
 
@@ -55,5 +58,19 @@ class Parser():
                         print(exc)
 
         return self.scenarios
+
+    def get_timestamp_int(self):
+        return int(datetime.utcnow().timestamp())
+
+
+    def wirte_in_file(self, file, log):
+        pass
+
+    def write_logs(self, logs):
+        for dir in os.listdir(self.root_path):
+            test_dir = os.path.join(self.root_path, dir)
+            if "logs" in os.listdir(test_dir):
+                self.wirte_in_file(logs)
+
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

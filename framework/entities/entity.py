@@ -17,6 +17,7 @@
 ##
 
 import os
+from datetime import datetime
 
 class Entity():
 
@@ -93,11 +94,10 @@ class Entity():
             return self.entity_default_mount_point
 
     def run(self):
-        print("name: {}".format(self))
-        print("mount point: {}".format(self.get_mount_point()))
-        print("ports: {}".format(self.get_ports()))
-        print("args: {}".format(self.get_args()))
-        print("image: {}".format(self.image))
+        print(str(datetime.utcnow()))
+        print("- Name: {}".format(self))
+        print("- Image: {}".format(self.image))
+        print("- Args: {}".format(self.get_args()))
 
         volumes = { self.test_dir: {
             "bind": self.get_mount_point(),
@@ -110,7 +110,8 @@ class Entity():
                 self.get_args(),
                 detach=True,
                 volumes=volumes,
-                ports=ports)
+                ports=ports,
+                name=self.name)
         if self.ip:
             self.controller.docker.networks.get("controllerNetwork").\
                     connect(self.container, ipv4_address = self.ip)

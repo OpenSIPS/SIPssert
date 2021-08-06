@@ -20,6 +20,7 @@ import os
 import docker
 from framework import parser
 from framework import scenario
+from datetime import datetime
 
 class Controller:
 
@@ -47,13 +48,13 @@ class Controller:
             self.docker.networks.get("controllerNetwork").remove()
         except docker.errors.APIError as err:
             if type(err) == docker.errors.NotFound:
-                print("Network not found!")
+                print(str(datetime.utcnow()) + " - Network not found!")
             else:
-                print("Something else went wrong!")
+                print(str(datetime.utcnow()) + " - Something else went wrong!")
         except ValueError:
             pass
         finally:
-            print("New network can be created!")
+            print(str(datetime.utcnow()) + " - New network can be created!")
 
     def setup_network(self):
 

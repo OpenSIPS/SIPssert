@@ -20,6 +20,8 @@ import os
 import importlib
 import time
 from framework.entities import entity
+from datetime import datetime
+LOGS_DIR = "logs"
 
 class Scenario():
 
@@ -28,6 +30,7 @@ class Scenario():
         self.controller = controller
         self.config = config
         self.file = file
+        self.dirname = os.path.dirname(file)
         self.entities = []
         if "timeout" in config.keys():
             self.timeout = config["timeout"]
@@ -93,7 +96,6 @@ class Scenario():
             wait = False
             # see if we still have "running" "non-daemons"
             for e in reversed(self.get_entities()):
-                print("terminated: " + e.name)
                 if e.daemon == False and e.container.status != "exited":
                     wait = True
             if wait:
@@ -101,7 +103,7 @@ class Scenario():
                 self.update()
                 counter -= 1
         if wait:
-            print("WARNING: not all entities self-terminated, end-forcing due timeout");
+            print(str(datetime.utcnow()) + " - WARNING: not all entities self-terminated, end-forcing due timeout");
         # stop all remaining containers
         self.stop_all()
 
@@ -110,10 +112,26 @@ class Scenario():
             if e.container.status != "exited":
                 e.stop()
 
+    def logs_dir(self, dir):
+        if "logs" not in os.listdir(dir):
+            path = os.path.join(dir, "logs")
+            os.mkdir(path)
+            print(str(datetime.utcnow()) + " - logs dir created successfully!")
+        else:
+            print(str(datetime.utcnow()) + " - logs dir already exists!")
+
     def get_logs(self):
         client = self.controller.docker
         containers = client.containers
+        self.logs_dir(self.dirname)
+        logs_path = os.path.join(self.dirname, LOGS_DIR)
         for c in containers.list(all=True):
-            name = self.controller.parser.get_timestamp_int()
-            print(name)
+            name = str(self.controller.parser.get_timestamp_int()) + "_" + c.name
+            log_file = os.path.join(logs_path, name)
+            f = open(log_file, 'w')
+            f.write(c.logs().decode('UTF-8'))
+            f.close()
+            print(str(datetime.utcnow()) + " - Logs for {} fetched successfully!".format(c.name))
+
+            
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

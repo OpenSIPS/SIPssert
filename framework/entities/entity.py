@@ -19,10 +19,11 @@
 import os
 from datetime import datetime
 
+
 class Entity():
 
-    entity_default_mount_point = "/home"
     entity_default_image = None
+    entity_default_mount_point = "/home"
 
     def __init__(self, test_dir, config, controller):
 
@@ -104,7 +105,6 @@ class Entity():
             "mode": "ro"
             }}
         ports = self.get_ports()
-
         self.container = self.controller.docker.containers.create(
                 self.image,
                 self.get_args(),

@@ -16,7 +16,6 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-import os
 import docker
 from framework import parser
 from framework import scenario
@@ -43,18 +42,19 @@ class Controller:
         # destroy the network when the controller is done
         self.destroy_network()
 
+
     def destroy_network(self):
         try:
             self.docker.networks.get("controllerNetwork").remove()
         except docker.errors.APIError as err:
             if type(err) == docker.errors.NotFound:
-                print(str(datetime.utcnow()) + " - Network not found!")
+                print(datetime.utcnow(), " - Network not found!")
             else:
-                print(str(datetime.utcnow()) + " - Something else went wrong!")
+                print(datetime.utcnow(), " - Something else went wrong!")
         except ValueError:
             pass
         finally:
-            print(str(datetime.utcnow()) + " - New network can be created!")
+            print(datetime.utcnow(), " - New network can be created!")
 
     def setup_network(self):
 
@@ -63,12 +63,13 @@ class Controller:
         try:
             ipam_pool = docker.types.IPAMPool(subnet='192.168.52.0/24', gateway='192.168.52.254')
             ipam_config = docker.types.IPAMConfig(pool_configs=[ipam_pool])
-            self.docker.networks.create("controllerNetwork", driver="bridge", ipam=ipam_config)
+            net = self.docker.networks.create("controllerNetwork", driver="bridge", ipam=ipam_config, options={"com.docker.network.bridge.name":"osbr0"})
         except docker.errors.APIError as err:
             print(type(err))
 
     def run(self):
         for s in self.scenarios:
+            s.get_network_logs()
             s.run()
             s.wait_end()  #wait 10 secs (TODO this should come from scenario)
             s.get_logs()

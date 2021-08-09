@@ -21,12 +21,14 @@ import importlib
 import time
 from framework.entities import entity
 from datetime import datetime
+import subprocess
+
 LOGS_DIR = "logs"
 
 class Scenario():
 
     def __init__(self, file, config, controller):
-
+        self.p = None
         self.controller = controller
         self.config = config
         self.file = file
@@ -103,7 +105,7 @@ class Scenario():
                 self.update()
                 counter -= 1
         if wait:
-            print(str(datetime.utcnow()) + " - WARNING: not all entities self-terminated, end-forcing due timeout");
+            print(datetime.utcnow(), "- WARNING: not all entities self-terminated, end-forcing due timeout");
         # stop all remaining containers
         self.stop_all()
 
@@ -116,9 +118,9 @@ class Scenario():
         if "logs" not in os.listdir(dir):
             path = os.path.join(dir, "logs")
             os.mkdir(path)
-            print(str(datetime.utcnow()) + " - logs dir created successfully!")
+            print(datetime.utcnow(), "- logs dir created successfully!")
         else:
-            print(str(datetime.utcnow()) + " - logs dir already exists!")
+            print(datetime.utcnow(), "- logs dir already exists!")
 
     def get_logs(self):
         client = self.controller.docker
@@ -131,7 +133,17 @@ class Scenario():
             f = open(log_file, 'w')
             f.write(c.logs().decode('UTF-8'))
             f.close()
-            print(datetime.utcnow(), " - Logs for {} fetched successfully!".format(c.name))
+            print(datetime.utcnow(), "- Logs for {} fetched successfully!".format(c.name))
+        if self.p:
+            print(datetime.utcnow(), "- tcpdump end!")
+            self.p.terminate()
+
+    def get_network_logs(self):
+        res = "osbr0"
+        dir = os.path.join(self.dirname, "cap.pcap")
+        self.p = subprocess.Popen(['tcpdump', '-i', res, '-w', dir], stdout=subprocess.PIPE)
+        # wait for proc to start
+        time.sleep(0.5)
 
             
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

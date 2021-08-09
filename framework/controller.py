@@ -69,9 +69,10 @@ class Controller:
 
     def run(self):
         for s in self.scenarios:
-            s.get_network_logs()
+            s.start_tcpdump()
             s.run()
             s.wait_end()  #wait 10 secs (TODO this should come from scenario)
+            s.stop_tcpdump()
             s.get_logs()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

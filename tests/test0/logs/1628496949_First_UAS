@@ -103,8 +103,83 @@
   5060       4.01 s            1  UDP
 
   0 new calls during 1.004 s period      1 ms scheduler resolution
-  0 calls                                Peak was 1 calls, after 0 s
+  1 calls                                Peak was 1 calls, after 0 s
   0 Running, 2 Paused, 3 Woken up
+  0 dead call msg (discarded)          
+  3 open sockets                        
+
+                                 Messages  Retrans   Timeout   Unexpected-Msg
+  ----------> INVITE             1         0         0         0        
+
+  <---------- 100                1         0                            
+  [      1ms] Pause              1                             0        
+  <---------- 180                1         0                            
+  [   1000ms] Pause              1                             0        
+  <---------- 200                1         0         0                  
+  ----------> ACK         E-RTD1 1         0         0         0        
+
+  ----------> BYE                0         0         0         0        
+
+  <---------- 200                0         0         0                  
+------------------------------ Sipp Server Mode -------------------------------
+
+------------------------------ Scenario Screen -------- [1-9]: Change Screen --
+  Port   Total-time  Total-calls  Transport
+  5060       5.01 s            1  UDP
+
+  0 new calls during 1.004 s period      1 ms scheduler resolution
+  1 calls                                Peak was 1 calls, after 0 s
+  0 Running, 2 Paused, 4 Woken up
+  0 dead call msg (discarded)          
+  3 open sockets                        
+
+                                 Messages  Retrans   Timeout   Unexpected-Msg
+  ----------> INVITE             1         0         0         0        
+
+  <---------- 100                1         0                            
+  [      1ms] Pause              1                             0        
+  <---------- 180                1         0                            
+  [   1000ms] Pause              1                             0        
+  <---------- 200                1         0         0                  
+  ----------> ACK         E-RTD1 1         0         0         0        
+
+  ----------> BYE                0         0         0         0        
+
+  <---------- 200                0         0         0                  
+------------------------------ Sipp Server Mode -------------------------------
+
+------------------------------ Scenario Screen -------- [1-9]: Change Screen --
+  Port   Total-time  Total-calls  Transport
+  5060       6.02 s            1  UDP
+
+  0 new calls during 1.004 s period      1 ms scheduler resolution
+  1 calls                                Peak was 1 calls, after 0 s
+  0 Running, 2 Paused, 3 Woken up
+  0 dead call msg (discarded)          
+  3 open sockets                        
+
+                                 Messages  Retrans   Timeout   Unexpected-Msg
+  ----------> INVITE             1         0         0         0        
+
+  <---------- 100                1         0                            
+  [      1ms] Pause              1                             0        
+  <---------- 180                1         0                            
+  [   1000ms] Pause              1                             0        
+  <---------- 200                1         0         0                  
+  ----------> ACK         E-RTD1 1         0         0         0        
+
+  ----------> BYE                0         0         0         0        
+
+  <---------- 200                0         0         0                  
+------------------------------ Sipp Server Mode -------------------------------
+
+------------------------------ Scenario Screen -------- [1-9]: Change Screen --
+  Port   Total-time  Total-calls  Transport
+  5060       7.02 s            1  UDP
+
+  0 new calls during 1.004 s period      1 ms scheduler resolution
+  0 calls                                Peak was 1 calls, after 0 s
+  0 Running, 2 Paused, 4 Woken up
   0 dead call msg (discarded)          
   3 open sockets                        
 
@@ -125,11 +200,11 @@
 
 ------------------------------ Scenario Screen -------- [1-9]: Change Screen --
   Port   Total-time  Total-calls  Transport
-  5060       4.18 s            1  UDP
+  5060       7.25 s            1  UDP
 
-  0 new calls during 0.172 s period      1 ms scheduler resolution
+  0 new calls during 0.224 s period      1 ms scheduler resolution
   0 calls                                Peak was 1 calls, after 0 s
-  0 Running, 3 Paused, 1 Woken up
+  0 Running, 3 Paused, 0 Woken up
   0 dead call msg (discarded)          
   3 open sockets                        
 
@@ -150,14 +225,14 @@
 
 
 ----------------------------- Statistics Screen ------- [1-9]: Change Screen --
-  Start Time             | 2021-08-06	13:55:22.830914	1628258122.830914         
-  Last Reset Time        | 2021-08-06	13:55:26.846677	1628258126.846677         
-  Current Time           | 2021-08-06	13:55:27.021866	1628258127.021866         
+  Start Time             | 2021-08-09	11:15:41.654914	1628507741.654914         
+  Last Reset Time        | 2021-08-09	11:15:48.681293	1628507748.681293         
+  Current Time           | 2021-08-09	11:15:48.907524	1628507748.907524         
 -------------------------+---------------------------+--------------------------
   Counter Name           | Periodic value            | Cumulative value
 -------------------------+---------------------------+--------------------------
-  Elapsed Time           | 00:00:00:175000           | 00:00:04:190000          
-  Call Rate              |    0.000 cps              |    0.239 cps             
+  Elapsed Time           | 00:00:00:226000           | 00:00:07:252000          
+  Call Rate              |    0.000 cps              |    0.138 cps             
 -------------------------+---------------------------+--------------------------
   Incoming call created  |        0                  |        1                 
   OutGoing call created  |        0                  |        0                 
@@ -167,8 +242,8 @@
   Successful call        |        0                  |        1                 
   Failed call            |        0                  |        0                 
 -------------------------+---------------------------+--------------------------
-  Response Time 1        | 00:00:00:000000           | 00:00:01:007000          
-  Call Length            | 00:00:00:000000           | 00:00:03:012000          
+  Response Time 1        | 00:00:00:000000           | 00:00:01:011000          
+  Call Length            | 00:00:00:000000           | 00:00:06:016000          
 ------------------------------ Test Terminated --------------------------------
 
 

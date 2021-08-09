@@ -1,0 +1,54 @@
+Aug  9 11:13:19 [1] INFO:core:fix_poll_method: using epoll as the IO watch method (auto detected)
+Aug  9 11:13:19 [1] NOTICE:core:main: version: opensips 3.1.3 (x86_64/linux)
+Aug  9 11:13:19 [1] NOTICE:core:main: using 32 MB of shared memory, allocator: F_MALLOC
+Aug  9 11:13:19 [1] NOTICE:core:main: using 16 MB of private process memory, allocator: F_MALLOC
+Aug  9 11:13:19 [1] WARNING:core:init_reactor_size: shrinking reactor size from 1048576 (autodetected via rlimit) to 41943 (limited by memory of 10% from 16Mb)
+Aug  9 11:13:19 [1] WARNING:core:init_reactor_size: use 'open_files_limit' to enforce other limit or increase pkg memory
+Aug  9 11:13:19 [1] INFO:core:init_reactor_size: reactor size 41943 (using up to 1.60Mb of memory per process)
+Listening on 
+             udp: 192.168.52.3 [192.168.52.3]:5060
+Aliases: 
+
+Aug  9 11:13:19 [1] INFO:core:evi_publish_event: Registered event <E_CORE_THRESHOLD(0)>
+Aug  9 11:13:19 [1] INFO:core:evi_publish_event: Registered event <E_CORE_SHM_THRESHOLD(1)>
+Aug  9 11:13:19 [1] INFO:core:evi_publish_event: Registered event <E_CORE_PKG_THRESHOLD(2)>
+Aug  9 11:13:19 [1] INFO:core:evi_publish_event: Registered event <E_CORE_PROC_AUTO_SCALE(3)>
+Aug  9 11:13:19 [1] INFO:tm:mod_init: TM - initializing...
+Aug  9 11:13:19 [1] INFO:sl:mod_init: Initializing StateLess engine
+Aug  9 11:13:19 [1] NOTICE:signaling:mod_init: initializing module ...
+Aug  9 11:13:19 [1] INFO:rr:mod_init: rr - initializing
+Aug  9 11:13:19 [1] INFO:maxfwd:mod_init: initializing...
+Aug  9 11:13:19 [1] INFO:sipmsgops:mod_init: initializing...
+Aug  9 11:13:19 [1] INFO:usrloc:ul_init_locks: locks array size 512
+Aug  9 11:13:19 [1] INFO:core:evi_publish_event: Registered event <E_UL_AOR_INSERT(4)>
+Aug  9 11:13:19 [1] INFO:core:evi_publish_event: Registered event <E_UL_AOR_DELETE(5)>
+Aug  9 11:13:19 [1] INFO:core:evi_publish_event: Registered event <E_UL_CONTACT_INSERT(6)>
+Aug  9 11:13:19 [1] INFO:core:evi_publish_event: Registered event <E_UL_CONTACT_UPDATE(7)>
+Aug  9 11:13:19 [1] INFO:core:evi_publish_event: Registered event <E_UL_CONTACT_DELETE(8)>
+Aug  9 11:13:19 [1] INFO:core:evi_publish_event: Registered event <E_UL_CONTACT_REFRESH(9)>
+Aug  9 11:13:19 [1] INFO:core:evi_publish_event: Registered event <E_UL_LATENCY_UPDATE(10)>
+Aug  9 11:13:19 [1] INFO:registrar:mod_init: initializing...
+Aug  9 11:13:19 [1] INFO:acc:mod_init: initializing...
+Aug  9 11:13:19 [1] INFO:core:evi_publish_event: Registered event <E_ACC_EVENT(11)>
+Aug  9 11:13:19 [1] INFO:core:evi_publish_event: Registered event <E_ACC_CDR(12)>
+Aug  9 11:13:19 [1] INFO:core:evi_publish_event: Registered event <E_ACC_MISSED_EVENT(13)>
+Aug  9 11:13:19 [1] INFO:core:mod_init: initializing UDP-plain protocol
+Aug  9 11:13:19 [13] new branch at sip:service@192.168.52.4:5060
+Aug  9 11:13:19 [13] incoming reply
+Aug  9 11:13:19 [13] incoming reply
+Aug  9 11:13:20 [11] incoming reply
+Aug  9 11:13:20 [11] ACC: transaction answered: timestamp=1628507600;method=INVITE;from_tag=1;to_tag=abcde;call_id=1-1@192.168.52.2;code=200;reason=OK
+Aug  9 11:13:25 [13] ACC: transaction answered: timestamp=1628507605;method=BYE;from_tag=1;to_tag=abcde;call_id=1-1@192.168.52.2;code=200;reason=OK
+Aug  9 11:13:26 [7] INFO:core:sig_usr: signal 15 received
+Aug  9 11:13:26 [9] INFO:core:sig_usr: signal 15 received
+Aug  9 11:13:26 [8] INFO:core:sig_usr: signal 15 received
+Aug  9 11:13:26 [1] INFO:core:shutdown_opensips: process 1(7) [MI FIFO] terminated, still waiting for 7 more
+Aug  9 11:13:26 [1] INFO:core:shutdown_opensips: process 2(8) [time_keeper] terminated, still waiting for 6 more
+Aug  9 11:13:26 [1] INFO:core:shutdown_opensips: process 3(9) [timer] terminated, still waiting for 5 more
+Aug  9 11:13:26 [1] INFO:core:shutdown_opensips: process 4(10) [SIP receiver udp:192.168.52.3:5060] terminated, still waiting for 4 more
+Aug  9 11:13:26 [1] INFO:core:shutdown_opensips: process 5(11) [SIP receiver udp:192.168.52.3:5060] terminated, still waiting for 3 more
+Aug  9 11:13:26 [1] INFO:core:shutdown_opensips: process 6(12) [SIP receiver udp:192.168.52.3:5060] terminated, still waiting for 2 more
+Aug  9 11:13:26 [1] INFO:core:shutdown_opensips: process 7(13) [SIP receiver udp:192.168.52.3:5060] terminated, still waiting for 1 more
+Aug  9 11:13:26 [1] INFO:core:shutdown_opensips: process 8(14) [Timer handler] terminated, still waiting for 0 more
+Aug  9 11:13:26 [1] INFO:core:cleanup: cleanup
+Thank you for running opensips

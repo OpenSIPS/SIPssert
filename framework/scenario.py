@@ -109,6 +109,11 @@ class Scenario():
         # stop all remaining containers
         self.stop_all()
 
+    def stop_tcpdump(self):
+        if self.p:
+            print(datetime.utcnow(), "- tcpdump end!")
+            self.p.terminate()
+
     def stop_all(self):
         for e in self.get_entities():
             if e.container.status != "exited":
@@ -134,11 +139,9 @@ class Scenario():
             f.write(c.logs().decode('UTF-8'))
             f.close()
             print(datetime.utcnow(), "- Logs for {} fetched successfully!".format(c.name))
-        if self.p:
-            print(datetime.utcnow(), "- tcpdump end!")
-            self.p.terminate()
 
-    def get_network_logs(self):
+
+    def start_tcpdump(self):
         res = "osbr0"
         dir = os.path.join(self.dirname, "cap.pcap")
         self.p = subprocess.Popen(['tcpdump', '-i', res, '-w', dir], stdout=subprocess.PIPE)

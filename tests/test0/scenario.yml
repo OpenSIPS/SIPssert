@@ -19,5 +19,5 @@ entities:
     image: ctaloi/sipp      # mandatory - the path/name to the docker image
     ip: 192.168.52.2
     config_file: uac.xml    # optional - cfg file, specific to container
-    extra_params: -i 192.168.52.2 -p 5060 -rsa 192.168.52.3:5060 -d 5 192.168.52.4:5060 -m 1
+    extra_params: -i 192.168.52.2 -p 5060 -rsa 192.168.52.3:5060 -d 5000 192.168.52.4:5060 -m 1
     daemon: False

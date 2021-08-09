@@ -131,7 +131,7 @@ class Scenario():
             f = open(log_file, 'w')
             f.write(c.logs().decode('UTF-8'))
             f.close()
-            print(str(datetime.utcnow()) + " - Logs for {} fetched successfully!".format(c.name))
+            print(datetime.utcnow(), " - Logs for {} fetched successfully!".format(c.name))
 
             
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

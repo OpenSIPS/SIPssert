@@ -43,29 +43,38 @@ class Controller:
         self.destroy_network()
 
 
+    def check_network(self):
+        try:
+            self.docker.networks.get("controllerNetwork").remove()
+        except docker.errors.APIError as err:
+            if type(err) == docker.errors.NotFound:
+                print(datetime.utcnow(), "- Network: controllerNetwork can be created!")
+            else:
+                print(datetime.utcnow(), "- Something else went wrong!")
+
     def destroy_network(self):
         try:
             self.docker.networks.get("controllerNetwork").remove()
         except docker.errors.APIError as err:
             if type(err) == docker.errors.NotFound:
-                print(datetime.utcnow(), " - Network not found!")
+                print(datetime.utcnow(), "- Network: controllerNetwork can be created!")
             else:
-                print(datetime.utcnow(), " - Something else went wrong!")
-        except ValueError:
-            pass
+                print(datetime.utcnow(), "- Something else went wrong!")
         finally:
-            print(datetime.utcnow(), " - New network can be created!")
-
+            print(datetime.utcnow(), "- Network: controllerNetwork succesfully deleted!")
+        
     def setup_network(self):
 
         # make sure we cleanup if there was any remaining network
-        self.destroy_network()
+        self.check_network()
         try:
             ipam_pool = docker.types.IPAMPool(subnet='192.168.52.0/24', gateway='192.168.52.254')
             ipam_config = docker.types.IPAMConfig(pool_configs=[ipam_pool])
             net = self.docker.networks.create("controllerNetwork", driver="bridge", ipam=ipam_config, options={"com.docker.network.bridge.name":"osbr0"})
         except docker.errors.APIError as err:
             print(type(err))
+        finally:
+            print(datetime.utcnow(), "- Network: controllerNetwork successfully created!")
 
     def run(self):
         for s in self.scenarios:
@@ -74,5 +83,6 @@ class Controller:
             s.wait_end()  #wait 10 secs (TODO this should come from scenario)
             s.stop_tcpdump()
             s.get_logs()
+            s.get_status()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

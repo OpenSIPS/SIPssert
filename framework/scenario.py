@@ -34,6 +34,7 @@ class Scenario():
         self.file = file
         self.dirname = os.path.dirname(file)
         self.entities = []
+        self.get_scenario_timestamp()
         if "timeout" in config.keys():
             self.timeout = config["timeout"]
         else:
@@ -111,13 +112,18 @@ class Scenario():
 
     def stop_tcpdump(self):
         if self.p:
-            print(datetime.utcnow(), "- tcpdump end!")
+            print(datetime.utcnow(), "- Tcpdump ended!")
             self.p.terminate()
+        time.sleep(0.5)
 
     def stop_all(self):
         for e in self.get_entities():
             if e.container.status != "exited":
                 e.stop()
+                print(datetime.utcnow(), e.name, "- ExitCode: ", e.get_exit_code())
+            else:
+                print(datetime.utcnow(), e.name, "- ExitCode: ", e.get_exit_code())
+
 
     def logs_dir(self, dir):
         if "logs" not in os.listdir(dir):
@@ -128,12 +134,11 @@ class Scenario():
             print(datetime.utcnow(), "- logs dir already exists!")
 
     def get_logs(self):
-        client = self.controller.docker
-        containers = client.containers
+        containers = self.controller.docker.containers
         self.logs_dir(self.dirname)
         logs_path = os.path.join(self.dirname, LOGS_DIR)
         for c in containers.list(all=True):
-            name = str(self.controller.parser.get_timestamp_int()) + "_" + c.name
+            name = str(self.timestamp) + "_" + c.name
             log_file = os.path.join(logs_path, name)
             f = open(log_file, 'w')
             f.write(c.logs().decode('UTF-8'))
@@ -147,6 +152,22 @@ class Scenario():
         self.p = subprocess.Popen(['tcpdump', '-i', res, '-w', dir], stdout=subprocess.PIPE)
         # wait for proc to start
         time.sleep(0.5)
+
+    def get_scenario_timestamp(self):
+        self.timestamp = int(datetime.utcnow().timestamp())
+
+    def get_status(self):
+        containers = self.controller.docker.containers
+        self.logs_dir(self.dirname)
+        logs_path = os.path.join(self.dirname, LOGS_DIR)
+        for c in containers.list(all=True):
+            name = str(self.timestamp) + "_" + c.name + "_STATUS"
+            log_file = os.path.join(logs_path, name)
+            f = open(log_file, 'w')
+            f.write(c.name + " " + str(c.image) + " ExitCode: " + str(c.attrs["State"]["ExitCode"]))
+            f.close()
+            print(datetime.utcnow(), "- Status for {} fetched successfully!".format(c.name))
+
 
             
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

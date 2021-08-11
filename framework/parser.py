@@ -59,7 +59,5 @@ class Parser():
 
         return self.scenarios
 
-    def get_timestamp_int(self):
-        return int(datetime.utcnow().timestamp())
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

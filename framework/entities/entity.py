@@ -19,7 +19,6 @@
 import os
 from datetime import datetime
 
-
 class Entity():
 
     entity_default_image = None
@@ -115,10 +114,13 @@ class Entity():
         if self.ip:
             self.controller.docker.networks.get("controllerNetwork").\
                     connect(self.container, ipv4_address = self.ip)
-        self.container.start()
+        self.container.start()        
 
     def stop(self):
         self.container.stop()
+
+    def get_exit_code(self):
+        return self.container.attrs["State"]["ExitCode"]
 
     def update(self):
         self.container.reload()

@@ -24,6 +24,7 @@ from datetime import datetime
 import subprocess
 
 LOGS_DIR = "logs"
+NETWORK_CAP = "net_capture"
 
 class Scenario():
 
@@ -125,17 +126,17 @@ class Scenario():
                 print(datetime.utcnow(), e.name, "- ExitCode: ", e.get_exit_code())
 
 
-    def logs_dir(self, dir):
-        if "logs" not in os.listdir(dir):
-            path = os.path.join(dir, "logs")
+    def create_dir(self, dir, searching_dir):
+        if searching_dir not in os.listdir(dir):
+            path = os.path.join(dir, searching_dir)
             os.mkdir(path)
-            print(datetime.utcnow(), "- logs dir created successfully!")
+            print(datetime.utcnow(), "- {} dir created successfully!".format(searching_dir))
         else:
-            print(datetime.utcnow(), "- logs dir already exists!")
+            print(datetime.utcnow(), "- {} dir already exists!".format(searching_dir))
 
     def get_logs(self):
         containers = self.controller.docker.containers
-        self.logs_dir(self.dirname)
+        self.create_dir(self.dirname, LOGS_DIR)
         logs_path = os.path.join(self.dirname, LOGS_DIR)
         for c in containers.list(all=True):
             name = str(self.timestamp) + "_" + c.name
@@ -148,8 +149,10 @@ class Scenario():
 
     def start_tcpdump(self):
         res = "osbr0"
-        dir = os.path.join(self.dirname, "cap.pcap")
-        self.p = subprocess.Popen(['tcpdump', '-i', res, '-w', dir], stdout=subprocess.PIPE)
+        self.create_dir(self.dirname, NETWORK_CAP)
+        dir = os.path.join(self.dirname, NETWORK_CAP)
+        capture_file = os.path.join(dir, str(self.timestamp) + "_cap.pcap")
+        self.p = subprocess.Popen(['tcpdump', '-i', res, '-w', capture_file], stdout=subprocess.PIPE)
         # wait for proc to start
         time.sleep(0.5)
 
@@ -158,7 +161,7 @@ class Scenario():
 
     def get_status(self):
         containers = self.controller.docker.containers
-        self.logs_dir(self.dirname)
+        self.create_dir(self.dirname, LOGS_DIR)
         logs_path = os.path.join(self.dirname, LOGS_DIR)
         for c in containers.list(all=True):
             name = str(self.timestamp) + "_" + c.name + "_STATUS"

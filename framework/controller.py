@@ -70,7 +70,7 @@ class Controller:
         try:
             ipam_pool = docker.types.IPAMPool(subnet='192.168.52.0/24', gateway='192.168.52.254')
             ipam_config = docker.types.IPAMConfig(pool_configs=[ipam_pool])
-            net = self.docker.networks.create("controllerNetwork", driver="bridge", ipam=ipam_config, options={"com.docker.network.bridge.name":"osbr0"})
+            self.docker.networks.create("controllerNetwork", driver="bridge", ipam=ipam_config, options={"com.docker.network.bridge.name":"osbr0"})
         except docker.errors.APIError as err:
             print(type(err))
         finally:

@@ -130,6 +130,8 @@ class Entity():
         self.container = None
 
     def __del__(self):
-        pass
+        if self.container:
+            self.container.stop()
+            self.container.remove()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

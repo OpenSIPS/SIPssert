@@ -57,7 +57,7 @@ class Controller:
             self.docker.networks.get("controllerNetwork").remove()
         except docker.errors.APIError as err:
             if type(err) == docker.errors.NotFound:
-                print(datetime.utcnow(), "- Network: controllerNetwork can be created!")
+                print(datetime.utcnow(), "- Network: controllerNetwork not found!")
             else:
                 print(datetime.utcnow(), "- Something else went wrong!")
         finally:

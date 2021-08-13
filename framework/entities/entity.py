@@ -18,10 +18,10 @@
 
 import os
 from datetime import datetime
+entity_default_image = None
 
 class Entity():
-
-    entity_default_image = None
+    
     entity_default_mount_point = "/home"
 
     def __init__(self, test_dir, config, controller):

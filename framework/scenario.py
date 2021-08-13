@@ -167,10 +167,37 @@ class Scenario():
             name = str(self.timestamp) + "_" + c.name + "_STATUS"
             log_file = os.path.join(logs_path, name)
             f = open(log_file, 'w')
-            f.write(c.name + " " + str(c.image) + " ExitCode: " + str(c.attrs["State"]["ExitCode"]))
+            f.write(c.name + " " + str(c.image) + " ExitCode: " + str(self.get_exit_code(c)))
             f.close()
             print(datetime.utcnow(), "- Status for {} fetched successfully!".format(c.name))
 
+    def get_exit_code(self, container):
+        return container.attrs["State"]["ExitCode"]
 
+    def print_status(self):
+        for container in self.controller.docker.containers.list(all=True):
+            print(datetime.utcnow(), "Name: {}, ExitCode: {}".format(container.name, self.get_exit_code(container)))
+
+    def verify_test(self):
+        ok = True
+        for container in self.controller.docker.containers.list(all=True):
+            if self.get_exit_code(container) != 0:
+                ok = False
+                break
+        if ok == False:
+            print(80*"=")
+            print(datetime.utcnow(), "Test: {}".format(os.path.basename(self.dirname)))
+            self.print_status()
+            print(datetime.utcnow(), "TEST FAILED!")
+            print(80*"=")
+        else:
+            print(80*"=")
+            print(datetime.utcnow(), "Test: {}".format(os.path.basename(self.dirname)))
+            self.print_status()
+            print(datetime.utcnow(), "TEST PASSED!")
+            print(80*"=")
+
+    def __del__(self):
+        self.verify_test()
             
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

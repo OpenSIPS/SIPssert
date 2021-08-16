@@ -12,7 +12,7 @@
       REGISTER sip:[remote_ip] SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port]
       To: <sip:[service]@[remote_ip]>
-      From: <sip:[service]@[local_ip]:[local_port]>;tag=[call_number]
+      From: <sip:[service]@[remote_ip]>;tag=[call_number]
       Contact: <sip:[service]@[local_ip]:[local_port]>;transport=[transport]
       Expires: 6000
       Call-ID: [call_id]
@@ -33,7 +33,7 @@
       REGISTER sip:[remote_ip] SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port]
       To: <sip:[service]@[remote_ip]>
-      From: <sip:[service]@[local_ip]:[local_port]>;tag=[call_number]
+      From: <sip:[service]@[remote_ip]>;tag=[call_number]
       Contact: <sip:[service]@[local_ip]:[local_port]>;transport=[transport]
       Expires: 600
       [authentication]

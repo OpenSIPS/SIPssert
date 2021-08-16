@@ -84,5 +84,6 @@ class Controller:
             s.stop_tcpdump()
             s.get_logs()
             s.get_status()
+            s.verify_test()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

@@ -24,6 +24,7 @@ class Entity():
     
     entity_default_image = None
     entity_default_mount_point = "/home"
+    entity_default_daemon = False
 
     def __init__(self, test_dir, config, controller):
 

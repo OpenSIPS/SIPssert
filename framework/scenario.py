@@ -135,16 +135,15 @@ class Scenario():
             print(datetime.utcnow(), "- {} dir already exists!".format(searching_dir))
 
     def get_logs(self):
-        containers = self.controller.docker.containers
         self.create_dir(self.dirname, LOGS_DIR)
         logs_path = os.path.join(self.dirname, LOGS_DIR)
-        for c in containers.list(all=True):
-            name = str(self.timestamp) + "_" + c.name
+        for entity in self.entities:
+            name = str(self.timestamp) + "_" + entity.container.name
             log_file = os.path.join(logs_path, name)
             f = open(log_file, 'w')
-            f.write(c.logs().decode('UTF-8'))
+            f.write(entity.container.logs().decode('UTF-8'))
             f.close()
-            print(datetime.utcnow(), "- Logs for {} fetched successfully!".format(c.name))
+            print(datetime.utcnow(), "- Logs for {} fetched successfully!".format(entity.container.name))
 
 
     def start_tcpdump(self):
@@ -160,28 +159,27 @@ class Scenario():
         self.timestamp = int(datetime.utcnow().timestamp())
 
     def get_status(self):
-        containers = self.controller.docker.containers
         self.create_dir(self.dirname, LOGS_DIR)
         logs_path = os.path.join(self.dirname, LOGS_DIR)
-        for c in containers.list(all=True):
-            name = str(self.timestamp) + "_" + c.name + "_STATUS"
+        for entity in self.entities:
+            name = str(self.timestamp) + "_" + entity.container.name + "_STATUS"
             log_file = os.path.join(logs_path, name)
             f = open(log_file, 'w')
-            f.write(c.name + " " + str(c.image) + " ExitCode: " + str(self.get_exit_code(c)))
+            f.write(entity.container.name + " " + str(entity.container.image) + " ExitCode: " + str(self.get_exit_code(entity.container)))
             f.close()
-            print(datetime.utcnow(), "- Status for {} fetched successfully!".format(c.name))
+            print(datetime.utcnow(), "- Status for {} fetched successfully!".format(entity.container.name))
 
     def get_exit_code(self, container):
         return container.attrs["State"]["ExitCode"]
 
     def print_status(self):
-        for container in self.controller.docker.containers.list(all=True):
-            print(datetime.utcnow(), "Name: {}, ExitCode: {}".format(container.name, self.get_exit_code(container)))
+        for entity in self.entities:
+            print(datetime.utcnow(), "Name: {}, ExitCode: {}".format(entity.container.name, self.get_exit_code(entity.container)))
 
     def verify_test(self):
         ok = True
-        for container in self.controller.docker.containers.list(all=True):
-            if self.get_exit_code(container) != 0:
+        for entity in self.entities:
+            if self.get_exit_code(entity.container) != 0:
                 ok = False
                 break
         if ok == False:
@@ -198,6 +196,6 @@ class Scenario():
             print(80*"=")
 
     def __del__(self):
-        self.verify_test()
+        pass
             
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

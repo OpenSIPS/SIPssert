@@ -28,8 +28,8 @@ class MysqlEntity(Entity):
 
         env_dict = {}
 
-        if "MYSQL_ROOT_PASSWORD" in self.config:
-            self.root_password = self.config["MYSQL_ROOT_PASSWORD"]
+        if "root_password" in self.config:
+            self.root_password = self.config["root_password"]
 
         if self.root_password:
             env_dict["MYSQL_ROOT_PASSWORD"] = self.root_password

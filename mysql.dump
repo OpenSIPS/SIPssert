@@ -1,4 +1,7 @@
 
+create database opensips;
+use opensips
+
 --
 -- Table structure for table `location`
 --

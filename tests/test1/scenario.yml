@@ -2,18 +2,19 @@
 timeout: 10
 entities:
   - type: mysql
-    name: Second_MYSQL
+    name: Database
     ip: 192.168.52.4
+    daemon: True
   - type: opensips
-    name: Second_OPENSIPS
+    name: Registrar
     image: opensips/opensips
     config_file: opensips.cfg   # optional
     ip: 192.168.52.3
     daemon: True
   - type: uac-sipp          # mandatory, correlates with the Class'es
-    name: Second_UAC         # mandatory - just a name (as container name)
+    name: SIP_UAC          # mandatory - just a name (as container name)
     image: ctaloi/sipp      # mandatory - the path/name to the docker image
     ip: 192.168.52.2
-    config_file: uac.xml    # optional - cfg file, specific to container
-    extra_params: -i 192.168.52.2 -p 5060 -rsa 192.168.52.3:5060 -d 5000 192.168.52.4:5060 -m 1
+    config_file: sipp-register.xml
+    extra_params: -i 192.168.52.2 -p 5060 -s test -ap superSecret -m1 192.168.52.3:5060
     daemon: False

@@ -1,6 +1,11 @@
 ---
 timeout: 10
 entities:
+  - type: mysql
+    name: First_MYSQL
+    image: mysql
+    ip: 192.168.52.5
+    daemon: True
   - type: uas-sipp          # mandatory, correlates with the Class'es
     name: First_UAS         # mandatory - just a name (as container name)
     image: ctaloi/sipp      # mandatory - the path/name to the docker image

@@ -149,8 +149,8 @@ class Scenario():
 
     def start_tcpdump(self):
         res = "osbr0"
-        self.create_dir(self.dirname, NETWORK_CAP)
-        dir = os.path.join(self.dirname, NETWORK_CAP)
+        self.create_dir(self.dirname, LOGS_DIR)
+        dir = os.path.join(self.dirname, LOGS_DIR)
         capture_file = os.path.join(dir, str(self.timestamp) + "_cap.pcap")
         self.p = subprocess.Popen(['tcpdump', '-i', res, '-w', capture_file], stdout=subprocess.PIPE)
         # wait for proc to start

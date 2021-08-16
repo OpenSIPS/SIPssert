@@ -18,10 +18,11 @@
 
 import os
 from datetime import datetime
-entity_default_image = None
+
 
 class Entity():
     
+    entity_default_image = None
     entity_default_mount_point = "/home"
 
     def __init__(self, test_dir, config, controller):
@@ -30,6 +31,10 @@ class Entity():
         self.config = config
         self.test_dir = test_dir
         self.container = None
+        self.root_password = None
+        
+        if "MYSQL_ROOT_PASSWORD" in self.config:
+            self.root_password = self.config["MYSQL_ROOT_PASSWORD"]
 
         if "name" in self.config:
             self.name = self.config["name"]
@@ -39,7 +44,7 @@ class Entity():
         if "image" in self.config:
             self.image = self.config["image"]
         else:
-            self.image = entity_default_image
+            self.image = self.entity_default_image
 
         if "ip" in self.config:
             self.ip = self.config["ip"]
@@ -87,6 +92,9 @@ class Entity():
             extra_params = []
         return self.get_entity_args() + extra_params
 
+    def get_entity_env(self):
+        return {}
+
     def get_mount_point(self):
         if "mount_point" in self.config:
             return self.config["mount_point"]
@@ -104,13 +112,16 @@ class Entity():
             "mode": "ro"
             }}
         ports = self.get_ports()
+        env = self.get_entity_env()
+        print("- Env: {}".format(env))
         self.container = self.controller.docker.containers.create(
                 self.image,
                 self.get_args(),
                 detach=True,
                 volumes=volumes,
                 ports=ports,
-                name=self.name)
+                name=self.name,
+                environment=env)
         if self.ip:
             self.controller.docker.networks.get("controllerNetwork").\
                     connect(self.container, ipv4_address = self.ip)

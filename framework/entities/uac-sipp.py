@@ -21,6 +21,7 @@ from framework.entities.entity import Entity
 class UacSIPPEntity(Entity):
 
     entity_default_image = "ctaloi/sipp"
+    entity_default_daemon = False
 
     def get_entity_args(self):
 

@@ -32,9 +32,6 @@ class Entity():
         self.test_dir = test_dir
         self.container = None
         self.root_password = None
-        
-        if "MYSQL_ROOT_PASSWORD" in self.config:
-            self.root_password = self.config["MYSQL_ROOT_PASSWORD"]
 
         if "name" in self.config:
             self.name = self.config["name"]
@@ -64,7 +61,7 @@ class Entity():
         if "daemon" in self.config:
             self.daemon = self.config["daemon"]
         else:
-            self.daemon = False
+            self.daemon = self.entity_default_daemon
 
         if self.image is None:
             raise Exception("entity {} does not have an image available".

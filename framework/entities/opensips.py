@@ -22,7 +22,8 @@ class OpenSIPSEntity(Entity):
 
     entity_default_mount_point = "/etc/opensips"
     entity_default_image = "opensips/opensips"
-
+    entity_default_daemon = True
+    
     def get_entity_args(self):
 
         args = []

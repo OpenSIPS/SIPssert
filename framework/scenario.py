@@ -165,21 +165,18 @@ class Scenario():
             name = str(self.timestamp) + "_" + entity.container.name + "_STATUS"
             log_file = os.path.join(logs_path, name)
             f = open(log_file, 'w')
-            f.write(entity.container.name + " " + str(entity.container.image) + " ExitCode: " + str(self.get_exit_code(entity.container)))
+            f.write(entity.container.name + " " + str(entity.container.image) + " ExitCode: " + str(entity.get_exit_code()))
             f.close()
             print(datetime.utcnow(), "- Status for {} fetched successfully!".format(entity.container.name))
 
-    def get_exit_code(self, container):
-        return container.attrs["State"]["ExitCode"]
-
     def print_status(self):
         for entity in self.entities:
-            print(datetime.utcnow(), "Name: {}, ExitCode: {}".format(entity.container.name, self.get_exit_code(entity.container)))
+            print(datetime.utcnow(), "Name: {}, ExitCode: {}".format(entity.container.name, entity.get_exit_code()))
 
     def verify_test(self):
         ok = True
         for entity in self.entities:
-            if self.get_exit_code(entity.container) != 0:
+            if entity.get_exit_code() != 0 and entity.daemon == False:
                 ok = False
                 break
         if ok == False:

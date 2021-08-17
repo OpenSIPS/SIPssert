@@ -63,7 +63,7 @@ CREATE TABLE `subscriber` (
 
 LOCK TABLES `subscriber` WRITE;
 /*!40000 ALTER TABLE `subscriber` DISABLE KEYS */;
-INSERT INTO `subscriber` VALUES (1,'test','opensips.org','superSecret','','','',NULL,5);
+INSERT INTO `subscriber` VALUES (1,'test','opensips.org','superSecret','','','',NULL);
 /*!40000 ALTER TABLE `subscriber` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -88,7 +88,7 @@ CREATE TABLE `version` (
 
 LOCK TABLES `version` WRITE;
 /*!40000 ALTER TABLE `version` DISABLE KEYS */;
-INSERT INTO `version` VALUES ('active_watchers',12),('address',5),('b2b_entities',2),('b2b_logic',3),('clusterer',4),('dialog',11),('dispatcher',8),('domain',3),('dr_carriers',3),('dr_gateways',6),('dr_groups',2),('dr_partitions',1),('dr_rules',4),('location',1013),('presentity',5),('pua',9),('silo',6),('subscriber',7),('uri',2),('watchers',4),('xcap',4);
+INSERT INTO `version` VALUES ('location',1013),('subscriber',7);
 /*!40000 ALTER TABLE `version` ENABLE KEYS */;
 UNLOCK TABLES;
 

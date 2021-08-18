@@ -36,6 +36,13 @@ class Scenario():
         self.dirname = os.path.dirname(file)
         self.entities = []
         self.get_scenario_timestamp()
+        self.network_device = None
+
+        if "network" in config.keys():
+            self.network_device = config["network"]
+        else:
+            self.network_device = "default_device"
+
         if "timeout" in config.keys():
             self.timeout = config["timeout"]
         else:
@@ -147,7 +154,7 @@ class Scenario():
 
 
     def start_tcpdump(self):
-        res = "osbr0"
+        res = self.network_device
         self.create_dir(self.dirname, LOGS_DIR)
         dir = os.path.join(self.dirname, LOGS_DIR)
         capture_file = os.path.join(dir, str(self.timestamp) + "_cap.pcap")

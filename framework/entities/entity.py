@@ -18,6 +18,7 @@
 
 import os
 from datetime import datetime
+import time
 
 
 class Entity():
@@ -33,6 +34,7 @@ class Entity():
         self.test_dir = test_dir
         self.container = None
         self.root_password = None
+        self.delay_start = 0
 
         if "name" in self.config:
             self.name = self.config["name"]
@@ -48,6 +50,9 @@ class Entity():
             self.ip = self.config["ip"]
         else:
             self.ip = None
+
+        if "delay_start" in self.config:
+            self.delay_start = self.config["delay_start"]
 
         if "config_file" in self.config:
             # if an absolute path, leave it as it is
@@ -123,6 +128,7 @@ class Entity():
         if self.ip:
             self.controller.docker.networks.get("controllerNetwork").\
                     connect(self.container, ipv4_address = self.ip)
+        time.sleep(self.delay_start)
         self.container.start()        
 
     def stop(self):

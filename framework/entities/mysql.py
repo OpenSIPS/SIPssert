@@ -23,6 +23,7 @@ class MysqlEntity(Entity):
     entity_default_image = "mysql"
     mysql_default_env = {"MYSQL_ALLOW_EMPTY_PASSWORD":"yes"}
     entity_default_daemon = True
+    entity_default_mount_point = "/docker-entrypoint-initdb.d"
 
     def get_entity_env(self):
 

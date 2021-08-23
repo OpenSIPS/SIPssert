@@ -24,7 +24,8 @@ arg_parser = argparse.ArgumentParser(description='Testing Framework for OpenSips
 
 arg_parser.add_argument('tests',
                         help='Absolute path of the tests director',
-                        type=os.path.abspath)
+                        type=os.path.abspath,
+                        nargs='+')
 
 # TODO: add a config path
 

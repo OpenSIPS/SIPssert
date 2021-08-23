@@ -26,8 +26,9 @@ LOGS_DIR = "logs"
 
 class Parser():
 
-    def __init__(self, root_path):
-        self.root_path = root_path
+    def __init__(self, list_test_dirs):
+        self.list_test_dirs = list_test_dirs
+        #self.root_path = root_path
         self.scenarios = None
         self.scenario_files = None
 
@@ -35,11 +36,12 @@ class Parser():
 
         if not self.scenario_files:
             self.scenario_files = []
-            for scenario_dir in os.listdir(self.root_path):
-                test_dir = os.path.join(self.root_path, scenario_dir)
-                if SCENARIO in os.listdir(test_dir):
-                    self.scenario_files.append(os.path.join(test_dir,
-                        SCENARIO))
+            for test_dirs in self.list_test_dirs:
+                for scenario_dir in os.listdir(test_dirs):
+                    test_dir = os.path.join(test_dirs, scenario_dir)
+                    if SCENARIO in os.listdir(test_dir):
+                        self.scenario_files.append(os.path.join(test_dir,
+                            SCENARIO))
 
         return self.scenario_files
 

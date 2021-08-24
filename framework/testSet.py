@@ -16,30 +16,16 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-import os
-import argparse
-from framework import controller
 
-arg_parser = argparse.ArgumentParser(description='Testing Framework for OpenSips Solutions')
+class TestSet():
+    def __init__(self, set_name, scenarios):
+        self.name = set_name
+        self.scenarios = scenarios
 
-arg_parser.add_argument('sets',
-                        help='Absolute path of the sets director',
-                        type=os.path.abspath,
-                        nargs='+')
-
-# TODO: add a config path
-
-
-def main():
-
-    # Parse all arguments
-    args = arg_parser.parse_args()
-
-    # Open the Controller
-    ctrl = controller.Controller(args.sets)
-    ctrl.run()
-
-if __name__ == '__main__':
-    main()
+    def getSetName(self):
+        return self.name
+    
+    def getSetScenarios(self):
+        return self.scenarios
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

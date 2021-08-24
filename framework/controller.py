@@ -24,20 +24,20 @@ from datetime import datetime
 
 class Controller:
 
-    def __init__(self, tests_dir):
-        self.tests_dir = tests_dir
+    def __init__(self, sets_dir):
+        self.sets_dirs = sets_dir
+        self.sets_dict = {}
 
-        self.parser = parser.Parser(self.tests_dir)
-
-        scenario_configs = self.parser.parse_scenario_configs()
+        self.parser = parser.Parser(self.sets_dirs)
+        self.parser.get_sets()
+        for set in self.parser.sets:
+            scenarios = []
+            set_scenarios = self.parser.parse_set_scenarios(set)
+            for f, cfg in set_scenarios:
+                scenarios.append(scenario.Scenario(f, cfg, self))
+            self.sets_dict[set] = scenarios
 
         self.docker = docker.from_env()
-
-        self.scenarios = []
-        for f, cfg in scenario_configs:
-            self.scenarios.append(scenario.Scenario(f, cfg, self))
-
-        #self.setup_network()
 
     def __del__(self):
         # destroy the network when the controller is done
@@ -83,16 +83,18 @@ class Controller:
             pass
 
     def run(self):
-        for s in self.scenarios:
-            network_name = "controllerNetwork"
-            self.setup_network(network_name, s.network_device)
-            s.start_tcpdump()
-            s.run()
-            s.wait_end()  #wait 10 secs (TODO this should come from scenario)
-            s.stop_tcpdump()
-            s.get_logs()
-            s.get_status()
-            s.verify_test()
-            self.destroy_network(network_name)
+        for set in self.sets_dict:
+            print("="*35,set.getSetName(),"="*35 )
+            for scenario in self.sets_dict[set]:
+                network_name = "controllerNetwork"
+                self.setup_network(network_name, scenario.network_device)
+                scenario.start_tcpdump()
+                scenario.run()
+                scenario.wait_end()  #wait 10 secs (TODO this should come from scenario)
+                scenario.stop_tcpdump()
+                scenario.get_logs()
+                scenario.get_status()
+                scenario.verify_test()
+                self.destroy_network(network_name)
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

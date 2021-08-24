@@ -20,6 +20,7 @@ from framework import scenario
 import os
 import yaml
 from datetime import datetime
+from framework import testSet
 
 SCENARIO = "scenario.yml"
 LOGS_DIR = "logs"
@@ -28,38 +29,29 @@ class Parser():
 
     def __init__(self, list_test_dirs):
         self.list_test_dirs = list_test_dirs
-        #self.root_path = root_path
-        self.scenarios = None
-        self.scenario_files = None
+        self.sets = []
 
-    def get_scenarios(self):
+    def get_sets(self):
+        for set in self.list_test_dirs:
+            set_scenarios = []
+            for test in os.listdir(set):
+                test_dir = os.path.join(set, test)
+                if SCENARIO in os.listdir(test_dir):
+                    set_scenarios.append(os.path.join(test_dir, SCENARIO))
 
-        if not self.scenario_files:
-            self.scenario_files = []
-            for test_dirs in self.list_test_dirs:
-                for scenario_dir in os.listdir(test_dirs):
-                    test_dir = os.path.join(test_dirs, scenario_dir)
-                    if SCENARIO in os.listdir(test_dir):
-                        self.scenario_files.append(os.path.join(test_dir,
-                            SCENARIO))
+            self.sets.append(testSet.TestSet(os.path.basename(set), set_scenarios))
 
-        return self.scenario_files
+    def parse_set_scenarios(self, set):
+        scenarios = []
+        for scenario in set.getSetScenarios():
+            with open(scenario, 'r') as stream:
+                try:
+                    cfg_stream = yaml.safe_load(stream)
+                    scenarios.append((scenario, cfg_stream))
+                except yaml.YAMLError as exc:
+                    print(exc)
 
-    def parse_scenario_configs(self):
-
-        self.get_scenarios()
-
-        if not self.scenarios:
-            self.scenarios = []
-            for scenario in self.scenario_files:
-                with open(scenario, 'r') as stream:
-                    try:
-                        cfg_stream = yaml.safe_load(stream)
-                        self.scenarios.append((scenario, cfg_stream))
-                    except yaml.YAMLError as exc:
-                        print(exc)
-
-        return self.scenarios
+        return scenarios
 
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

@@ -20,6 +20,18 @@ from framework.networks.network import Network
 
 class BridgedNetwork(Network):
     # TODO bridge network configuration
-    pass
+    def __init__(self, type, name, device, subnet, gateway):
+        self.type = type
+        self.name = name
+        self.device = device
+        self.subnet = subnet
+        self.gateway = gateway
+
+    def isHost(self):
+        return self.type == "host"
+
+    def getName(self):
+        return self.name
+
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

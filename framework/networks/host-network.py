@@ -20,5 +20,10 @@ from framework.networks.network import Network
 
 class HostNetwork(Network):
     # TODO bridge network configuration
-    pass
+    def __init__(self, type):
+        self.type = type
+
+    def isHost(self):
+        return self.type == "host"
+
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

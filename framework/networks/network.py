@@ -16,8 +16,21 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-class Network():
-    def __init__(self, type):
-        self.type = type
+
+from abc import ABC, abstractmethod
+
+class Network(ABC):
+
+    network_default_type = "host"
+    network_default_name = "controllerNetwork"
+
+    @abstractmethod
+    def isHost(self):
+        pass
+
+    @abstractmethod
+    def getName(self):
+        pass
+        
         
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

@@ -85,16 +85,6 @@ class Controller:
     def run(self):
         for set in self.sets_dict:
             print("="*35,set.getSetName(),"="*35 )
-            for scenario in self.sets_dict[set]:
-                network_name = "controllerNetwork"
-                self.setup_network(network_name, scenario.network_device)
-                scenario.start_tcpdump()
-                scenario.run()
-                scenario.wait_end()  #wait 10 secs (TODO this should come from scenario)
-                scenario.stop_tcpdump()
-                scenario.get_logs()
-                scenario.get_status()
-                scenario.verify_test()
-                self.destroy_network(network_name)
+            set.run(self)
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

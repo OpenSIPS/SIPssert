@@ -28,4 +28,17 @@ class TestSet():
     def getSetScenarios(self):
         return self.scenarios
 
+    def run(self, controller):
+        for scenario in controller.sets_dict[self]:
+            network_name = "controllerNetwork"
+            controller.setup_network(network_name, scenario.network_device)
+            scenario.start_tcpdump()
+            scenario.run()
+            scenario.wait_end()  #wait 10 secs (TODO this should come from scenario)
+            scenario.stop_tcpdump()
+            scenario.get_logs()
+            scenario.get_status()
+            scenario.verify_test()
+            controller.destroy_network(network_name)
+
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

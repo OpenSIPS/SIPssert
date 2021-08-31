@@ -36,8 +36,9 @@ class Parser():
             set_scenarios = []
             for test in os.listdir(set):
                 test_dir = os.path.join(set, test)
-                if SCENARIO in os.listdir(test_dir):
-                    set_scenarios.append(os.path.join(test_dir, SCENARIO))
+                if os.path.isdir(test_dir):
+                    if SCENARIO in os.listdir(test_dir):
+                        set_scenarios.append(os.path.join(test_dir, SCENARIO))
 
             self.sets.append(testSet.TestSet(os.path.basename(set), set_scenarios))
 

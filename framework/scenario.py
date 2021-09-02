@@ -35,7 +35,7 @@ class Scenario():
         self.file = file
         self.dirname = os.path.dirname(file)
         self.entities = []
-        self.get_scenario_timestamp()
+        self.getScenarioTimestamp()
         self.network_device = None
 
         if "network" in config.keys():
@@ -75,7 +75,7 @@ class Scenario():
                 else:
                     className = getattr(entity_mod, classes[0])
                     new_entity = className(os.path.dirname(self.file),
-                            e, self.controller)
+                            e, self.controller, self)
             except AttributeError:
                 print(entity_type + " not found")
                 pass
@@ -83,22 +83,25 @@ class Scenario():
             if not new_entity:
                 print("creating a generic entity")
                 new_entity = entity.Entity(os.path.dirname(self.file),
-                        e, self.controller)
+                        e, self.controller, self)
             # TODO: sort out the entities
             self.entities.append(new_entity)
 
-    def get_entities(self):
+    def getEntities(self):
         return self.entities
 
+    def getNetwork(self):
+        return self.network_device
+
     def run(self):
-        for e in self.get_entities():
+        for e in self.getEntities():
             e.run()
 
     def update(self):
-        for e in self.get_entities():
+        for e in self.getEntities():
             e.update()
 
-    def wait_end(self):
+    def waitEnd(self):
         wait = True
         counter = 0
         if self.timeout != 0:
@@ -106,7 +109,7 @@ class Scenario():
         while wait or (self.timeout!=0 and counter==0):
             wait = False
             # see if we still have "running" "non-daemons"
-            for e in reversed(self.get_entities()):
+            for e in reversed(self.getEntities()):
                 if e.daemon == False and e.container.status != "exited":
                     wait = True
             if wait:
@@ -116,16 +119,16 @@ class Scenario():
         if wait:
             print(datetime.utcnow(), "- WARNING: not all entities self-terminated, end-forcing due timeout");
         # stop all remaining containers
-        self.stop_all()
+        self.stopAll()
 
-    def stop_tcpdump(self):
+    def stopTcpdump(self):
         if self.p:
             print(datetime.utcnow(), "- Tcpdump ended!")
             self.p.terminate()
         time.sleep(0.5)
 
-    def stop_all(self):
-        for e in self.get_entities():
+    def stopAll(self):
+        for e in self.getEntities():
             if e.container.status != "exited":
                 e.stop()
                 print(datetime.utcnow(), e.name, "- ExitCode: ", e.get_exit_code())
@@ -133,7 +136,7 @@ class Scenario():
                 print(datetime.utcnow(), e.name, "- ExitCode: ", e.get_exit_code())
 
 
-    def create_dir(self, dir, searching_dir):
+    def createDir(self, dir, searching_dir):
         if searching_dir not in os.listdir(dir):
             path = os.path.join(dir, searching_dir)
             os.mkdir(path)
@@ -141,8 +144,8 @@ class Scenario():
         else:
             print(datetime.utcnow(), "- {} dir already exists!".format(searching_dir))
 
-    def get_logs(self):
-        self.create_dir(self.dirname, LOGS_DIR)
+    def getLogs(self):
+        self.createDir(self.dirname, LOGS_DIR)
         logs_path = os.path.join(self.dirname, LOGS_DIR)
         for entity in self.entities:
             name = str(self.timestamp) + "_" + entity.container.name
@@ -153,20 +156,20 @@ class Scenario():
             print(datetime.utcnow(), "- Logs for {} fetched successfully!".format(entity.container.name))
 
 
-    def start_tcpdump(self):
+    def startTcpdump(self):
         res = self.network_device
-        self.create_dir(self.dirname, LOGS_DIR)
+        self.createDir(self.dirname, LOGS_DIR)
         dir = os.path.join(self.dirname, LOGS_DIR)
         capture_file = os.path.join(dir, str(self.timestamp) + "_cap.pcap")
         self.p = subprocess.Popen(['tcpdump', '-i', res, '-w', capture_file], stdout=subprocess.PIPE)
         # wait for proc to start
         time.sleep(0.5)
 
-    def get_scenario_timestamp(self):
+    def getScenarioTimestamp(self):
         self.timestamp = int(datetime.utcnow().timestamp())
 
-    def get_status(self):
-        self.create_dir(self.dirname, LOGS_DIR)
+    def getStatus(self):
+        self.createDir(self.dirname, LOGS_DIR)
         logs_path = os.path.join(self.dirname, LOGS_DIR)
         for entity in self.entities:
             name = str(self.timestamp) + "_" + entity.container.name + "_STATUS"
@@ -176,11 +179,11 @@ class Scenario():
             f.close()
             print(datetime.utcnow(), "- Status for {} fetched successfully!".format(entity.container.name))
 
-    def print_status(self):
+    def printStatus(self):
         for entity in self.entities:
             print(datetime.utcnow(), "Name: {}, ExitCode: {}".format(entity.container.name, entity.get_exit_code()))
 
-    def verify_test(self):
+    def verifyTest(self):
         ok = True
         for entity in self.entities:
             if entity.get_exit_code() != 0 and entity.daemon == False:
@@ -189,17 +192,18 @@ class Scenario():
         if ok == False:
             print(80*"=")
             print(datetime.utcnow(), "Test: {}".format(os.path.basename(self.dirname)))
-            self.print_status()
+            self.printStatus()
             print(datetime.utcnow(), "TEST FAILED!")
             print(80*"=")
         else:
             print(80*"=")
             print(datetime.utcnow(), "Test: {}".format(os.path.basename(self.dirname)))
-            self.print_status()
+            self.printStatus()
             print(datetime.utcnow(), "TEST PASSED!")
             print(80*"=")
 
     def __del__(self):
         pass
             
+
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

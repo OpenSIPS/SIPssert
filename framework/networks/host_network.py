@@ -16,25 +16,17 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from time import sleep
-import docker
-from framework import parser
-from framework import scenario
-from datetime import datetime
-from framework import tests_set
+from framework.networks.network import Network
 
-class Controller:
+class HostNetwork(Network):
+    # TODO bridge network configuration
+    def __init__(self):
+        self.type = "host"
 
-    def __init__(self, sets_dirs):
-        self.sets_dirs = sets_dirs
-        self.docker = docker.from_env()
+    def isHost(self):
+        return True
 
-    def __del__(self):
-        pass
-
-    def run(self):
-        for set in self.sets_dirs:
-            s = tests_set.TestSet(set, self)
-            s.run()
-
+    def getName(self):
+        return "host"
+        
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

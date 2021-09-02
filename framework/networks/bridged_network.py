@@ -16,25 +16,35 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from time import sleep
-import docker
-from framework import parser
-from framework import scenario
-from datetime import datetime
-from framework import tests_set
+from framework.networks.network import Network
 
-class Controller:
+class BridgedNetwork(Network):
+    # TODO bridge network configuration
+    def __init__(self, network_config):
+        self.type = "bridge"
+        self.name = network_config["name"]
+        self.subnet = network_config["subnet"]
+        self.gateway = network_config["gateway"]
 
-    def __init__(self, sets_dirs):
-        self.sets_dirs = sets_dirs
-        self.docker = docker.from_env()
+        if "device" in network_config.keys():
+            self.device = network_config["device"]
+        else:
+            self.device = network_config["name"]
 
-    def __del__(self):
-        pass
+    def isHost(self):
+        return False
 
-    def run(self):
-        for set in self.sets_dirs:
-            s = tests_set.TestSet(set, self)
-            s.run()
+    def getName(self):
+        return self.name
+
+    def getSubnet(self):
+        return self.subnet
+
+    def getGateway(self):
+        return self.gateway
+
+    def getDevice(self):
+        return self.device
+
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

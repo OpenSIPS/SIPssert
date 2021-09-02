@@ -22,8 +22,8 @@ from framework import controller
 
 arg_parser = argparse.ArgumentParser(description='Testing Framework for OpenSips Solutions')
 
-arg_parser.add_argument('sets',
-                        help='Absolute path of the sets director',
+arg_parser.add_argument('tests',
+                        help='Absolute path of the tests director',
                         type=os.path.abspath,
                         nargs='+')
 
@@ -36,7 +36,7 @@ def main():
     args = arg_parser.parse_args()
 
     # Open the Controller
-    ctrl = controller.Controller(args.sets)
+    ctrl = controller.Controller(args.tests)
     ctrl.run()
 
 if __name__ == '__main__':

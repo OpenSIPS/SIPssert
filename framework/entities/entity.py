@@ -27,8 +27,8 @@ class Entity():
     entity_default_mount_point = "/home"
     entity_default_daemon = False
 
-    def __init__(self, test_dir, config, controller):
-
+    def __init__(self, test_dir, config, controller, scenario):
+        self.scenario = scenario
         self.controller = controller
         self.config = config
         self.test_dir = test_dir
@@ -126,7 +126,7 @@ class Entity():
                 name=self.name,
                 environment=env)
         if self.ip:
-            self.controller.docker.networks.get("controllerNetwork").\
+            self.controller.docker.networks.get(self.scenario.getNetwork()).\
                     connect(self.container, ipv4_address = self.ip)
         time.sleep(self.delay_start)
         self.container.start()        

@@ -6,5 +6,5 @@ networks:
     gateway: 192.168.52.254
     device: osbr0 # defaults to the name of the network, if not present
   - name: osbr1 # device should be the same as the name
-    subnet: 10.0.0.0/16
-    gateway: 10.0.255.254
+    subnet: 192.168.52.0/24
+    gateway: 192.168.52.254

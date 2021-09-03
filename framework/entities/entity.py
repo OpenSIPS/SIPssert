@@ -117,6 +117,7 @@ class Entity():
         ports = self.get_ports()
         env = self.get_entity_env()
         print("- Env: {}".format(env))
+        net_mode = self.getNetMode()
         self.container = self.controller.docker.containers.create(
                 self.image,
                 self.get_args(),
@@ -124,12 +125,26 @@ class Entity():
                 volumes=volumes,
                 ports=ports,
                 name=self.name,
-                environment=env)
+                environment=env,
+                network_mode=net_mode)
+
+        if net_mode == "bridge":
+            self.connect()
+        else: pass
+
+        time.sleep(self.delay_start)
+        self.container.start()
+
+    def connect(self):
         if self.ip:
             self.controller.docker.networks.get(self.scenario.getNetwork()).\
-                    connect(self.container, ipv4_address = self.ip)
-        time.sleep(self.delay_start)
-        self.container.start()        
+                    connect(self.container, ipv4_address = self.ip)    
+
+    def getNetMode(self):
+        if self.scenario.getNetwork() == "host":
+            return "host"
+        else:
+            return "bridge"
 
     def stop(self):
         self.container.stop()

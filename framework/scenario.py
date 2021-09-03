@@ -157,7 +157,11 @@ class Scenario():
 
 
     def startTcpdump(self):
-        res = self.network_device
+        if self.network_device == "host":
+            res = "any"
+        else:
+            res = self.network_device
+            
         self.createDir(self.dirname, LOGS_DIR)
         dir = os.path.join(self.dirname, LOGS_DIR)
         capture_file = os.path.join(dir, str(self.timestamp) + "_cap.pcap")

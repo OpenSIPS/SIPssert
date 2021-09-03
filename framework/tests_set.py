@@ -146,7 +146,18 @@ class TestSet():
                 s.getStatus()
                 s.verifyTest()
                 self.destroyNetwork(network)
-        
+        elif self.getSetType() == "host":
+            self.setScenarios()
+            for s in self.getSetScenarios():
+                s.startTcpdump()
+                s.run()
+                s.waitEnd()  #wait 10 secs (TODO this should come from scenario)
+                s.stopTcpdump()
+                s.getLogs()
+                s.getStatus()
+                s.verifyTest()
+
+
     def checkNetwork(self, network):
         name = network.getName()
         try:

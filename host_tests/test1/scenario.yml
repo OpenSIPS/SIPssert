@@ -1,0 +1,11 @@
+---
+network: host
+timeout: 10
+tasks:
+  - type: uac-sipp              # mandatory, correlates with the Class'es
+    name: host_SIP_UAC               # mandatory - just a name (as container name)
+    image: ctaloi/sipp          # mandatory - the path/name to the docker image
+    ip: 127.0.0.1
+    config_file: sipp-register.xml
+    extra_params: -i 127.0.0.1 -p 5066 -s framework -ap testingframework -m 1 opensips.org:5060
+    daemon: False

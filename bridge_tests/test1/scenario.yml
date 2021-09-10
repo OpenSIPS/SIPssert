@@ -1,7 +1,7 @@
 ---
 network: osbr1
 timeout: 10
-entities:
+tasks:
   - type: mysql
     name: Database
     ip: 192.168.52.4

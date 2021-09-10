@@ -21,11 +21,11 @@ from datetime import datetime
 import time
 
 
-class Entity():
+class Task():
     
-    entity_default_image = None
-    entity_default_mount_point = "/home"
-    entity_default_daemon = False
+    task_default_image = None
+    task_default_mount_point = "/home"
+    task_default_daemon = False
 
     def __init__(self, test_dir, config, controller, scenario):
         self.scenario = scenario
@@ -44,7 +44,7 @@ class Entity():
         if "image" in self.config:
             self.image = self.config["image"]
         else:
-            self.image = self.entity_default_image
+            self.image = self.task_default_image
 
         if "ip" in self.config:
             self.ip = self.config["ip"]
@@ -67,16 +67,16 @@ class Entity():
         if "daemon" in self.config:
             self.daemon = self.config["daemon"]
         else:
-            self.daemon = self.entity_default_daemon
+            self.daemon = self.task_default_daemon
 
         if self.image is None:
-            raise Exception("entity {} does not have an image available".
+            raise Exception("task {} does not have an image available".
                     format(self.name))
 
     def __str__(self):
         return self.name
 
-    def get_entity_args(self):
+    def get_task_args(self):
         return []
 
     def get_ports(self):
@@ -93,16 +93,16 @@ class Entity():
             extra_params = self.config["extra_params"].split(" ")
         else:
             extra_params = []
-        return self.get_entity_args() + extra_params
+        return self.get_task_args() + extra_params
 
-    def get_entity_env(self):
+    def get_task_env(self):
         return {}
 
     def get_mount_point(self):
         if "mount_point" in self.config:
             return self.config["mount_point"]
         else:
-            return self.entity_default_mount_point
+            return self.task_default_mount_point
 
     def run(self):
         print(str(datetime.utcnow()))
@@ -115,7 +115,7 @@ class Entity():
             "mode": "ro"
             }}
         ports = self.get_ports()
-        env = self.get_entity_env()
+        env = self.get_task_env()
         print("- Env: {}".format(env))
         net_mode = self.getNetMode()
         self.container = self.controller.docker.containers.create(

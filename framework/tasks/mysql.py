@@ -16,16 +16,16 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from framework.entities.entity import Entity
+from framework.tasks.task import Task
 
-class MysqlEntity(Entity):
+class MysqlTask(Task):
 
-    entity_default_image = "mysql"
+    task_default_image = "mysql"
     mysql_default_env = {"MYSQL_ALLOW_EMPTY_PASSWORD":"yes"}
-    entity_default_daemon = True
-    entity_default_mount_point = "/docker-entrypoint-initdb.d"
+    task_default_daemon = True
+    task_default_mount_point = "/docker-entrypoint-initdb.d"
 
-    def get_entity_env(self):
+    def get_task_env(self):
 
         env_dict = {}
 

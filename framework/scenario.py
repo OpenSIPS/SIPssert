@@ -19,7 +19,7 @@
 import os
 import importlib
 import time
-from framework.entities import entity
+from framework.tasks import task
 from datetime import datetime
 import subprocess
 
@@ -34,7 +34,7 @@ class Scenario():
         self.config = config
         self.file = file
         self.dirname = os.path.dirname(file)
-        self.entities = []
+        self.tasks = []
         self.getScenarioTimestamp()
         self.network_device = None
 
@@ -48,57 +48,57 @@ class Scenario():
         else:
             self.timeout = 0
 
-        for e in config["entities"]:
+        for e in config["tasks"]:
             if "type" in e.keys():
-                entity_type = e["type"].lower()
+                task_type = e["type"].lower()
             else:
-                # create a generic entity
-                entity_type = ""
+                # create a generic task
+                task_type = ""
 
-            new_entity = None
+            new_task = None
             try:
-                entity_mod = getattr(
-                        importlib.import_module("framework.entities"),
-                        entity_type)
-                normalized_entity_type = "".join(
-                        [ x for x in entity_type if x.isalnum() ])
-                normalized_class_name = normalized_entity_type + "entity"
-                classes = [ c for c in dir(entity_mod) if
+                task_mod = getattr(
+                        importlib.import_module("framework.tasks"),
+                        task_type)
+                normalized_task_type = "".join(
+                        [ x for x in task_type if x.isalnum() ])
+                normalized_class_name = normalized_task_type + "task"
+                classes = [ c for c in dir(task_mod) if
                         c.lower() == normalized_class_name and
-                        c.endswith("Entity") ]
+                        c.endswith("Task") ]
                 if len(classes) == 0:
-                    print("unknown entity derived from {}".
-                            format(entity_type))
+                    print("unknown task derived from {}".
+                            format(task_type))
                 elif len(classes) != 1:
                     print("too many classed derived from {}: {}".
-                            format(entity_type, str(classes)))
+                            format(task_type, str(classes)))
                 else:
-                    className = getattr(entity_mod, classes[0])
-                    new_entity = className(os.path.dirname(self.file),
+                    className = getattr(task_mod, classes[0])
+                    new_task = className(os.path.dirname(self.file),
                             e, self.controller, self)
             except AttributeError:
-                print(entity_type + " not found")
+                print(task_type + " not found")
                 pass
 
-            if not new_entity:
-                print("creating a generic entity")
-                new_entity = entity.Entity(os.path.dirname(self.file),
+            if not new_task:
+                print("creating a generic task")
+                new_task = task.Task(os.path.dirname(self.file),
                         e, self.controller, self)
-            # TODO: sort out the entities
-            self.entities.append(new_entity)
+            # TODO: sort out the tasks
+            self.tasks.append(new_task)
 
-    def getEntities(self):
-        return self.entities
+    def getTasks(self):
+        return self.tasks
 
     def getNetwork(self):
         return self.network_device
 
     def run(self):
-        for e in self.getEntities():
+        for e in self.getTasks():
             e.run()
 
     def update(self):
-        for e in self.getEntities():
+        for e in self.getTasks():
             e.update()
 
     def waitEnd(self):
@@ -109,7 +109,7 @@ class Scenario():
         while wait or (self.timeout!=0 and counter==0):
             wait = False
             # see if we still have "running" "non-daemons"
-            for e in reversed(self.getEntities()):
+            for e in reversed(self.getTasks()):
                 if e.daemon == False and e.container.status != "exited":
                     wait = True
             if wait:
@@ -117,7 +117,7 @@ class Scenario():
                 self.update()
                 counter -= 1
         if wait:
-            print(datetime.utcnow(), "- WARNING: not all entities self-terminated, end-forcing due timeout");
+            print(datetime.utcnow(), "- WARNING: not all tasks self-terminated, end-forcing due timeout");
         # stop all remaining containers
         self.stopAll()
 
@@ -128,7 +128,7 @@ class Scenario():
         time.sleep(0.5)
 
     def stopAll(self):
-        for e in self.getEntities():
+        for e in self.getTasks():
             if e.container.status != "exited":
                 e.stop()
                 print(datetime.utcnow(), e.name, "- ExitCode: ", e.get_exit_code())
@@ -147,13 +147,13 @@ class Scenario():
     def getLogs(self):
         self.createDir(self.dirname, LOGS_DIR)
         logs_path = os.path.join(self.dirname, LOGS_DIR)
-        for entity in self.entities:
-            name = str(self.timestamp) + "_" + entity.container.name
+        for task in self.tasks:
+            name = str(self.timestamp) + "_" + task.container.name
             log_file = os.path.join(logs_path, name)
             f = open(log_file, 'w')
-            f.write(entity.container.logs().decode('UTF-8'))
+            f.write(task.container.logs().decode('UTF-8'))
             f.close()
-            print(datetime.utcnow(), "- Logs for {} fetched successfully!".format(entity.container.name))
+            print(datetime.utcnow(), "- Logs for {} fetched successfully!".format(task.container.name))
 
 
     def startTcpdump(self):
@@ -175,22 +175,22 @@ class Scenario():
     def getStatus(self):
         self.createDir(self.dirname, LOGS_DIR)
         logs_path = os.path.join(self.dirname, LOGS_DIR)
-        for entity in self.entities:
-            name = str(self.timestamp) + "_" + entity.container.name + "_STATUS"
+        for task in self.tasks:
+            name = str(self.timestamp) + "_" + task.container.name + "_STATUS"
             log_file = os.path.join(logs_path, name)
             f = open(log_file, 'w')
-            f.write(entity.container.name + " " + str(entity.container.image) + " ExitCode: " + str(entity.get_exit_code()))
+            f.write(task.container.name + " " + str(task.container.image) + " ExitCode: " + str(task.get_exit_code()))
             f.close()
-            print(datetime.utcnow(), "- Status for {} fetched successfully!".format(entity.container.name))
+            print(datetime.utcnow(), "- Status for {} fetched successfully!".format(task.container.name))
 
     def printStatus(self):
-        for entity in self.entities:
-            print(datetime.utcnow(), "Name: {}, ExitCode: {}".format(entity.container.name, entity.get_exit_code()))
+        for task in self.tasks:
+            print(datetime.utcnow(), "Name: {}, ExitCode: {}".format(task.container.name, task.get_exit_code()))
 
     def verifyTest(self):
         ok = True
-        for entity in self.entities:
-            if entity.get_exit_code() != 0 and entity.daemon == False:
+        for task in self.tasks:
+            if task.get_exit_code() != 0 and task.daemon == False:
                 ok = False
                 break
         if ok == False:

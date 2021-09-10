@@ -16,10 +16,7 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from time import sleep
 import docker
-from framework import parser
-from framework import scenario
 from datetime import datetime
 from framework import tests_set
 

@@ -61,13 +61,13 @@ class TestSet():
 
     def hasNetworksConfig(self):
         if self.hasConfig():
-            if self.config["networks"]:
+            if "networks" in self.config.keys():
                 return True
         
         return False
 
     def getNetworkConfig(self):
-        return self.config["networks"]
+        return self.config["networks"]        
 
     def setNetworks(self):
         networks = []

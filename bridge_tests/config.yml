@@ -8,3 +8,5 @@ networks:
   - name: osbr1 # device should be the same as the name
     subnet: 192.168.52.0/24
     gateway: 192.168.52.254
+globals:
+  - proxy-ip: opensips.org:5060

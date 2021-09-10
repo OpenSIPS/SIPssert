@@ -1,0 +1,4 @@
+---
+# right now, all networks here should be bridged
+globals:
+  - proxy-ip: opensips.org

@@ -16,14 +16,14 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from framework.entities.entity import Entity
+from framework.tasks.task import Task
 
-class UacSIPPEntity(Entity):
+class UacSIPPTask(Task):
 
-    entity_default_image = "ctaloi/sipp"
-    entity_default_daemon = False
+    task_default_image = "ctaloi/sipp"
+    task_default_daemon = False
 
-    def get_entity_args(self):
+    def get_task_args(self):
 
         args = []
 

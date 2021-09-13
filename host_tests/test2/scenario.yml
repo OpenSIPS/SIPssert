@@ -3,20 +3,16 @@ network: host
 timeout: 10
 tasks:
   - type: uas-sipp          # mandatory, correlates with the Class'es
-    name: Second_UAS         # mandatory - just a name (as container name)
+    name: First_UAS         # mandatory - just a name (as container name)
     image: ctaloi/sipp      # mandatory - the path/name to the docker image
+    ip: 127.0.0.1
     config_file: uas.xml    # optional - cfg file, specific to container
-    extra_params: -i 127.0.0.1 -p 5090
-    daemon: True
-  - type: opensips
-    name: Second_OPENSIPS
-    image: opensips/opensips
-    config_file: opensips.cfg   # optional
-    port: 5070/udp
+    extra_params: -i 127.0.0.1 -p 5070
     daemon: True
   - type: uac-sipp          # mandatory, correlates with the Class'es
-    name: Second_UAC         # mandatory - just a name (as container name)
+    name: First_UAC         # mandatory - just a name (as container name)
     image: ctaloi/sipp      # mandatory - the path/name to the docker image
+    ip: 127.0.0.1
     config_file: uac.xml    # optional - cfg file, specific to container
-    extra_params: -i 127.0.0.1 -p 5080 -rsa 127.0.0.1:5070 -d 5000 127.0.0.1:5090 -m 1
+    extra_params: -s framework -ap testingframework opensips.org -d 5000 127.0.0.1:5070 -m 1
     daemon: False

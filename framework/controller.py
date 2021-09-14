@@ -19,19 +19,25 @@
 import docker
 from datetime import datetime
 from framework import tests_set
-
+from framework import parser
+from framework import controllerLogger
 class Controller:
 
-    def __init__(self, sets_dirs):
+    def __init__(self, sets_dirs, global_config):
         self.sets_dirs = sets_dirs
+        p = parser.Parser()
+        self.global_config = p.parse_yaml(global_config)
+        controllerLogger.initLogger(self.global_config["logging"]["controller"])
         self.docker = docker.from_env()
 
     def __del__(self):
         pass
 
     def run(self):
+        controllerLogger.clog.warning("Running Tests!")
         for set in self.sets_dirs:
             s = tests_set.TestSet(set, self)
+            controllerLogger.clog.info("Start test: {}".format(set))
             s.run()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

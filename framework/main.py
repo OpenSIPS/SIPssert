@@ -27,6 +27,10 @@ arg_parser.add_argument('tests',
                         type=os.path.abspath,
                         nargs='+')
 
+arg_parser.add_argument('--config',
+                        help='Absolute path of the global config',
+                        type=os.path.abspath)
+
 # TODO: add a config path
 
 
@@ -34,9 +38,10 @@ def main():
 
     # Parse all arguments
     args = arg_parser.parse_args()
+    print(args)
 
     # Open the Controller
-    ctrl = controller.Controller(args.tests)
+    ctrl = controller.Controller(args.tests, args.config)
     ctrl.run()
 
 if __name__ == '__main__':

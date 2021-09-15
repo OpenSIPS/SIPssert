@@ -19,7 +19,9 @@
 import os
 import importlib
 import time
+from framework import controllerLogger
 from framework.tasks import task
+from framework import controllerLogger
 from datetime import datetime
 import subprocess
 
@@ -67,21 +69,21 @@ class Scenario():
                         c.lower() == normalized_class_name and
                         c.endswith("Task") ]
                 if len(classes) == 0:
-                    print("unknown task derived from {}".
+                    controllerLogger.clog.debug("unknown task derived from {}".
                             format(task_type))
                 elif len(classes) != 1:
-                    print("too many classed derived from {}: {}".
+                    controllerLogger.clog.debug("too many classed derived from {}: {}".
                             format(task_type, str(classes)))
                 else:
                     className = getattr(task_mod, classes[0])
                     new_task = className(os.path.dirname(self.file),
                             e, self.controller, self)
             except AttributeError:
-                print(task_type + " not found")
+                controllerLogger.clog.debug(task_type + " not found")
                 pass
 
             if not new_task:
-                print("creating a generic task")
+                controllerLogger.clog.debug("creating a generic task")
                 new_task = task.Task(os.path.dirname(self.file),
                         e, self.controller, self)
             # TODO: sort out the tasks
@@ -117,13 +119,13 @@ class Scenario():
                 self.update()
                 counter -= 1
         if wait:
-            print(datetime.utcnow(), "- WARNING: not all tasks self-terminated, end-forcing due timeout");
+            controllerLogger.clog.warning(str(datetime.utcnow()) +" - WARNING: not all tasks self-terminated, end-forcing due timeout");
         # stop all remaining containers
         self.stopAll()
 
     def stopTcpdump(self):
         if self.p:
-            print(datetime.utcnow(), "- Tcpdump ended!")
+            controllerLogger.clog.info(str(datetime.utcnow()) +" - Tcpdump ended!")
             self.p.terminate()
         time.sleep(0.5)
 
@@ -131,18 +133,18 @@ class Scenario():
         for e in self.getTasks():
             if e.container.status != "exited":
                 e.stop()
-                print(datetime.utcnow(), e.name, "- ExitCode: ", e.get_exit_code())
+                controllerLogger.clog.debug(str(datetime.utcnow()) +" "+ e.name+ " - ExitCode: "+ str(e.get_exit_code()))
             else:
-                print(datetime.utcnow(), e.name, "- ExitCode: ", e.get_exit_code())
+                controllerLogger.clog.debug(str(datetime.utcnow()) +" "+ e.name+ " - ExitCode: "+ str(e.get_exit_code()))
 
 
     def createDir(self, dir, searching_dir):
         if searching_dir not in os.listdir(dir):
             path = os.path.join(dir, searching_dir)
             os.mkdir(path)
-            print(datetime.utcnow(), "- {} dir created successfully!".format(searching_dir))
+            controllerLogger.clog.debug(str(datetime.utcnow()) + " - {} dir created successfully!".format(searching_dir))
         else:
-            print(datetime.utcnow(), "- {} dir already exists!".format(searching_dir))
+            controllerLogger.clog.debug(str(datetime.utcnow()) + " - {} dir already exists!".format(searching_dir))
 
     def getLogs(self):
         self.createDir(self.dirname, LOGS_DIR)
@@ -153,7 +155,7 @@ class Scenario():
             f = open(log_file, 'w')
             f.write(task.container.logs().decode('UTF-8'))
             f.close()
-            print(datetime.utcnow(), "- Logs for {} fetched successfully!".format(task.container.name))
+            controllerLogger.clog.debug(str(datetime.utcnow()) + " - Logs for {} fetched successfully!".format(task.container.name))
 
 
     def startTcpdump(self):
@@ -181,11 +183,11 @@ class Scenario():
             f = open(log_file, 'w')
             f.write(task.container.name + " " + str(task.container.image) + " ExitCode: " + str(task.get_exit_code()))
             f.close()
-            print(datetime.utcnow(), "- Status for {} fetched successfully!".format(task.container.name))
+            controllerLogger.clog.debug(str(datetime.utcnow())+ " - Status for {} fetched successfully!".format(task.container.name))
 
     def printStatus(self):
         for task in self.tasks:
-            print(datetime.utcnow(), "Name: {}, ExitCode: {}".format(task.container.name, task.get_exit_code()))
+            controllerLogger.clog.debug(str(datetime.utcnow())+ " Name: {}, ExitCode: {}".format(task.container.name, str(task.get_exit_code())))
 
     def verifyTest(self):
         ok = True

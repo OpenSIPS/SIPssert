@@ -18,6 +18,7 @@
 
 import os
 from datetime import datetime
+from framework import controllerLogger
 import time
 
 
@@ -105,10 +106,10 @@ class Task():
             return self.task_default_mount_point
 
     def run(self):
-        print(str(datetime.utcnow()))
-        print("- Name: {}".format(self))
-        print("- Image: {}".format(self.image))
-        print("- Args: {}".format(self.get_args()))
+        controllerLogger.clog.debug(str(datetime.utcnow()))
+        controllerLogger.clog.debug("- Name: {}".format(self))
+        controllerLogger.clog.debug("- Image: {}".format(self.image))
+        controllerLogger.clog.debug("- Args: {}".format(self.get_args()))
 
         volumes = { self.test_dir: {
             "bind": self.get_mount_point(),
@@ -116,7 +117,7 @@ class Task():
             }}
         ports = self.get_ports()
         env = self.get_task_env()
-        print("- Env: {}".format(env))
+        controllerLogger.clog.debug("- Env: {}".format(env))
         net_mode = self.getNetMode()
         self.container = self.controller.docker.containers.create(
                 self.image,

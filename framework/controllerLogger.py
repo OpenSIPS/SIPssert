@@ -24,6 +24,7 @@ def initLogger(config):
     if "console" in config.keys():
         if config["console"] == True:
             console = logging.StreamHandler()
+            console.setLevel("INFO")
             clog.addHandler(console)
     if "file" in config.keys():
         file = logging.FileHandler(config["file"])

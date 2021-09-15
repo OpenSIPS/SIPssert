@@ -21,6 +21,7 @@ from datetime import datetime
 from framework import tests_set
 from framework import parser
 from framework import controllerLogger
+import os
 class Controller:
 
     def __init__(self, sets_dirs, global_config):
@@ -34,10 +35,10 @@ class Controller:
         pass
 
     def run(self):
-        controllerLogger.clog.warning("Running Tests!")
+        controllerLogger.clog.info("========== Runing Testing Framework ==========")
         for set in self.sets_dirs:
             s = tests_set.TestSet(set, self)
-            controllerLogger.clog.info("Start test: {}".format(set))
+            controllerLogger.clog.info("Running: {} set!".format(os.path.basename(set)))
             s.run()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

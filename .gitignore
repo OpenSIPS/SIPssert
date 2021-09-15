@@ -1,6 +1,7 @@
 *.pyc
 *.pyo
 *.swp
+*.log
 __pycach*
 /.pybuild/
 /build/

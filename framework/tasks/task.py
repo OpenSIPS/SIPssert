@@ -20,6 +20,7 @@ import os
 from datetime import datetime
 from framework import controllerLogger
 import time
+import docker
 
 
 class Task():
@@ -130,11 +131,18 @@ class Task():
                 network_mode=net_mode)
 
         if net_mode == "bridge":
-            self.connect()
+            try:
+                self.connect()
+            except docker.errors.APIError as err:
+                controllerLogger.clog.critical(type(err))
         else: pass
 
         time.sleep(self.delay_start)
-        self.container.start()
+        try:
+            self.container.start()
+        except docker.errors.APIError as err:
+            controllerLogger.clog.critical(type(err))
+        
 
     def connect(self):
         if self.ip:

@@ -17,6 +17,7 @@
 ##
 
 import os
+import docker
 import importlib
 import time
 from framework import controllerLogger
@@ -167,7 +168,7 @@ class Scenario():
         self.createDir(self.dirname, LOGS_DIR)
         dir = os.path.join(self.dirname, LOGS_DIR)
         capture_file = os.path.join(dir, str(self.timestamp) + "_cap.pcap")
-        self.p = subprocess.Popen(['tcpdump', '-i', res, '-w', capture_file], stdout=subprocess.PIPE)
+        self.p = subprocess.Popen(['tcpdump', '-i', res, '-w', capture_file])
         # wait for proc to start
         time.sleep(0.5)
 

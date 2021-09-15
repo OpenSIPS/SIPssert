@@ -1,0 +1,609 @@
+========== Runing Testing Framework ==========
+Running: host_tests set!
+2021-09-15 11:12:34.137871 - logs dir already exists!
+2021-09-15 11:12:34.639673
+- Name: Second_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-i', '127.0.0.1', '-p', '5090']
+- Env: {}
+2021-09-15 11:12:34.775824
+- Name: Second_OPENSIPS
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 11:12:34.908110
+- Name: Second_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-i', '127.0.0.1', '-p', '5080', '-rsa', '127.0.0.1:5070', '-d', '5000', '127.0.0.1:5090', '-m', '1']
+- Env: {}
+2021-09-15 11:12:41.283122 Second_UAS - ExitCode: 0
+2021-09-15 11:12:41.358990 Second_OPENSIPS - ExitCode: 0
+2021-09-15 11:12:41.359085 Second_UAC - ExitCode: 0
+2021-09-15 11:12:41.359113 - Tcpdump ended!
+2021-09-15 11:12:41.859920 - logs dir already exists!
+2021-09-15 11:12:41.868136 - Logs for Second_UAS fetched successfully!
+2021-09-15 11:12:41.874022 - Logs for Second_OPENSIPS fetched successfully!
+2021-09-15 11:12:41.880512 - Logs for Second_UAC fetched successfully!
+2021-09-15 11:12:41.880669 - logs dir already exists!
+2021-09-15 11:12:41.882464 - Status for Second_UAS fetched successfully!
+2021-09-15 11:12:41.883700 - Status for Second_OPENSIPS fetched successfully!
+2021-09-15 11:12:41.884826 - Status for Second_UAC fetched successfully!
+2021-09-15 11:12:41.884897 Name: Second_UAS, ExitCode: 0
+2021-09-15 11:12:41.884920 Name: Second_OPENSIPS, ExitCode: 0
+2021-09-15 11:12:41.884941 Name: Second_UAC, ExitCode: 0
+========================= Runing Testing Framework ===========================
+Running: host_tests set!
+2021-09-15 11:14:46.175903 - logs dir already exists!
+2021-09-15 11:14:46.677785
+- Name: Second_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-i', '127.0.0.1', '-p', '5090']
+- Env: {}
+2021-09-15 11:14:46.800535
+- Name: Second_OPENSIPS
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 11:14:46.908776
+- Name: Second_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-i', '127.0.0.1', '-p', '5080', '-rsa', '127.0.0.1:5070', '-d', '5000', '127.0.0.1:5090', '-m', '1']
+- Env: {}
+2021-09-15 11:14:53.271710 Second_UAS - ExitCode: 0
+2021-09-15 11:14:53.363407 Second_OPENSIPS - ExitCode: 0
+2021-09-15 11:14:53.363534 Second_UAC - ExitCode: 0
+2021-09-15 11:14:53.363582 - Tcpdump ended!
+2021-09-15 11:14:53.864366 - logs dir already exists!
+2021-09-15 11:14:53.871810 - Logs for Second_UAS fetched successfully!
+2021-09-15 11:14:53.874442 - Logs for Second_OPENSIPS fetched successfully!
+2021-09-15 11:14:53.877693 - Logs for Second_UAC fetched successfully!
+2021-09-15 11:14:53.877790 - logs dir already exists!
+2021-09-15 11:14:53.879506 - Status for Second_UAS fetched successfully!
+2021-09-15 11:14:53.881149 - Status for Second_OPENSIPS fetched successfully!
+2021-09-15 11:14:53.882881 - Status for Second_UAC fetched successfully!
+2021-09-15 11:14:53.882975 Name: Second_UAS, ExitCode: 0
+2021-09-15 11:14:53.883003 Name: Second_OPENSIPS, ExitCode: 0
+2021-09-15 11:14:53.883021 Name: Second_UAC, ExitCode: 0
+=========================== Runing Testing Framework ===========================
+Running: host_tests set!
+2021-09-15 11:22:13.507812 - logs dir already exists!
+2021-09-15 11:22:14.009774
+- Name: Second_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-i', '127.0.0.1', '-p', '5090']
+- Env: {}
+2021-09-15 11:22:14.129355
+- Name: Second_OPENSIPS
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 11:22:14.237766
+- Name: Second_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-i', '127.0.0.1', '-p', '5080', '-rsa', '127.0.0.1:5070', '-d', '5000', '127.0.0.1:5090', '-m', '1']
+- Env: {}
+2021-09-15 11:22:20.611452 Second_UAS - ExitCode: 0
+2021-09-15 11:22:20.692285 Second_OPENSIPS - ExitCode: 0
+2021-09-15 11:22:20.692423 Second_UAC - ExitCode: 0
+2021-09-15 11:22:20.692491 - Tcpdump ended!
+2021-09-15 11:22:21.193277 - logs dir already exists!
+2021-09-15 11:22:21.201380 - Logs for Second_UAS fetched successfully!
+2021-09-15 11:22:21.207391 - Logs for Second_OPENSIPS fetched successfully!
+2021-09-15 11:22:21.211388 - Logs for Second_UAC fetched successfully!
+2021-09-15 11:22:21.211465 - logs dir already exists!
+2021-09-15 11:22:21.212844 - Status for Second_UAS fetched successfully!
+2021-09-15 11:22:21.214174 - Status for Second_OPENSIPS fetched successfully!
+2021-09-15 11:22:21.215407 - Status for Second_UAC fetched successfully!
+2021-09-15 11:22:21.215484 Name: Second_UAS, ExitCode: 0
+2021-09-15 11:22:21.215510 Name: Second_OPENSIPS, ExitCode: 0
+2021-09-15 11:22:21.215531 Name: Second_UAC, ExitCode: 0
+=========================== Runing Testing Framework ===========================
+Running: host_tests set!
+2021-09-15 11:22:31.784517 - logs dir already exists!
+2021-09-15 11:22:32.286399
+- Name: Second_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-i', '127.0.0.1', '-p', '5090']
+- Env: {}
+2021-09-15 11:22:32.424778
+- Name: Second_OPENSIPS
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 11:22:32.502443
+- Name: Second_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-i', '127.0.0.1', '-p', '5080', '-rsa', '127.0.0.1:5070', '-d', '5000', '127.0.0.1:5090', '-m', '1']
+- Env: {}
+2021-09-15 11:22:38.875684 Second_UAS - ExitCode: 0
+2021-09-15 11:22:38.952534 Second_OPENSIPS - ExitCode: 0
+2021-09-15 11:22:38.952696 Second_UAC - ExitCode: 0
+2021-09-15 11:22:38.952856 - Tcpdump ended!
+2021-09-15 11:22:39.453770 - logs dir already exists!
+2021-09-15 11:22:39.462218 - Logs for Second_UAS fetched successfully!
+2021-09-15 11:22:39.467211 - Logs for Second_OPENSIPS fetched successfully!
+2021-09-15 11:22:39.469793 - Logs for Second_UAC fetched successfully!
+2021-09-15 11:22:39.469864 - logs dir already exists!
+2021-09-15 11:22:39.471338 - Status for Second_UAS fetched successfully!
+2021-09-15 11:22:39.472877 - Status for Second_OPENSIPS fetched successfully!
+2021-09-15 11:22:39.474105 - Status for Second_UAC fetched successfully!
+2021-09-15 11:22:39.474177 Name: Second_UAS, ExitCode: 0
+2021-09-15 11:22:39.474199 Name: Second_OPENSIPS, ExitCode: 0
+2021-09-15 11:22:39.474216 Name: Second_UAC, ExitCode: 0
+=========================== Runing Testing Framework ===========================
+Running: host_tests set!
+2021-09-15 11:25:29.181191 - logs dir already exists!
+2021-09-15 11:25:29.683202
+- Name: Second_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-i', '127.0.0.1', '-p', '5090']
+- Env: {}
+2021-09-15 11:25:29.815591
+- Name: Second_OPENSIPS
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 11:25:29.928748
+- Name: Second_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-i', '127.0.0.1', '-p', '5080', '-rsa', '127.0.0.1:5070', '-d', '5000', '127.0.0.1:5090', '-m', '1']
+- Env: {}
+2021-09-15 11:25:36.315137 Second_UAS - ExitCode: 0
+2021-09-15 11:25:36.387210 Second_OPENSIPS - ExitCode: 0
+2021-09-15 11:25:36.387299 Second_UAC - ExitCode: 0
+2021-09-15 11:25:36.387326 - Tcpdump ended!
+2021-09-15 11:25:36.888120 - logs dir already exists!
+2021-09-15 11:25:36.896366 - Logs for Second_UAS fetched successfully!
+2021-09-15 11:25:36.898834 - Logs for Second_OPENSIPS fetched successfully!
+2021-09-15 11:25:36.901526 - Logs for Second_UAC fetched successfully!
+2021-09-15 11:25:36.901602 - logs dir already exists!
+2021-09-15 11:25:36.903501 - Status for Second_UAS fetched successfully!
+2021-09-15 11:25:36.905590 - Status for Second_OPENSIPS fetched successfully!
+2021-09-15 11:25:36.907323 - Status for Second_UAC fetched successfully!
+2021-09-15 11:25:36.907424 Name: Second_UAS, ExitCode: 0
+2021-09-15 11:25:36.907456 Name: Second_OPENSIPS, ExitCode: 0
+2021-09-15 11:25:36.907481 Name: Second_UAC, ExitCode: 0
+=========================== Runing Testing Framework ===========================
+Running: host_tests set!
+2021-09-15 12:29:57.881514 - logs dir already exists!
+2021-09-15 12:29:58.383509
+- Name: Second_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-i', '127.0.0.1', '-p', '5090']
+- Env: {}
+2021-09-15 12:29:58.516825
+- Name: Second_OPENSIPS
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 12:29:58.642947
+- Name: Second_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-i', '127.0.0.1', '-p', '5080', '-rsa', '127.0.0.1:5070', '-d', '5000', '127.0.0.1:5090', '-m', '1']
+- Env: {}
+2021-09-15 12:30:05.058212 Second_UAS - ExitCode: 0
+2021-09-15 12:30:05.129386 Second_OPENSIPS - ExitCode: 0
+2021-09-15 12:30:05.129488 Second_UAC - ExitCode: 0
+2021-09-15 12:30:05.129528 - Tcpdump ended!
+2021-09-15 12:30:05.630223 - logs dir already exists!
+2021-09-15 12:30:05.637981 - Logs for Second_UAS fetched successfully!
+2021-09-15 12:30:05.640279 - Logs for Second_OPENSIPS fetched successfully!
+2021-09-15 12:30:05.643156 - Logs for Second_UAC fetched successfully!
+2021-09-15 12:30:05.643232 - logs dir already exists!
+2021-09-15 12:30:05.644551 - Status for Second_UAS fetched successfully!
+2021-09-15 12:30:05.645807 - Status for Second_OPENSIPS fetched successfully!
+2021-09-15 12:30:05.646973 - Status for Second_UAC fetched successfully!
+2021-09-15 12:30:05.647043 Name: Second_UAS, ExitCode: 0
+2021-09-15 12:30:05.647065 Name: Second_OPENSIPS, ExitCode: 0
+2021-09-15 12:30:05.647082 Name: Second_UAC, ExitCode: 0
+=========================== Runing Testing Framework ===========================
+Running: host_tests set!
+2021-09-15 12:32:04.219141 - logs dir already exists!
+2021-09-15 12:32:04.721049
+- Name: Second_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-i', '127.0.0.1', '-p', '5090']
+- Env: {}
+2021-09-15 12:32:04.865510
+- Name: Second_OPENSIPS
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 12:32:04.988958
+- Name: Second_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-i', '127.0.0.1', '-p', '5080', '-rsa', '127.0.0.1:5070', '-d', '5000', '127.0.0.1:5090', '-m', '1']
+- Env: {}
+2021-09-15 12:32:11.359101 Second_UAS - ExitCode: 0
+2021-09-15 12:32:11.409481 Second_OPENSIPS - ExitCode: 0
+2021-09-15 12:32:11.409590 Second_UAC - ExitCode: 0
+2021-09-15 12:32:11.409638 - Tcpdump ended!
+2021-09-15 12:32:11.910335 - logs dir already exists!
+2021-09-15 12:32:11.915783 - Logs for Second_UAS fetched successfully!
+2021-09-15 12:32:11.919243 - Logs for Second_OPENSIPS fetched successfully!
+2021-09-15 12:32:11.922159 - Logs for Second_UAC fetched successfully!
+2021-09-15 12:32:11.922270 - logs dir already exists!
+2021-09-15 12:32:11.923772 - Status for Second_UAS fetched successfully!
+2021-09-15 12:32:11.925213 - Status for Second_OPENSIPS fetched successfully!
+2021-09-15 12:32:11.926944 - Status for Second_UAC fetched successfully!
+2021-09-15 12:32:11.927045 Name: Second_UAS, ExitCode: 0
+2021-09-15 12:32:11.927078 Name: Second_OPENSIPS, ExitCode: 0
+2021-09-15 12:32:11.927104 Name: Second_UAC, ExitCode: 0
+=========================== Runing Testing Framework ===========================
+Running: host_tests set!
+2021-09-15 12:33:57.423297 - logs dir already exists!
+2021-09-15 12:33:57.925217
+- Name: Second_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-i', '127.0.0.1', '-p', '5090']
+- Env: {}
+2021-09-15 12:33:58.025938
+- Name: Second_OPENSIPS
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 12:33:58.142143
+- Name: Second_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-i', '127.0.0.1', '-p', '5080', '-rsa', '127.0.0.1:5070', '-d', '5000', '127.0.0.1:5090', '-m', '1']
+- Env: {}
+2021-09-15 12:34:04.513922 Second_UAS - ExitCode: 0
+2021-09-15 12:34:04.563105 Second_OPENSIPS - ExitCode: 0
+2021-09-15 12:34:04.563207 Second_UAC - ExitCode: 0
+2021-09-15 12:34:04.563247 - Tcpdump ended!
+2021-09-15 12:34:05.063910 - logs dir already exists!
+2021-09-15 12:34:05.070613 - Logs for Second_UAS fetched successfully!
+2021-09-15 12:34:05.075610 - Logs for Second_OPENSIPS fetched successfully!
+2021-09-15 12:34:05.078742 - Logs for Second_UAC fetched successfully!
+2021-09-15 12:34:05.078849 - logs dir already exists!
+2021-09-15 12:34:05.080455 - Status for Second_UAS fetched successfully!
+2021-09-15 12:34:05.081722 - Status for Second_OPENSIPS fetched successfully!
+2021-09-15 12:34:05.082877 - Status for Second_UAC fetched successfully!
+2021-09-15 12:34:05.082949 Name: Second_UAS, ExitCode: 0
+2021-09-15 12:34:05.082978 Name: Second_OPENSIPS, ExitCode: 0
+2021-09-15 12:34:05.083002 Name: Second_UAC, ExitCode: 0
+Running: bridge_tests set!
+2021-09-15 12:34:05.122053 - logs dir already exists!
+2021-09-15 12:34:05.624487
+- Name: First_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-i', '192.168.52.4', '-p', '5060']
+- Env: {}
+2021-09-15 12:34:06.094807
+- Name: First_OPENSIPS
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 12:34:06.442419
+- Name: First_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-i', '192.168.52.2', '-p', '5060', '-rsa', '192.168.52.3:5060', '-d', '5000', '192.168.52.4:5060', '-m', '1']
+- Env: {}
+2021-09-15 12:34:13.702444 First_UAS - ExitCode: 0
+2021-09-15 12:34:14.111243 First_OPENSIPS - ExitCode: 0
+2021-09-15 12:34:14.111438 First_UAC - ExitCode: 0
+2021-09-15 12:34:14.111558 - Tcpdump ended!
+2021-09-15 12:34:14.612392 - logs dir already exists!
+2021-09-15 12:34:14.620877 - Logs for First_UAS fetched successfully!
+2021-09-15 12:34:14.626007 - Logs for First_OPENSIPS fetched successfully!
+2021-09-15 12:34:14.628974 - Logs for First_UAC fetched successfully!
+2021-09-15 12:34:14.629053 - logs dir already exists!
+2021-09-15 12:34:14.630371 - Status for First_UAS fetched successfully!
+2021-09-15 12:34:14.633154 - Status for First_OPENSIPS fetched successfully!
+2021-09-15 12:34:14.635154 - Status for First_UAC fetched successfully!
+2021-09-15 12:34:14.635248 Name: First_UAS, ExitCode: 0
+2021-09-15 12:34:14.635278 Name: First_OPENSIPS, ExitCode: 0
+2021-09-15 12:34:14.635303 Name: First_UAC, ExitCode: 0
+2021-09-15 12:34:14.791596 - logs dir already exists!
+2021-09-15 12:34:15.293596
+- Name: Database
+- Image: mysql
+- Args: []
+- Env: {'MYSQL_ALLOW_EMPTY_PASSWORD': 'yes'}
+2021-09-15 12:34:15.741621
+- Name: Registrar
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 12:34:26.194381
+- Name: SIP_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/sipp-register.xml', '-i', '192.168.52.2', '-p', '5060', '-s', 'test', '-ap', 'superSecret', '-m', '1', '-rsa', '192.168.52.3:5060', 'opensips.org:5060']
+- Env: {}
+2021-09-15 12:34:30.257097 Database - ExitCode: 0
+2021-09-15 12:34:30.679288 Registrar - ExitCode: 0
+2021-09-15 12:34:30.679533 SIP_UAC - ExitCode: 0
+2021-09-15 12:34:30.679654 - Tcpdump ended!
+2021-09-15 12:34:31.180472 - logs dir already exists!
+2021-09-15 12:34:31.188534 - Logs for Database fetched successfully!
+2021-09-15 12:34:31.195439 - Logs for Registrar fetched successfully!
+2021-09-15 12:34:31.198370 - Logs for SIP_UAC fetched successfully!
+2021-09-15 12:34:31.198479 - logs dir already exists!
+2021-09-15 12:34:31.200179 - Status for Database fetched successfully!
+2021-09-15 12:34:31.201762 - Status for Registrar fetched successfully!
+2021-09-15 12:34:31.203376 - Status for SIP_UAC fetched successfully!
+2021-09-15 12:34:31.203479 Name: Database, ExitCode: 0
+2021-09-15 12:34:31.203523 Name: Registrar, ExitCode: 0
+2021-09-15 12:34:31.203556 Name: SIP_UAC, ExitCode: 0
+Running: opensips.org_tests set!
+2021-09-15 12:34:31.309960 - logs dir already exists!
+2021-09-15 12:34:31.812058
+- Name: host_SIP_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/sipp-register.xml', '-s', 'framework', '-ap', 'testingframework', '-m', '1', 'opensips.org']
+- Env: {}
+2021-09-15 12:34:32.160165 host_SIP_UAC - ExitCode: 0
+2021-09-15 12:34:32.160266 - Tcpdump ended!
+2021-09-15 12:34:32.660953 - logs dir already exists!
+2021-09-15 12:34:32.667962 - Logs for host_SIP_UAC fetched successfully!
+2021-09-15 12:34:32.668174 - logs dir already exists!
+2021-09-15 12:34:32.671718 - Status for host_SIP_UAC fetched successfully!
+2021-09-15 12:34:32.671920 Name: host_SIP_UAC, ExitCode: 0
+2021-09-15 12:34:32.672069 - logs dir already exists!
+2021-09-15 12:34:33.175576
+- Name: First_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-s', 'framework', '-ap', 'testingframework', 'opensips.org']
+- Env: {}
+<class 'docker.errors.APIError'>
+2021-09-15 12:34:33.183270
+- Name: First_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-s', 'framework', '-ap', 'testingframework', 'opensips.org', '-d', '5000', '-m', '1']
+- Env: {}
+<class 'docker.errors.APIError'>
+=========================== Runing Testing Framework ===========================
+Running: host_tests set!
+2021-09-15 12:41:13.988851 - logs dir already exists!
+2021-09-15 12:41:14.490418
+- Name: Second_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-i', '127.0.0.1', '-p', '5090']
+- Env: {}
+2021-09-15 12:41:14.666551
+- Name: Second_OPENSIPS
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 12:41:14.817631
+- Name: Second_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-i', '127.0.0.1', '-p', '5080', '-rsa', '127.0.0.1:5070', '-d', '5000', '127.0.0.1:5090', '-m', '1']
+- Env: {}
+2021-09-15 12:41:21.175905 Second_UAS - ExitCode: 0
+2021-09-15 12:41:21.278142 Second_OPENSIPS - ExitCode: 0
+2021-09-15 12:41:21.278352 Second_UAC - ExitCode: 0
+2021-09-15 12:41:21.278472 - Tcpdump ended!
+2021-09-15 12:41:21.779298 - logs dir already exists!
+2021-09-15 12:41:21.786088 - Logs for Second_UAS fetched successfully!
+2021-09-15 12:41:21.789210 - Logs for Second_OPENSIPS fetched successfully!
+2021-09-15 12:41:21.792204 - Logs for Second_UAC fetched successfully!
+2021-09-15 12:41:21.792296 - logs dir already exists!
+2021-09-15 12:41:21.793781 - Status for Second_UAS fetched successfully!
+2021-09-15 12:41:21.795108 - Status for Second_OPENSIPS fetched successfully!
+2021-09-15 12:41:21.796413 - Status for Second_UAC fetched successfully!
+2021-09-15 12:41:21.796491 Name: Second_UAS, ExitCode: 0
+2021-09-15 12:41:21.796518 Name: Second_OPENSIPS, ExitCode: 0
+2021-09-15 12:41:21.796539 Name: Second_UAC, ExitCode: 0
+Running: bridge_tests set!
+2021-09-15 12:41:21.834900 - logs dir already exists!
+2021-09-15 12:41:22.336904
+- Name: First_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-i', '192.168.52.4', '-p', '5060']
+- Env: {}
+2021-09-15 12:41:22.735498
+- Name: First_OPENSIPS
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 12:41:23.108786
+- Name: First_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-i', '192.168.52.2', '-p', '5060', '-rsa', '192.168.52.3:5060', '-d', '5000', '192.168.52.4:5060', '-m', '1']
+- Env: {}
+2021-09-15 12:41:30.445324 First_UAS - ExitCode: 0
+2021-09-15 12:41:30.834904 First_OPENSIPS - ExitCode: 0
+2021-09-15 12:41:30.835137 First_UAC - ExitCode: 0
+2021-09-15 12:41:30.835251 - Tcpdump ended!
+2021-09-15 12:41:31.336090 - logs dir already exists!
+2021-09-15 12:41:31.344707 - Logs for First_UAS fetched successfully!
+2021-09-15 12:41:31.350237 - Logs for First_OPENSIPS fetched successfully!
+2021-09-15 12:41:31.354523 - Logs for First_UAC fetched successfully!
+2021-09-15 12:41:31.354618 - logs dir already exists!
+2021-09-15 12:41:31.356012 - Status for First_UAS fetched successfully!
+2021-09-15 12:41:31.357365 - Status for First_OPENSIPS fetched successfully!
+2021-09-15 12:41:31.358564 - Status for First_UAC fetched successfully!
+2021-09-15 12:41:31.358638 Name: First_UAS, ExitCode: 0
+2021-09-15 12:41:31.358669 Name: First_OPENSIPS, ExitCode: 0
+2021-09-15 12:41:31.358694 Name: First_UAC, ExitCode: 0
+2021-09-15 12:41:31.520540 - logs dir already exists!
+2021-09-15 12:41:32.022645
+- Name: Database
+- Image: mysql
+- Args: []
+- Env: {'MYSQL_ALLOW_EMPTY_PASSWORD': 'yes'}
+2021-09-15 12:41:32.438867
+- Name: Registrar
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 12:41:42.858819
+- Name: SIP_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/sipp-register.xml', '-i', '192.168.52.2', '-p', '5060', '-s', 'test', '-ap', 'superSecret', '-m', '1', '-rsa', '192.168.52.3:5060', 'opensips.org:5060']
+- Env: {}
+2021-09-15 12:41:46.904401 Database - ExitCode: 0
+2021-09-15 12:41:47.314740 Registrar - ExitCode: 0
+2021-09-15 12:41:47.315007 SIP_UAC - ExitCode: 0
+2021-09-15 12:41:47.315124 - Tcpdump ended!
+2021-09-15 12:41:47.815972 - logs dir already exists!
+2021-09-15 12:41:47.822391 - Logs for Database fetched successfully!
+2021-09-15 12:41:47.827111 - Logs for Registrar fetched successfully!
+2021-09-15 12:41:47.830243 - Logs for SIP_UAC fetched successfully!
+2021-09-15 12:41:47.830439 - logs dir already exists!
+2021-09-15 12:41:47.831830 - Status for Database fetched successfully!
+2021-09-15 12:41:47.833016 - Status for Registrar fetched successfully!
+2021-09-15 12:41:47.834192 - Status for SIP_UAC fetched successfully!
+2021-09-15 12:41:47.834268 Name: Database, ExitCode: 0
+2021-09-15 12:41:47.834298 Name: Registrar, ExitCode: 0
+2021-09-15 12:41:47.834322 Name: SIP_UAC, ExitCode: 0
+Running: opensips.org_tests set!
+2021-09-15 12:41:47.948317 - logs dir already exists!
+2021-09-15 12:41:48.450174
+- Name: host_SIP_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/sipp-register.xml', '-s', 'framework', '-ap', 'testingframework', '-m', '1', 'opensips.org']
+- Env: {}
+2021-09-15 12:41:48.818914 host_SIP_UAC - ExitCode: 0
+2021-09-15 12:41:48.819028 - Tcpdump ended!
+2021-09-15 12:41:49.319795 - logs dir already exists!
+2021-09-15 12:41:49.327136 - Logs for host_SIP_UAC fetched successfully!
+2021-09-15 12:41:49.327353 - logs dir already exists!
+2021-09-15 12:41:49.330894 - Status for host_SIP_UAC fetched successfully!
+2021-09-15 12:41:49.330983 Name: host_SIP_UAC, ExitCode: 0
+2021-09-15 12:41:49.331036 - logs dir already exists!
+2021-09-15 12:41:49.832824
+- Name: First_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-s', 'framework', '-ap', 'testingframework', 'opensips.org']
+- Env: {}
+<class 'docker.errors.APIError'>
+2021-09-15 12:41:49.835958
+- Name: First_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-s', 'framework', '-ap', 'testingframework', 'opensips.org', '-d', '5000', '-m', '1']
+- Env: {}
+<class 'docker.errors.APIError'>
+=========================== Runing Testing Framework ===========================
+Running: host_tests set!
+2021-09-15 12:50:07.357916 - logs dir already exists!
+2021-09-15 12:50:07.859874
+- Name: Second_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-i', '127.0.0.1', '-p', '5090']
+- Env: {}
+2021-09-15 12:50:07.989581
+- Name: Second_OPENSIPS
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 12:50:08.084787
+- Name: Second_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-i', '127.0.0.1', '-p', '5080', '-rsa', '127.0.0.1:5070', '-d', '5000', '127.0.0.1:5090', '-m', '1']
+- Env: {}
+2021-09-15 12:50:14.396156 Second_UAS - ExitCode: 0
+2021-09-15 12:50:14.467884 Second_OPENSIPS - ExitCode: 0
+2021-09-15 12:50:14.467987 Second_UAC - ExitCode: 0
+2021-09-15 12:50:14.468030 - Tcpdump ended!
+2021-09-15 12:50:14.968850 - logs dir already exists!
+2021-09-15 12:50:14.974403 - Logs for Second_UAS fetched successfully!
+2021-09-15 12:50:14.979810 - Logs for Second_OPENSIPS fetched successfully!
+2021-09-15 12:50:14.983830 - Logs for Second_UAC fetched successfully!
+2021-09-15 12:50:14.983930 - logs dir already exists!
+2021-09-15 12:50:14.985605 - Status for Second_UAS fetched successfully!
+2021-09-15 12:50:14.987465 - Status for Second_OPENSIPS fetched successfully!
+2021-09-15 12:50:14.988705 - Status for Second_UAC fetched successfully!
+2021-09-15 12:50:14.988790 Name: Second_UAS, ExitCode: 0
+2021-09-15 12:50:14.988833 Name: Second_OPENSIPS, ExitCode: 0
+2021-09-15 12:50:14.988864 Name: Second_UAC, ExitCode: 0
+Running: bridge_tests set!
+2021-09-15 12:50:15.026105 - logs dir already exists!
+2021-09-15 12:50:15.528227
+- Name: First_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-i', '192.168.52.4', '-p', '5060']
+- Env: {}
+2021-09-15 12:50:15.929337
+- Name: First_OPENSIPS
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 12:50:16.296416
+- Name: First_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-i', '192.168.52.2', '-p', '5060', '-rsa', '192.168.52.3:5060', '-d', '5000', '192.168.52.4:5060', '-m', '1']
+- Env: {}
+2021-09-15 12:50:23.522567 First_UAS - ExitCode: 0
+2021-09-15 12:50:23.953588 First_OPENSIPS - ExitCode: 0
+2021-09-15 12:50:23.953788 First_UAC - ExitCode: 0
+2021-09-15 12:50:23.953888 - Tcpdump ended!
+2021-09-15 12:50:24.454722 - logs dir already exists!
+2021-09-15 12:50:24.464126 - Logs for First_UAS fetched successfully!
+2021-09-15 12:50:24.468407 - Logs for First_OPENSIPS fetched successfully!
+2021-09-15 12:50:24.471818 - Logs for First_UAC fetched successfully!
+2021-09-15 12:50:24.471907 - logs dir already exists!
+2021-09-15 12:50:24.473200 - Status for First_UAS fetched successfully!
+2021-09-15 12:50:24.474481 - Status for First_OPENSIPS fetched successfully!
+2021-09-15 12:50:24.475676 - Status for First_UAC fetched successfully!
+2021-09-15 12:50:24.475750 Name: First_UAS, ExitCode: 0
+2021-09-15 12:50:24.475779 Name: First_OPENSIPS, ExitCode: 0
+2021-09-15 12:50:24.475802 Name: First_UAC, ExitCode: 0
+2021-09-15 12:50:24.627696 - logs dir already exists!
+2021-09-15 12:50:25.130264
+- Name: Database
+- Image: mysql
+- Args: []
+- Env: {'MYSQL_ALLOW_EMPTY_PASSWORD': 'yes'}
+2021-09-15 12:50:25.558568
+- Name: Registrar
+- Image: opensips/opensips
+- Args: ['-f', '/etc/opensips/opensips.cfg']
+- Env: {}
+2021-09-15 12:50:35.987962
+- Name: SIP_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/sipp-register.xml', '-i', '192.168.52.2', '-p', '5060', '-s', 'test', '-ap', 'superSecret', '-m', '1', '-rsa', '192.168.52.3:5060', 'opensips.org:5060']
+- Env: {}
+2021-09-15 12:50:40.917444 Database - ExitCode: 0
+2021-09-15 12:50:41.351309 Registrar - ExitCode: 0
+2021-09-15 12:50:41.351525 SIP_UAC - ExitCode: 0
+2021-09-15 12:50:41.351627 - Tcpdump ended!
+2021-09-15 12:50:41.852431 - logs dir already exists!
+2021-09-15 12:50:41.859586 - Logs for Database fetched successfully!
+2021-09-15 12:50:41.866033 - Logs for Registrar fetched successfully!
+2021-09-15 12:50:41.868704 - Logs for SIP_UAC fetched successfully!
+2021-09-15 12:50:41.868786 - logs dir already exists!
+2021-09-15 12:50:41.870251 - Status for Database fetched successfully!
+2021-09-15 12:50:41.871452 - Status for Registrar fetched successfully!
+2021-09-15 12:50:41.872643 - Status for SIP_UAC fetched successfully!
+2021-09-15 12:50:41.872715 Name: Database, ExitCode: 0
+2021-09-15 12:50:41.872745 Name: Registrar, ExitCode: 0
+2021-09-15 12:50:41.872771 Name: SIP_UAC, ExitCode: 0
+Running: opensips.org_tests set!
+2021-09-15 12:50:42.005016 - logs dir already exists!
+2021-09-15 12:50:42.507124
+- Name: host_SIP_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/sipp-register.xml', '-s', 'framework', '-ap', 'testingframework', '-m', '1', 'opensips.org']
+- Env: {}
+2021-09-15 12:50:42.857877 host_SIP_UAC - ExitCode: 0
+2021-09-15 12:50:42.857975 - Tcpdump ended!
+2021-09-15 12:50:43.358711 - logs dir already exists!
+2021-09-15 12:50:43.365409 - Logs for host_SIP_UAC fetched successfully!
+2021-09-15 12:50:43.365646 - logs dir already exists!
+2021-09-15 12:50:43.369536 - Status for host_SIP_UAC fetched successfully!
+2021-09-15 12:50:43.369732 Name: host_SIP_UAC, ExitCode: 0
+2021-09-15 12:50:43.369862 - logs dir already exists!
+2021-09-15 12:50:43.872022
+- Name: Third_UAS
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uas.xml', '-s', 'framework', '-ap', 'testingframework', 'opensips.org']
+- Env: {}
+2021-09-15 12:50:44.024584
+- Name: Third_UAC
+- Image: ctaloi/sipp
+- Args: ['-sf', '/home/uac.xml', '-s', 'framework', '-ap', 'testingframework', 'opensips.org', '-d', '5000', '-m', '1']
+- Env: {}
+2021-09-15 12:51:06.027751 Third_UAS - ExitCode: 0
+2021-09-15 12:51:06.027871 Third_UAC - ExitCode: 0
+2021-09-15 12:51:06.027910 - Tcpdump ended!
+2021-09-15 12:51:06.528676 - logs dir already exists!
+2021-09-15 12:51:06.536581 - Logs for Third_UAS fetched successfully!
+2021-09-15 12:51:06.540057 - Logs for Third_UAC fetched successfully!
+2021-09-15 12:51:06.540143 - logs dir already exists!
+2021-09-15 12:51:06.541613 - Status for Third_UAS fetched successfully!
+2021-09-15 12:51:06.542920 - Status for Third_UAC fetched successfully!
+2021-09-15 12:51:06.542996 Name: Third_UAS, ExitCode: 0
+2021-09-15 12:51:06.543021 Name: Third_UAC, ExitCode: 0

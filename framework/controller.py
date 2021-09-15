@@ -35,7 +35,7 @@ class Controller:
         pass
 
     def run(self):
-        controllerLogger.clog.info("========== Runing Testing Framework ==========")
+        controllerLogger.clog.info("=========================== Runing Testing Framework ===========================")
         for set in self.sets_dirs:
             s = tests_set.TestSet(set, self)
             controllerLogger.clog.info("Running: {} set!".format(os.path.basename(set)))

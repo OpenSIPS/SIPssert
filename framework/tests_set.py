@@ -107,7 +107,7 @@ class TestSet():
 
     def getScenariosPaths(self):
         scenarios_paths = []
-        for test in os.listdir(self.set_path):
+        for test in sorted(os.listdir(self.set_path)):
             test_dir = os.path.join(self.set_path, test)
             if os.path.isdir(test_dir):
                 if SCENARIO in os.listdir(test_dir):

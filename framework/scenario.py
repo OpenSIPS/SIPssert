@@ -169,7 +169,7 @@ class Scenario():
         self.createDir(self.dirname, LOGS_DIR)
         dir = os.path.join(self.dirname, LOGS_DIR)
         capture_file = os.path.join(dir, str(self.timestamp) + "_cap.pcap")
-        self.p = subprocess.Popen(['tcpdump', '-i', res, '-w', capture_file])
+        self.p = subprocess.Popen(['tcpdump', '-i', res, '-w', capture_file], stdout=subprocess.PIPE)
         # wait for proc to start
         time.sleep(0.5)
 
@@ -190,6 +190,7 @@ class Scenario():
     def printStatus(self):
         for task in self.tasks:
             controllerLogger.clog.debug(str(datetime.utcnow())+ " Name: {}, ExitCode: {}".format(task.container.name, str(task.get_exit_code())))
+            print(datetime.utcnow(), "Name: {}, ExitCode: {}".format(task.container.name, str(task.get_exit_code())))
 
     def verifyTest(self):
         ok = True

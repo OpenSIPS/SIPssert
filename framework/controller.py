@@ -35,10 +35,11 @@ class Controller:
         pass
 
     def run(self):
-        controllerLogger.clog.info("=========================== Runing Testing Framework ===========================")
+        print("=========================== Runing Testing Framework ===========================")
         for set in self.sets_dirs:
             s = tests_set.TestSet(set, self)
-            controllerLogger.clog.info("Running: {} set!".format(os.path.basename(set)))
+            controllerLogger.clog.info(23*'='+" Running: {} set! ".format(os.path.basename(set))+23*'=')
             s.run()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
+

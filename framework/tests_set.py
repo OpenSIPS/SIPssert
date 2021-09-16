@@ -22,6 +22,7 @@ from framework import parser
 from framework import scenario
 from datetime import datetime
 from framework.networks import bridged_network
+from framework import controllerLogger
 import os
 
 SCENARIO = "scenario.yml"
@@ -155,6 +156,8 @@ class TestSet():
         if self.getSetType() == "bridge":
             self.setScenarios()
             for s in self.getSetScenarios():
+                name = os.path.basename(s.dirname)
+                print("================================== Test: {} =================================".format(name))
                 network = self.getScenarioNetwork(s)
                 self.setupBridgeNetwork(network)
                 s.startTcpdump()
@@ -168,6 +171,8 @@ class TestSet():
         elif self.getSetType() == "host":
             self.setScenarios()
             for s in self.getSetScenarios():
+                name = os.path.basename(s.dirname)
+                print("================================== Test: {} =================================".format(name))
                 s.startTcpdump()
                 s.run()
                 s.waitEnd()  #wait 10 secs (TODO this should come from scenario)
@@ -183,9 +188,9 @@ class TestSet():
             self.controller.docker.networks.get(name).remove()
         except docker.errors.APIError as err:
             if type(err) == docker.errors.NotFound:
-                print(datetime.utcnow(), "- Network: {} can be created!".format(name))
+                controllerLogger.clog.debug(str(datetime.utcnow()) + " - Network: {} can be created!".format(name))
             else:
-                print(datetime.utcnow(), "- Something else went wrong!")
+                controllerLogger.clog.error(str(datetime.utcnow()) + " - Something else went wrong!")
 
     def destroyNetwork(self, network):
         name = network.getName()
@@ -193,11 +198,11 @@ class TestSet():
             self.controller.docker.networks.get(name).remove()
         except docker.errors.APIError as err:
             if type(err) == docker.errors.NotFound:
-                print(datetime.utcnow(), "- Network: {} not found!".format(name))
+                controllerLogger.clog.debug(str(datetime.utcnow()) + " - Network: {} not found!".format(name))
             else:
-                print(datetime.utcnow(), "- Something else went wrong!")
+                controllerLogger.clog.error(str(datetime.utcnow()) + " - Something else went wrong!")
         finally:
-            print(datetime.utcnow(), "- Network: {} succesfully deleted!".format(name))
+            controllerLogger.clog.info(str(datetime.utcnow()) + " - Network: {} succesfully deleted!".format(name))
         
     def setupBridgeNetwork(self, network):
         name = network.getName()
@@ -213,8 +218,8 @@ class TestSet():
             ipam_config = docker.types.IPAMConfig(pool_configs=[ipam_pool])
             self.controller.docker.networks.create(name, driver=driver, ipam=ipam_config, options={"com.docker.network.bridge.name":device})
         except docker.errors.APIError as err:
-            print(type(err))
+            controllerLogger.clog.error(type(err))
         finally:
-            print(datetime.utcnow(), "- Network: {} successfully created!".format(name))
+            controllerLogger.clog.info(str(datetime.utcnow()) + " - Network: {} successfully created!".format(name))
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

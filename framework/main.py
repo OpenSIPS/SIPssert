@@ -38,7 +38,6 @@ def main():
 
     # Parse all arguments
     args = arg_parser.parse_args()
-    print(args)
 
     # Open the Controller
     ctrl = controller.Controller(args.tests, args.config)

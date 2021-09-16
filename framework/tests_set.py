@@ -80,15 +80,21 @@ class TestSet():
         self.networks = networks
 
     def getGlobalConfig(self):
-        return self.config["globals"]
+        if "globals" in self.config.keys():
+            return self.config["globals"]
+        else:
+            return None
 
     def getProxyIp(self):
         return self.proxy_ip
 
     def setProxyIp(self):
-        if "proxy-ip" in self.getGlobalConfig().keys():
-            self.proxy_ip = self.getGlobalConfig()["proxy-ip"]
-        else: 
+        if self.getGlobalConfig():
+            if "proxy-ip" in self.getGlobalConfig().keys():
+                self.proxy_ip = self.getGlobalConfig()["proxy-ip"]
+            else: 
+                pass
+        else:
             pass
 
     def setConfig(self):

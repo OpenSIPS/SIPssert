@@ -115,7 +115,6 @@ class Scenario():
             # see if we still have "running" "non-daemons"
             for e in reversed(self.getTasks()):
                 if e.daemon == False and e.container.status != "exited":
-                    print(type(e))
                     wait = True
             if wait:
                 time.sleep(0.1)  #sleep 100 ms before rechecking

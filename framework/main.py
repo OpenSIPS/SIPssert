@@ -29,6 +29,7 @@ arg_parser.add_argument('tests',
 
 arg_parser.add_argument('--config',
                         help='Absolute path of the global config',
+                        default="default_config.yml",
                         type=os.path.abspath)
 
 # TODO: add a config path

@@ -2,7 +2,11 @@
 network: host
 timeout: 10
 tasks:
+  - type: mysql
+    name: Database
+    daemon: True
   - type: opensips
+    delay_start: 10             # seconds float
     name: Registrar
     image: opensips/opensips
     config_file: opensips.cfg   # optional
@@ -11,9 +15,10 @@ tasks:
     name: SIP_UAC               # mandatory - just a name (as container name)
     image: ctaloi/sipp          # mandatory - the path/name to the docker image
     config_file: sipp-register.xml
-    extra_params: s test -ap superSecret -m 1 -rsa 127.0.0.1:5060 opensips.org:5060
+    extra_params: -s test -ap superSecret -m 1 -rsa 127.0.0.1:5060 opensips.org:5060
     daemon: False
   - type: opensips-cli
     name: host_opensips-cli
     extra_params: -o url=http://127.0.0.1:8888/mi -x mi ul_dump
     daemon: True
+  

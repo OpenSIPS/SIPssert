@@ -9,10 +9,10 @@
  <send retrans="5000">
     <![CDATA[
 
-      REGISTER sip:opensips.org SIP/2.0
+      REGISTER sip:[remote_ip] SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port]
-      To: <sip:[service]@opensips.org>
-      From: <sip:[service]@opensips.org>;tag=[call_number]
+      To: <sip:[service]@[remote_ip]>
+      From: <sip:[service]@[remote_ip]>;tag=[call_number]
       Contact: <sip:[service]@[local_ip]:[local_port]>;transport=[transport]
       Expires: 6000
       Call-ID: [call_id]
@@ -30,10 +30,10 @@
  <send retrans="5000">
     <![CDATA[
 
-      REGISTER sip:opensips.org SIP/2.0
+      REGISTER sip:[remote_ip] SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port]
-      To: <sip:[service]@opensips.org>
-      From: <sip:[service]@opensips.org>;tag=[call_number]
+      To: <sip:[service]@[remote_ip]>
+      From: <sip:[service]@[remote_ip]>;tag=[call_number]
       Contact: <sip:[service]@[local_ip]:[local_port]>;transport=[transport]
       Expires: 600
       [authentication]

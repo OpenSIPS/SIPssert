@@ -21,7 +21,7 @@ from framework.tasks.task import Task
 class OpenSIPSCliTask(Task):
 
     task_default_image = "opensips/opensips-cli"
-    task_default_daemon = False
+    task_default_daemon = True
     
     def get_task_args(self):
 
@@ -29,7 +29,7 @@ class OpenSIPSCliTask(Task):
 
         # handle config
         if self.config_file:
-            args.append("-f")
+            args.append("-c")
             args.append(self.config_file)
 
         return args

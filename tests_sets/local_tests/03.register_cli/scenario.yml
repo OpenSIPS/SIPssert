@@ -23,5 +23,5 @@ tasks:
   - type: opensips-cli
     delay_start: 5
     name: host_opensips-cli
-    extra_params: -o url=http://192.168.52.3:8888/mi -x mi ul_dump
+    extra_params: -o url=http://192.168.52.3:8888/mi -x -d mi ul_dump
     daemon: True

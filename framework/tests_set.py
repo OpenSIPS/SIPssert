@@ -29,7 +29,8 @@ SCENARIO = "scenario.yml"
 CONFIG = "config.yml"
 
 class TestSet():
-    def __init__(self, set_path, controller):
+    def __init__(self, set_path, controller, test):
+        self.testsToRun = test
         self.name = os.path.basename(set_path)
         self.set_path = set_path
         self.controller = controller
@@ -149,38 +150,43 @@ class TestSet():
     def getSetType(self):
         return self.set_type
 
+    def run_bridge(self):
+        for s in self.getSetScenarios():
+            name = os.path.basename(s.dirname)
+            print("================================== Test: {} =================================".format(name))
+            network = self.getScenarioNetwork(s)
+            self.setupBridgeNetwork(network)
+            s.startTcpdump()
+            s.run()
+            s.waitEnd()  #wait 10 secs (TODO this should come from scenario)
+            s.stopTcpdump()
+            s.getLogs()
+            s.getStatus()
+            s.verifyTest()
+            self.destroyNetwork(network)
+
+    def run_host(self):
+        for s in self.getSetScenarios():
+            name = os.path.basename(s.dirname)
+            print("================================== Test: {} =================================".format(name))
+            s.startTcpdump()
+            s.run()
+            s.waitEnd()  #wait 10 secs (TODO this should come from scenario)
+            s.stopTcpdump()
+            s.getLogs()
+            s.getStatus()
+            s.verifyTest()
+
+
     def run(self):
         self.setConfig()
         self.setNetworks()
         self.setProxyIp()
+        self.setScenarios()
         if self.getSetType() == "bridge":
-            self.setScenarios()
-            for s in self.getSetScenarios():
-                name = os.path.basename(s.dirname)
-                print("================================== Test: {} =================================".format(name))
-                network = self.getScenarioNetwork(s)
-                self.setupBridgeNetwork(network)
-                s.startTcpdump()
-                s.run()
-                s.waitEnd()  #wait 10 secs (TODO this should come from scenario)
-                s.stopTcpdump()
-                s.getLogs()
-                s.getStatus()
-                s.verifyTest()
-                self.destroyNetwork(network)
+            self.run_bridge()
         elif self.getSetType() == "host":
-            self.setScenarios()
-            for s in self.getSetScenarios():
-                name = os.path.basename(s.dirname)
-                print("================================== Test: {} =================================".format(name))
-                s.startTcpdump()
-                s.run()
-                s.waitEnd()  #wait 10 secs (TODO this should come from scenario)
-                s.stopTcpdump()
-                s.getLogs()
-                s.getStatus()
-                s.verifyTest()
-
+            self.run_host()
 
     def checkNetwork(self, network):
         name = network.getName()

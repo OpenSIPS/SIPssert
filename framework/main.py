@@ -27,6 +27,11 @@ arg_parser.add_argument('tests',
                         type=os.path.abspath,
                         nargs='+')
 
+arg_parser.add_argument('--test',
+                        help='Absolute path of the test. It works only with one set. Default value = All',
+                        type=os.path.abspath,
+                        default='All')
+
 arg_parser.add_argument('--config',
                         help='Absolute path of the global config',
                         default="default_config.yml",
@@ -41,7 +46,7 @@ def main():
     args = arg_parser.parse_args()
 
     # Open the Controller
-    ctrl = controller.Controller(args.tests, args.config)
+    ctrl = controller.Controller(args.tests, args.test, args.config)
     ctrl.run()
 
 if __name__ == '__main__':

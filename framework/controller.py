@@ -24,8 +24,9 @@ from framework import controllerLogger
 import os
 class Controller:
 
-    def __init__(self, sets_dirs, global_config):
+    def __init__(self, sets_dirs, test, global_config):
         self.sets_dirs = sets_dirs
+        self.test = test
         p = parser.Parser()
         self.global_config = p.parse_yaml(global_config)
         controllerLogger.initLogger(self.global_config["logging"]["controller"])
@@ -37,9 +38,9 @@ class Controller:
     def run(self):
         print("=========================== Runing Testing Framework ===========================")
         for set in self.sets_dirs:
-            s = tests_set.TestSet(set, self)
+            test_set = tests_set.TestSet(set, self, self.test)
             controllerLogger.clog.info(23*'='+" Running: {} set! ".format(os.path.basename(set))+23*'=')
-            s.run()
+            test_set.run()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 

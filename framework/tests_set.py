@@ -177,16 +177,68 @@ class TestSet():
             s.getStatus()
             s.verifyTest()
 
+    def run_host_test(self):
+        ok = False
+        for s in self.getSetScenarios():
+            name = os.path.basename(s.dirname)
+            if name == os.path.basename(self.testsToRun):
+                ok = True
+                break
+            else:
+                continue
+
+        if ok:
+            print("================================== Test: {} =================================".format(name))
+            s.startTcpdump()
+            s.run()
+            s.waitEnd()  #wait 10 secs (TODO this should come from scenario)
+            s.stopTcpdump()
+            s.getLogs()
+            s.getStatus()
+            s.verifyTest()
+        else:
+            print("Set {} does not include test: {}".format(self.name, os.path.basename(self.testsToRun)))
+
+    def run_bridge_test(self):
+        ok = False
+        for s in self.getSetScenarios():
+            name = os.path.basename(s.dirname)
+            if name == os.path.basename(self.testsToRun):
+                ok = True
+                break
+            else:
+                continue
+        
+        if ok:
+            print("================================== Test: {} =================================".format(name))
+            network = self.getScenarioNetwork(s)
+            self.setupBridgeNetwork(network)
+            s.startTcpdump()
+            s.run()
+            s.waitEnd()  #wait 10 secs (TODO this should come from scenario)
+            s.stopTcpdump()
+            s.getLogs()
+            s.getStatus()
+            s.verifyTest()
+            self.destroyNetwork(network)
+        else:
+            print("Set {} does not include test: {}".format(self.name, os.path.basename(self.testsToRun)))
 
     def run(self):
         self.setConfig()
         self.setNetworks()
         self.setProxyIp()
         self.setScenarios()
-        if self.getSetType() == "bridge":
-            self.run_bridge()
-        elif self.getSetType() == "host":
-            self.run_host()
+        if os.path.basename(self.testsToRun) == "All":
+            if self.getSetType() == "bridge":
+                self.run_bridge()
+            elif self.getSetType() == "host":
+                self.run_host()
+        else:
+            if self.getSetType() == "bridge":
+                self.run_bridge_test()
+            elif self.getSetType() == "host":
+                self.run_host_test()
 
     def checkNetwork(self, network):
         name = network.getName()

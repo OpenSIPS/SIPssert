@@ -91,14 +91,11 @@ class Task():
         return r
 
     def get_args(self):
-        proxy_ip = []
-        if self.scenario.set.getProxyIp():
-            proxy_ip.append(self.scenario.set.getProxyIp())
         if "extra_params" in self.config:
             extra_params = self.config["extra_params"].split(" ")
         else:
             extra_params = []
-        return self.get_task_args() + extra_params + proxy_ip
+        return self.get_task_args() + extra_params
 
     def get_task_env(self):
         return {}

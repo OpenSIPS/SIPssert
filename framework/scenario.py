@@ -31,14 +31,13 @@ NETWORK_CAP = "net_capture"
 
 class Scenario():
 
-    def __init__(self, file, config, controller, set):
+    def __init__(self, file, config, controller):
         self.p = None
         self.controller = controller
         self.config = config
         self.file = file
         self.dirname = os.path.dirname(file)
         self.tasks = []
-        self.set = set
         self.getScenarioTimestamp()
         self.network_device = None
 

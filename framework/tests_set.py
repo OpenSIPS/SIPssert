@@ -35,7 +35,6 @@ class TestSet():
         self.set_path = set_path
         self.controller = controller
         self.config = None
-        self.proxy_ip = None
         self.scenarios = None
         self.networks = []
         self.set_type = None
@@ -81,24 +80,6 @@ class TestSet():
 
         self.networks = networks
 
-    def getGlobalConfig(self):
-        if "globals" in self.config.keys():
-            return self.config["globals"]
-        else:
-            return None
-
-    def getProxyIp(self):
-        return self.proxy_ip
-
-    def setProxyIp(self):
-        if self.getGlobalConfig():
-            if "proxy-ip" in self.getGlobalConfig().keys():
-                self.proxy_ip = self.getGlobalConfig()["proxy-ip"]
-            else: 
-                pass
-        else:
-            pass
-
     def setConfig(self):
         if CONFIG in os.listdir(self.set_path):
             p = parser.Parser()
@@ -143,7 +124,7 @@ class TestSet():
         for scenario_path in scenarios_paths:
             p = parser.Parser()
             scenario_stream = p.parse_yaml(scenario_path)
-            scenarios.append(scenario.Scenario(scenario_path, scenario_stream, self.controller, self))
+            scenarios.append(scenario.Scenario(scenario_path, scenario_stream, self.controller))
 
         self.scenarios = scenarios
 
@@ -227,7 +208,6 @@ class TestSet():
     def run(self):
         self.setConfig()
         self.setNetworks()
-        self.setProxyIp()
         self.setScenarios()
         if os.path.basename(self.testsToRun) == "All":
             if self.getSetType() == "bridge":

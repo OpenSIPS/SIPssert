@@ -18,7 +18,7 @@
 
 import os
 from datetime import datetime
-from framework import controllerLogger
+from framework import logger
 import time
 import docker
 
@@ -107,10 +107,10 @@ class Task():
             return self.task_default_mount_point
 
     def run(self):
-        controllerLogger.clog.debug(str(datetime.utcnow()))
-        controllerLogger.clog.debug("- Name: {}".format(self))
-        controllerLogger.clog.debug("- Image: {}".format(self.image))
-        controllerLogger.clog.debug("- Args: {}".format(self.get_args()))
+        #logger.loggerSystem.debug(str(datetime.utcnow()))
+        logger.loggerSystem.debug("- Name: {}".format(self))
+        logger.loggerSystem.debug("- Image: {}".format(self.image))
+        logger.loggerSystem.debug("- Args: {}".format(self.get_args()))
 
         volumes = { self.test_dir: {
             "bind": self.get_mount_point(),
@@ -118,7 +118,7 @@ class Task():
             }}
         ports = self.get_ports()
         env = self.get_task_env()
-        controllerLogger.clog.debug("- Env: {}".format(env))
+        logger.loggerSystem.debug("- Env: {}".format(env))
         net_mode = self.getNetMode()
         self.container = self.controller.docker.containers.create(
                 self.image,
@@ -134,14 +134,14 @@ class Task():
             try:
                 self.connect()
             except docker.errors.APIError as err:
-                controllerLogger.clog.critical(type(err))
+                logger.loggerSystem.critical(type(err))
         else: pass
 
         time.sleep(self.delay_start)
         try:
             self.container.start()
         except docker.errors.APIError as err:
-            controllerLogger.clog.critical(type(err))
+            logger.loggerSystem.critical(type(err))
         
 
     def connect(self):
@@ -156,7 +156,7 @@ class Task():
             return "bridge"
 
     def stop(self):
-        self.container.stop()
+        #self.container.stop()
 
     def get_exit_code(self):
         return self.container.attrs["State"]["ExitCode"]
@@ -165,12 +165,12 @@ class Task():
         self.container.reload()
 
     def remove(self):
-        self.container.remove()
+        #self.container.remove()
         self.container = None
 
     def __del__(self):
         if self.container:
-            self.container.stop()
-            self.container.remove()
+            #self.container.stop()
+            #self.container.remove()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

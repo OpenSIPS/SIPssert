@@ -16,25 +16,13 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-import yaml
+from framework.tasks.task import Task
 
-SCENARIO = "scenario.yml"
-LOGS_DIR = "logs"
+class cleanupTask(Task):
 
-class Parser():
-
-    def __init__(self):
-        pass
-    
-    def parse_yaml(self, yaml_file):
-        yaml_stream = None
-        with open(yaml_file, 'r') as stream:
-            try:
-                yaml_stream = yaml.safe_load(stream)
-            except yaml.YAMLError as exc:
-                logger.loggerSystem.error(exc)
-
-        return yaml_stream
-
+    task_default_image = "hello-world"
+    def get_task_env(self):
+        env_dict = {}
+        return env_dict
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

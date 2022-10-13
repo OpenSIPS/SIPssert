@@ -16,20 +16,16 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-import logging
+from framework.tasks.task import Task
 
-def initLogger(config):
-    global clog
-    clog = logging.getLogger(__name__)
-    if "console" in config.keys():
-        if config["console"] == True:
-            console = logging.StreamHandler()
-            clog.addHandler(console)
-    if "file" in config.keys():
-        file = logging.FileHandler(config["file"])
-        clog.addHandler(file)
-    else:
-        file = logging.FileHandler("default.log")
-        clog.addHandler(file)
-    if "level" in config.keys():
-        clog.setLevel(config["level"])
+class initTask(Task):
+
+    task_default_image = "hello-world"
+    task_default_daemon = True
+    task_default_mount_point = "/docker-entrypoint-initdb.d"
+
+    def get_task_env(self):
+        env_dict = {}
+        return env_dict
+
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

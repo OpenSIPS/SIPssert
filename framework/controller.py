@@ -20,7 +20,7 @@ import docker
 from datetime import datetime
 from framework import tests_set
 from framework import parser
-from framework import controllerLogger
+from framework import logger
 import os
 class Controller:
 
@@ -29,17 +29,17 @@ class Controller:
         self.test = test
         p = parser.Parser()
         self.global_config = p.parse_yaml(global_config)
-        controllerLogger.initLogger(self.global_config["logging"]["controller"])
+        logger.initLogger(self.global_config["logging"]["controller"])
         self.docker = docker.from_env()
 
     def __del__(self):
         pass
 
     def run(self):
-        print("=========================== Runing Testing Framework ===========================")
+        logger.loggerSystem.info("=========================== Runing Testing Framework ===========================")
         for set in self.sets_dirs:
             test_set = tests_set.TestSet(set, self, self.test)
-            controllerLogger.clog.info(23*'='+" Running: {} set! ".format(os.path.basename(set))+23*'=')
+            logger.loggerSystem.info(23*'='+" Running: {} set! ".format(os.path.basename(set))+23*'=')
             test_set.run()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

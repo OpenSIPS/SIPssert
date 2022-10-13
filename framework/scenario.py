@@ -20,9 +20,9 @@ import os
 import docker
 import importlib
 import time
-from framework import controllerLogger
+from framework import logger
 from framework.tasks import task
-from framework import controllerLogger
+from framework import logger
 from datetime import datetime
 import subprocess
 
@@ -70,21 +70,21 @@ class Scenario():
                         c.lower() == normalized_class_name and
                         c.endswith("Task") ]
                 if len(classes) == 0:
-                    controllerLogger.clog.debug("unknown task derived from {}".
+                    logger.loggerSystem.debug("unknown task derived from {}".
                             format(task_type))
                 elif len(classes) != 1:
-                    controllerLogger.clog.debug("too many classed derived from {}: {}".
+                    logger.loggerSystem.debug("too many classed derived from {}: {}".
                             format(task_type, str(classes)))
                 else:
                     className = getattr(task_mod, classes[0])
                     new_task = className(os.path.dirname(self.file),
                             e, self.controller, self)
             except AttributeError:
-                controllerLogger.clog.debug(task_type + " not found")
+                logger.loggerSystem.debug(task_type + " not found")
                 pass
 
             if not new_task:
-                controllerLogger.clog.debug("creating a generic task")
+                logger.loggerSystem.debug("creating a generic task")
                 new_task = task.Task(os.path.dirname(self.file),
                         e, self.controller, self)
             # TODO: sort out the tasks
@@ -120,32 +120,32 @@ class Scenario():
                 self.update()
                 counter -= 1
         if wait:
-            controllerLogger.clog.warning(str(datetime.utcnow()) +" - WARNING: not all tasks self-terminated, end-forcing due timeout");
+            logger.loggerSystem.warning(" - WARNING: not all tasks self-terminated, end-forcing due timeout");
         # stop all remaining containers
         self.stopAll()
 
     def stopTcpdump(self):
         if self.p:
-            controllerLogger.clog.info(str(datetime.utcnow()) +" - Tcpdump ended!")
+            #logger.loggerSystem.info(str(datetime.utcnow()) +" - Tcpdump ended!")
             self.p.terminate()
         time.sleep(0.5)
 
     def stopAll(self):
         for e in self.getTasks():
             if e.container.status != "exited":
-                e.stop()
-                controllerLogger.clog.debug(str(datetime.utcnow()) +" "+ e.name+ " - ExitCode: "+ str(e.get_exit_code()))
+                #e.stop()
+                logger.loggerSystem.debug(str(datetime.utcnow()) +" "+ e.name+ " - ExitCode: "+ str(e.get_exit_code()))
             else:
-                controllerLogger.clog.debug(str(datetime.utcnow()) +" "+ e.name+ " - ExitCode: "+ str(e.get_exit_code()))
+                logger.loggerSystem.debug(str(datetime.utcnow()) +" "+ e.name+ " - ExitCode: "+ str(e.get_exit_code()))
 
 
     def createDir(self, dir, searching_dir):
         if searching_dir not in os.listdir(dir):
             path = os.path.join(dir, searching_dir)
             os.mkdir(path)
-            controllerLogger.clog.debug(str(datetime.utcnow()) + " - {} dir created successfully!".format(searching_dir))
+            logger.loggerSystem.debug(str(datetime.utcnow()) + " - {} dir created successfully!".format(searching_dir))
         else:
-            controllerLogger.clog.debug(str(datetime.utcnow()) + " - {} dir already exists!".format(searching_dir))
+            logger.loggerSystem.debug(str(datetime.utcnow()) + " - {} dir already exists!".format(searching_dir))
 
     def getLogs(self):
         self.createDir(self.dirname, LOGS_DIR)
@@ -156,7 +156,7 @@ class Scenario():
             f = open(log_file, 'w')
             f.write(task.container.logs().decode('UTF-8'))
             f.close()
-            controllerLogger.clog.debug(str(datetime.utcnow()) + " - Logs for {} fetched successfully!".format(task.container.name))
+            logger.loggerSystem.debug(str(datetime.utcnow()) + " - Logs for {} fetched successfully!".format(task.container.name))
 
 
     def startTcpdump(self):
@@ -184,12 +184,11 @@ class Scenario():
             f = open(log_file, 'w')
             f.write(task.container.name + " " + str(task.container.image) + " ExitCode: " + str(task.get_exit_code()))
             f.close()
-            controllerLogger.clog.debug(str(datetime.utcnow())+ " - Status for {} fetched successfully!".format(task.container.name))
+            logger.loggerSystem.debug(str(datetime.utcnow())+ " - Status for {} fetched successfully!".format(task.container.name))
 
     def printStatus(self):
         for task in self.tasks:
-            controllerLogger.clog.debug(str(datetime.utcnow())+ " Name: {}, ExitCode: {}".format(task.container.name, str(task.get_exit_code())))
-            print(datetime.utcnow(), "Name: {}, ExitCode: {}".format(task.container.name, str(task.get_exit_code())))
+            logger.loggerSystem.debug( "Name: {}, ExitCode: {}".format(task.container.name, str(task.get_exit_code())))
 
     def verifyTest(self):
         ok = True
@@ -198,17 +197,17 @@ class Scenario():
                 ok = False
                 break
         if ok == False:
-            print(80*"=")
-            print(datetime.utcnow(), "Test: {}".format(os.path.basename(self.dirname)))
+            logger.loggerSystem.debug(80*"=")
+            logger.loggerSystem.info("Test: {}".format(os.path.basename(self.dirname)))
             self.printStatus()
-            print(datetime.utcnow(), "TEST FAILED!")
-            print(80*"=")
+            logger.loggerSystem.info( "TEST FAILED!")
+            logger.loggerSystem.info(80*"=")
         else:
-            print(80*"=")
-            print(datetime.utcnow(), "Test: {}".format(os.path.basename(self.dirname)))
+            logger.loggerSystem.debug(80*"=")
+            logger.loggerSystem.info("Test: {}".format(os.path.basename(self.dirname)))
             self.printStatus()
-            print(datetime.utcnow(), "TEST PASSED!")
-            print(80*"=")
+            logger.loggerSystem.info("TEST PASSED!")
+            logger.loggerSystem.info(80*"=")
 
     def __del__(self):
         pass

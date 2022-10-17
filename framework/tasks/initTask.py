@@ -20,12 +20,15 @@ from framework.tasks.task import Task
 
 class initTask(Task):
 
-    task_default_image = "hello-world"
-    task_default_daemon = True
-    task_default_mount_point = "/docker-entrypoint-initdb.d"
+				task_default_image = "debian"
+				task_default_daemon = True
 
-    def get_task_env(self):
-        env_dict = {}
-        return env_dict
+				def get_task_args(self):
+
+								args = []
+
+								# handle config
+								args.append(" echo INIT ")
+								return args
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

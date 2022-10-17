@@ -20,7 +20,7 @@ from framework.tasks.task import Task
 
 class cleanupTask(Task):
 
-    task_default_image = "hello-world"
+    task_default_image = "hello-debian"
     def get_task_env(self):
         env_dict = {}
         return env_dict

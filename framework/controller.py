@@ -36,10 +36,10 @@ class Controller:
         pass
 
     def run(self):
-        logger.loggerSystem.info("=========================== Runing Testing Framework ===========================")
+        logger.slog.info("=========================== Runing Testing Framework ===========================")
         for set in self.sets_dirs:
             test_set = tests_set.TestSet(set, self, self.test)
-            logger.loggerSystem.info(23*'='+" Running: {} set! ".format(os.path.basename(set))+23*'=')
+            logger.slog.info(23*'='+" Running: {} set! ".format(os.path.basename(set))+23*'=')
             test_set.run()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

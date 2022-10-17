@@ -107,10 +107,10 @@ class Task():
             return self.task_default_mount_point
 
     def run(self):
-        #logger.loggerSystem.debug(str(datetime.utcnow()))
-        logger.loggerSystem.debug("- Name: {}".format(self))
-        logger.loggerSystem.debug("- Image: {}".format(self.image))
-        logger.loggerSystem.debug("- Args: {}".format(self.get_args()))
+        #logger.slog.debug(str(datetime.utcnow()))
+        logger.slog.debug("- Name: {}".format(self))
+        logger.slog.debug("- Image: {}".format(self.image))
+        logger.slog.debug("- Args: {}".format(self.get_args()))
 
         volumes = { self.test_dir: {
             "bind": self.get_mount_point(),
@@ -118,7 +118,7 @@ class Task():
             }}
         ports = self.get_ports()
         env = self.get_task_env()
-        logger.loggerSystem.debug("- Env: {}".format(env))
+        logger.slog.debug("- Env: {}".format(env))
         net_mode = self.getNetMode()
         self.container = self.controller.docker.containers.create(
                 self.image,
@@ -134,14 +134,14 @@ class Task():
             try:
                 self.connect()
             except docker.errors.APIError as err:
-                logger.loggerSystem.critical(type(err))
+                logger.slog.critical(type(err))
         else: pass
 
         time.sleep(self.delay_start)
         try:
             self.container.start()
         except docker.errors.APIError as err:
-            logger.loggerSystem.critical(type(err))
+            logger.slog.critical(type(err))
         
 
     def connect(self):
@@ -156,7 +156,7 @@ class Task():
             return "bridge"
 
     def stop(self):
-        #self.container.stop()
+        self.container.stop()
 
     def get_exit_code(self):
         return self.container.attrs["State"]["ExitCode"]
@@ -170,7 +170,7 @@ class Task():
 
     def __del__(self):
         if self.container:
-            #self.container.stop()
-            #self.container.remove()
+            self.container.stop()
+            self.container.remove()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

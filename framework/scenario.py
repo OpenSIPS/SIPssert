@@ -70,21 +70,21 @@ class Scenario():
                         c.lower() == normalized_class_name and
                         c.endswith("Task") ]
                 if len(classes) == 0:
-                    logger.loggerSystem.debug("unknown task derived from {}".
+                    logger.slog.debug("unknown task derived from {}".
                             format(task_type))
                 elif len(classes) != 1:
-                    logger.loggerSystem.debug("too many classed derived from {}: {}".
+                    logger.slog.debug("too many classed derived from {}: {}".
                             format(task_type, str(classes)))
                 else:
                     className = getattr(task_mod, classes[0])
                     new_task = className(os.path.dirname(self.file),
                             e, self.controller, self)
             except AttributeError:
-                logger.loggerSystem.debug(task_type + " not found")
+                logger.slog.debug(task_type + " not found")
                 pass
 
             if not new_task:
-                logger.loggerSystem.debug("creating a generic task")
+                logger.slog.debug("creating a generic task")
                 new_task = task.Task(os.path.dirname(self.file),
                         e, self.controller, self)
             # TODO: sort out the tasks
@@ -96,9 +96,28 @@ class Scenario():
     def getNetwork(self):
         return self.network_device
 
-    def run(self):
+    def init(self):
         for e in self.getTasks():
-            e.run()
+            if str(e) == "initialTask":
+                e.run()
+
+    def cleanup(self):
+        for e in self.getTasks():
+            if str(e) == "cleanupTask":
+                e.run()
+
+    def run(self):
+        try:
+            self.init()
+            for e in self.getTasks():
+                if str(e) != "initialTask" and str(e) != "cleanupTask":
+                    e.run()
+        except:
+            logger.slog.error("Error occured during task run")
+        try:
+                self.cleanup()
+        except:
+                logger.slog.error("Error occured during cleanup task")
 
     def update(self):
         for e in self.getTasks():
@@ -120,32 +139,32 @@ class Scenario():
                 self.update()
                 counter -= 1
         if wait:
-            logger.loggerSystem.warning(" - WARNING: not all tasks self-terminated, end-forcing due timeout");
+            logger.slog.warning(" - WARNING: not all tasks self-terminated, end-forcing due timeout");
         # stop all remaining containers
         self.stopAll()
 
     def stopTcpdump(self):
         if self.p:
-            #logger.loggerSystem.info(str(datetime.utcnow()) +" - Tcpdump ended!")
+            logger.slog.info(str(datetime.utcnow()) +" - Tcpdump ended!")
             self.p.terminate()
         time.sleep(0.5)
 
     def stopAll(self):
         for e in self.getTasks():
             if e.container.status != "exited":
-                #e.stop()
-                logger.loggerSystem.debug(str(datetime.utcnow()) +" "+ e.name+ " - ExitCode: "+ str(e.get_exit_code()))
+                e.stop()
+                logger.slog.debug(str(datetime.utcnow()) +" "+ e.name+ " - ExitCode: "+ str(e.get_exit_code()))
             else:
-                logger.loggerSystem.debug(str(datetime.utcnow()) +" "+ e.name+ " - ExitCode: "+ str(e.get_exit_code()))
+                logger.slog.debug(str(datetime.utcnow()) +" "+ e.name+ " - ExitCode: "+ str(e.get_exit_code()))
 
 
     def createDir(self, dir, searching_dir):
         if searching_dir not in os.listdir(dir):
             path = os.path.join(dir, searching_dir)
             os.mkdir(path)
-            logger.loggerSystem.debug(str(datetime.utcnow()) + " - {} dir created successfully!".format(searching_dir))
+            logger.slog.debug(str(datetime.utcnow()) + " - {} dir created successfully!".format(searching_dir))
         else:
-            logger.loggerSystem.debug(str(datetime.utcnow()) + " - {} dir already exists!".format(searching_dir))
+            logger.slog.debug(str(datetime.utcnow()) + " - {} dir already exists!".format(searching_dir))
 
     def getLogs(self):
         self.createDir(self.dirname, LOGS_DIR)
@@ -156,7 +175,7 @@ class Scenario():
             f = open(log_file, 'w')
             f.write(task.container.logs().decode('UTF-8'))
             f.close()
-            logger.loggerSystem.debug(str(datetime.utcnow()) + " - Logs for {} fetched successfully!".format(task.container.name))
+            logger.slog.debug(str(datetime.utcnow()) + " - Logs for {} fetched successfully!".format(task.container.name))
 
 
     def startTcpdump(self):
@@ -184,11 +203,11 @@ class Scenario():
             f = open(log_file, 'w')
             f.write(task.container.name + " " + str(task.container.image) + " ExitCode: " + str(task.get_exit_code()))
             f.close()
-            logger.loggerSystem.debug(str(datetime.utcnow())+ " - Status for {} fetched successfully!".format(task.container.name))
+            logger.slog.debug(str(datetime.utcnow())+ " - Status for {} fetched successfully!".format(task.container.name))
 
     def printStatus(self):
         for task in self.tasks:
-            logger.loggerSystem.debug( "Name: {}, ExitCode: {}".format(task.container.name, str(task.get_exit_code())))
+            logger.slog.debug( "Name: {}, ExitCode: {}".format(task.container.name, str(task.get_exit_code())))
 
     def verifyTest(self):
         ok = True
@@ -197,17 +216,17 @@ class Scenario():
                 ok = False
                 break
         if ok == False:
-            logger.loggerSystem.debug(80*"=")
-            logger.loggerSystem.info("Test: {}".format(os.path.basename(self.dirname)))
+            logger.slog.debug(80*"=")
+            logger.slog.info("Test: {}".format(os.path.basename(self.dirname)))
             self.printStatus()
-            logger.loggerSystem.info( "TEST FAILED!")
-            logger.loggerSystem.info(80*"=")
+            logger.slog.info( "TEST FAILED!")
+            logger.slog.info(80*"=")
         else:
-            logger.loggerSystem.debug(80*"=")
-            logger.loggerSystem.info("Test: {}".format(os.path.basename(self.dirname)))
+            logger.slog.debug(80*"=")
+            logger.slog.info("Test: {}".format(os.path.basename(self.dirname)))
             self.printStatus()
-            logger.loggerSystem.info("TEST PASSED!")
-            logger.loggerSystem.info(80*"=")
+            logger.slog.info("TEST PASSED!")
+            logger.slog.info(80*"=")
 
     def __del__(self):
         pass

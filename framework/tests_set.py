@@ -134,7 +134,7 @@ class TestSet():
     def run_bridge(self):
         for s in self.getSetScenarios():
             name = os.path.basename(s.dirname)
-            logger.loggerSystem.debug("================================== Test: {} =================================".format(name))
+            logger.slog.debug("================================== Test: {} =================================".format(name))
             network = self.getScenarioNetwork(s)
             self.setupBridgeNetwork(network)
             s.startTcpdump()
@@ -149,14 +149,18 @@ class TestSet():
     def run_host(self):
         for s in self.getSetScenarios():
             name = os.path.basename(s.dirname)
-            logger.loggerSystem.debug("================================== Test: {} =================================".format(name))
+            logger.slog.debug("================================== Test: {} =================================".format(name))
             s.startTcpdump()
             s.run()
+            #s.run should return exit code
+            #try:
             s.waitEnd()  #wait 10 secs (TODO this should come from scenario)
             s.stopTcpdump()
             s.getLogs()
             s.getStatus()
             s.verifyTest()
+            #except:
+            #logger.slog.error("Something happened during scenario")
 
     def run_host_test(self):
         ok = False
@@ -169,7 +173,7 @@ class TestSet():
                 continue
 
         if ok:
-            logger.loggerSystem.debug("================================== Test: {} =================================".format(name))
+            logger.slog.debug("================================== Test: {} =================================".format(name))
             s.startTcpdump()
             s.run()
             s.waitEnd()  #wait 10 secs (TODO this should come from scenario)
@@ -178,7 +182,7 @@ class TestSet():
             s.getStatus()
             s.verifyTest()
         else:
-            logger.loggerSystem.warning("Set {} does not include test: {}".format(self.name, os.path.basename(self.testsToRun)))
+            logger.slog.warning("Set {} does not include test: {}".format(self.name, os.path.basename(self.testsToRun)))
 
     def run_bridge_test(self):
         ok = False
@@ -191,7 +195,7 @@ class TestSet():
                 continue
         
         if ok:
-            logger.loggerSystem.debug("================================== Test: {} =================================".format(name))
+            logger.slog.debug("================================== Test: {} =================================".format(name))
             network = self.getScenarioNetwork(s)
             self.setupBridgeNetwork(network)
             s.startTcpdump()
@@ -203,7 +207,7 @@ class TestSet():
             s.verifyTest()
             self.destroyNetwork(network)
         else:
-            logger.loggerSystem.warning("Set {} does not include test: {}".format(self.name, os.path.basename(self.testsToRun)))
+            logger.slog.warning("Set {} does not include test: {}".format(self.name, os.path.basename(self.testsToRun)))
 
     def run(self):
         self.setConfig()
@@ -226,9 +230,9 @@ class TestSet():
             self.controller.docker.networks.get(name).remove()
         except docker.errors.APIError as err:
             if type(err) == docker.errors.NotFound:
-                logger.loggerSystem.debug(" - Network: {} can be created!".format(name))
+                logger.slog.debug(" - Network: {} can be created!".format(name))
             else:
-                logger.loggerSystem.error( " - Something else went wrong!")
+                logger.slog.error( " - Something else went wrong!")
 
     def destroyNetwork(self, network):
         name = network.getName()
@@ -236,11 +240,11 @@ class TestSet():
             self.controller.docker.networks.get(name).remove()
         except docker.errors.APIError as err:
             if type(err) == docker.errors.NotFound:
-                logger.loggerSystem.debug( " - Network: {} not found!".format(name))
+                logger.slog.debug( " - Network: {} not found!".format(name))
             else:
-                logger.loggerSystem.error(" - Something else went wrong!")
+                logger.slog.error(" - Something else went wrong!")
         finally:
-            logger.loggerSystem.info(" - Network: {} succesfully deleted!".format(name))
+            logger.slog.info(" - Network: {} succesfully deleted!".format(name))
         
     def setupBridgeNetwork(self, network):
         name = network.getName()
@@ -256,8 +260,8 @@ class TestSet():
             ipam_config = docker.types.IPAMConfig(pool_configs=[ipam_pool])
             self.controller.docker.networks.create(name, driver=driver, ipam=ipam_config, options={"com.docker.network.bridge.name":device})
         except docker.errors.APIError as err:
-            logger.loggerSystem.error(type(err))
+            logger.slog.error(type(err))
         finally:
-            logger.loggerSystem.info(" - Network: {} successfully created!".format(name))
+            logger.slog.info(" - Network: {} successfully created!".format(name))
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

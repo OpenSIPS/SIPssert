@@ -20,7 +20,7 @@ class Controller:
             try:
                 cfg_stream = yaml.safe_load(stream)
             except yaml.YAMLError as exc:
-                logger.slog.error(exc)
+                print(exc)
 
         return cfg_stream
 
@@ -85,14 +85,14 @@ class Entity:
         self.mount = mount
 
     def run_container(self, client):
-        logger.slog.debug(self.parameters)
-        logger.slog.debug(self.path)
+        print(self.parameters)
+        print(self.path)
         if self.type == "opensips":
             container = client.containers.run(self.image, self.parameters, detach=True)
-            logger.slog.debug(self.image + " " + container.status)
+            print(self.image + " " + container.status)
         elif self.type == "uas-sipp":
             container = client.containers.run(self.image, self.parameters, detach=True)
-            logger.slog.debug(self.image + " " + container.status)
+            print(self.image + " " + container.status)
         else:
             pass
         
@@ -100,15 +100,15 @@ class Entity:
             # updateing status
             container.reload()
             if container.status == "created":
-                logger.slog.debug("container just created, wait for changeing status")
+                print("container just created, wait for changeing status")
                 continue
             elif container.status == "exited":
-                logger.slog.debug("container terminated")
+                print("container terminated")
                 break
             # container still running
             else:
-                logger.slog.debug("the container will stop")
-                #container.stop()
+                print("the container will stop")
+                container.stop()
                 container.reload()
 
 controller = Controller()

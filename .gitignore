@@ -1,7 +1,6 @@
 *.pyc
 *.pyo
 *.swp
-*.pcap
 *.log
 __pycach*
 /.pybuild/

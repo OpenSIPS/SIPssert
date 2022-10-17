@@ -53,7 +53,7 @@ class Parser():
                         cfg_stream = yaml.safe_load(stream)
                         self.scenarios.append(cfg_stream)
                     except yaml.YAMLError as exc:
-                        logger.slog.error(exc)
+                        print(exc)
 
         return self.scenarios
 

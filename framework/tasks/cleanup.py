@@ -20,15 +20,9 @@ from framework.tasks.task import Task
 
 class cleanupTask(Task):
 
-				task_default_image = "debian"
-				task_default_daemon = True
-
-				def get_task_args(self):
-
-								args = []
-
-								# handle config
-								args.append(" echo CLEANUP ")
-								return args
+    task_default_image = "hello-world"
+    def get_task_env(self):
+        env_dict = {}
+        return env_dict
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

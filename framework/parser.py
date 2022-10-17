@@ -32,7 +32,7 @@ class Parser():
             try:
                 yaml_stream = yaml.safe_load(stream)
             except yaml.YAMLError as exc:
-                logger.slog.error(exc)
+                logger.loggerSystem.error(exc)
 
         return yaml_stream
 

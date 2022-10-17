@@ -86,7 +86,7 @@ class ColoredFormatter(logging.Formatter):
 		return logging.Formatter.format(self, record)
 
 def initLogger(config):
-	global slog, clog
+	global loggerSystem, loggerTesting
 	if "console" in config.keys():
 		if config["console"] == False:
 			consoleEnabled = False
@@ -95,10 +95,10 @@ def initLogger(config):
 	if "level" in config.keys():
 		handlerLevel = config["level"]
 	logging.setLoggerClass(ColoredLogger)
-	slog = logging.getLogger(__name__ + "System")
-	tlog = logging.getLogger(__name__ + "Testing")
-	slog.setLevel(handlerLevel)
-	tlog.setLevel(handlerLevel)
+	loggerSystem = logging.getLogger(__name__ + "System")
+	loggerTesting = logging.getLogger(__name__ + "Testing")
+	loggerSystem.setLevel(handlerLevel)
+	loggerTesting.setLevel(handlerLevel)
 
 fileHandlerName = "default.log"
 consoleEnabled = True

@@ -76,7 +76,7 @@ class BridgedNetwork(network.Network):
 
     def destroy(self):
         """Destroys the network"""
-        if self.created:
+        if not self.created:
             return
         try:
             self.controller.docker.networks.get(self.name).remove()

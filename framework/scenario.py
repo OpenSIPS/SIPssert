@@ -23,10 +23,8 @@ import importlib
 import time
 from datetime import datetime
 import subprocess
-import docker
 from framework.tasks import task
 from framework import logger
-from framework.network import network
 
 LOGS_DIR = "logs"
 NETWORK_CAP = "net_capture"
@@ -157,7 +155,6 @@ class Scenario():
     def stop_tcpdump(self):
         """Stops started tcpdump"""
         if self.tcpdump:
-            logger.slog.info(" - Tcpdump ended!")
             self.tcpdump.terminate()
         time.sleep(0.5)
 
@@ -198,7 +195,9 @@ class Scenario():
         self.createDir(self.dirname, LOGS_DIR)
         directory = os.path.join(self.dirname, LOGS_DIR)
         capture_file = os.path.join(directory, str(self.timestamp) + "_cap.pcap")
-        self.tcpdump = subprocess.Popen(['tcpdump', '-i', res, '-w', capture_file], stdout=subprocess.PIPE)
+        self.tcpdump = subprocess.Popen(['tcpdump', '-i', res, '-w', capture_file],
+                                         stdout=subprocess.DEVNULL,
+                                         stderr=subprocess.DEVNULL)
         # wait for proc to start
         time.sleep(0.5)
 
@@ -241,6 +240,5 @@ class Scenario():
 
     def __del__(self):
         pass
-            
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

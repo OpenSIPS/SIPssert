@@ -16,98 +16,54 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
+"""Logic that runs a set of tests"""
 
-import docker
+import os
 from framework import parser
 from framework import scenario
-from datetime import datetime
-from framework.networks import bridged_network
-from framework import logger
-import os
+from framework.network import network
 
 SCENARIO = "scenario.yml"
 CONFIG = "config.yml"
 
 class TestSet():
+
+    """Main class that runs a set of tests"""
+
     def __init__(self, set_path, controller, test):
-        self.testsToRun = test
+        self.tests_to_run = test
         self.name = os.path.basename(set_path)
         self.set_path = set_path
         self.controller = controller
-        self.config = None
-        self.scenarios = None
-        self.networks = []
-        self.set_type = None
+        self.parse_config()
+        self.setup_networks()
+        self.set_scenarios()
 
-    def getSetName(self):
-        return self.name
-
-    def getSetPath(self):
-        return self.set_path
-    
-    def getSetScenarios(self):
-        return self.scenarios
-
-    def getSetNetworks(self):
-        return self.networks
-
-    def hasConfig(self):
-        if self.config:
-            return True
-        else:
-            return False
-
-    def getSetConfig(self):
-        return self.config
-
-    def hasNetworksConfig(self):
-        if self.hasConfig():
-            if "networks" in self.config.keys():
-                return True
-        
-        return False
-
-    def getNetworkConfig(self):
-        return self.config["networks"]        
-
-    def setNetworks(self):
-        networks = []
-        if self.hasNetworksConfig():
-            networks_stream = self.getNetworkConfig()
-            for n in networks_stream:
-                net = bridged_network.BridgedNetwork(n)
-                networks.append(net)
-
-        self.networks = networks
-
-    def setConfig(self):
-        if CONFIG in os.listdir(self.set_path):
-            p = parser.Parser()
-            config_stream = p.parse_yaml(os.path.join(self.set_path, CONFIG))
-            self.config = config_stream
-        else:
+    def parse_config(self):
+        """Parses tests set configuration file"""
+        if not CONFIG in os.listdir(self.set_path):
             self.config = None
+            return
+        config_parser = parser.Parser()
+        self.config = config_parser.parse_yaml(os.path.join(self.set_path, CONFIG))
 
-        if self.hasNetworksConfig():
-            self.set_type = "bridge"
-        else:
-            self.set_type = "host"
+    def get_network(self, name):
+        """returns a created network based on its name"""
+        if not name:
+            return self.networks[0]
+        network_list = [ net for net in self.networks if name == net.name ]
+        if len(network_list) != 1:
+            return None
+        return network_list[0]
 
-    def findNetwork(self, name):
-        for n in self.getSetNetworks():
-            if n.getName() == name:
-                return n
-        
-        return None
+    def setup_networks(self):
+        """Setup of all networks involved in the test set"""
+        nets = self.config["networks"] if self.config and "networks" in self.config else None
+        self.networks = network.get_networks(self.controller, nets)
 
-    def getScenarioNetwork(self, scenario):
-        # TODO get network from a scenario
-        # return scenario.getNetwork()
-        network_name = scenario.getNetwork()
-        network = self.findNetwork(network_name)
-        return network
-
-    def getScenariosPaths(self):
+    def set_scenarios(self):
+        """Constructs all the scenarios"""
+        scenarios = []
         scenarios_paths = []
         for test in sorted(os.listdir(self.set_path)):
             test_dir = os.path.join(self.set_path, test)
@@ -115,153 +71,31 @@ class TestSet():
                 if SCENARIO in os.listdir(test_dir):
                     scenario_path = os.path.join(test_dir, SCENARIO)
                     scenarios_paths.append(scenario_path)
-        
-        return scenarios_paths
-
-    def setScenarios(self):
-        scenarios = []
-        scenarios_paths = self.getScenariosPaths()
         for scenario_path in scenarios_paths:
-            p = parser.Parser()
-            scenario_stream = p.parse_yaml(scenario_path)
+            scenario_parser = parser.Parser()
+            scenario_stream = scenario_parser.parse_yaml(scenario_path)
             scenarios.append(scenario.Scenario(scenario_path, scenario_stream, self.controller))
 
         self.scenarios = scenarios
 
-    def getSetType(self):
-        return self.set_type
-
-    def run_bridge(self):
-        for s in self.getSetScenarios():
-            name = os.path.basename(s.dirname)
-            logger.slog.debug("================================== Test: {} =================================".format(name))
-            network = self.getScenarioNetwork(s)
-            self.setupBridgeNetwork(network)
-            s.startTcpdump()
-            s.run()
-            s.waitEnd()  #wait 10 secs (TODO this should come from scenario)
-            s.stopTcpdump()
-            s.getLogs()
-            s.getStatus()
-            s.verifyTest()
-            self.destroyNetwork(network)
-
-    def run_host(self):
-        for s in self.getSetScenarios():
-            name = os.path.basename(s.dirname)
-            logger.slog.debug("================================== Test: {} =================================".format(name))
-            s.startTcpdump()
-            s.run()
-            #s.run should return exit code
-            #try:
-            s.waitEnd()  #wait 10 secs (TODO this should come from scenario)
-            s.stopTcpdump()
-            s.getLogs()
-            s.getStatus()
-            s.verifyTest()
-            #except:
-            #logger.slog.error("Something happened during scenario")
-
-    def run_host_test(self):
-        ok = False
-        for s in self.getSetScenarios():
-            name = os.path.basename(s.dirname)
-            if name == os.path.basename(self.testsToRun):
-                ok = True
-                break
-            else:
-                continue
-
-        if ok:
-            logger.slog.debug("================================== Test: {} =================================".format(name))
-            s.startTcpdump()
-            s.run()
-            s.waitEnd()  #wait 10 secs (TODO this should come from scenario)
-            s.stopTcpdump()
-            s.getLogs()
-            s.getStatus()
-            s.verifyTest()
-        else:
-            logger.slog.warning("Set {} does not include test: {}".format(self.name, os.path.basename(self.testsToRun)))
-
-    def run_bridge_test(self):
-        ok = False
-        for s in self.getSetScenarios():
-            name = os.path.basename(s.dirname)
-            if name == os.path.basename(self.testsToRun):
-                ok = True
-                break
-            else:
-                continue
-        
-        if ok:
-            logger.slog.debug("================================== Test: {} =================================".format(name))
-            network = self.getScenarioNetwork(s)
-            self.setupBridgeNetwork(network)
-            s.startTcpdump()
-            s.run()
-            s.waitEnd()  #wait 10 secs (TODO this should come from scenario)
-            s.stopTcpdump()
-            s.getLogs()
-            s.getStatus()
-            s.verifyTest()
-            self.destroyNetwork(network)
-        else:
-            logger.slog.warning("Set {} does not include test: {}".format(self.name, os.path.basename(self.testsToRun)))
-
     def run(self):
-        self.setConfig()
-        self.setNetworks()
-        self.setScenarios()
-        if os.path.basename(self.testsToRun) == "All":
-            if self.getSetType() == "bridge":
-                self.run_bridge()
-            elif self.getSetType() == "host":
-                self.run_host()
+        """Runs one or all tests in a set"""
+        # TODO: handle this scenario resolution way earlier
+        if os.path.basename(self.tests_to_run) != "All":
+            # we are only interested in a particular scenario
+            scenarios_to_run = [ s for s in self.scenarios if
+                                os.path.basename(s.dirname) ==
+                                os.path.basename(self.tests_to_run) ]
+            if len(scenarios_to_run) != 1:
+                raise Exception("too many/few scenarios")
         else:
-            if self.getSetType() == "bridge":
-                self.run_bridge_test()
-            elif self.getSetType() == "host":
-                self.run_host_test()
+            scenarios_to_run = self.scenarios
+        # TODO: run init
+        for scen in scenarios_to_run:
+            scen.run()
 
-    def checkNetwork(self, network):
-        name = network.getName()
-        try:
-            self.controller.docker.networks.get(name).remove()
-        except docker.errors.APIError as err:
-            if type(err) == docker.errors.NotFound:
-                logger.slog.debug(" - Network: {} can be created!".format(name))
-            else:
-                logger.slog.error( " - Something else went wrong!")
-
-    def destroyNetwork(self, network):
-        name = network.getName()
-        try:
-            self.controller.docker.networks.get(name).remove()
-        except docker.errors.APIError as err:
-            if type(err) == docker.errors.NotFound:
-                logger.slog.debug( " - Network: {} not found!".format(name))
-            else:
-                logger.slog.error(" - Something else went wrong!")
-        finally:
-            logger.slog.info(" - Network: {} succesfully deleted!".format(name))
-        
-    def setupBridgeNetwork(self, network):
-        name = network.getName()
-        subnet = network.getSubnet()
-        gateway = network.getGateway()
-        device = network.getDevice()
-        driver = "bridge"
-
-        # make sure we cleanup if there was any remaining network
-        self.checkNetwork(network)
-        try:
-            ipam_pool = docker.types.IPAMPool(subnet=subnet, gateway=gateway)
-            ipam_config = docker.types.IPAMConfig(pool_configs=[ipam_pool])
-            self.controller.docker.networks.create(name, driver=driver, ipam=ipam_config, options={"com.docker.network.bridge.name":device})
-        except docker.errors.APIError as err:
-            logger.slog.error(type(err))
-        finally:
-            logger.slog.info(" - Network: {} successfully created!".format(name))
+        # cleanup networks
+        for net in self.networks:
+            net.destroy()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

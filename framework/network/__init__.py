@@ -16,35 +16,9 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from framework.networks.network import Network
+"""Package that exposes all available networks"""
 
-class BridgedNetwork(Network):
-    # TODO bridge network configuration
-    def __init__(self, network_config):
-        self.type = "bridge"
-        self.name = network_config["name"]
-        self.subnet = network_config["subnet"]
-        self.gateway = network_config["gateway"]
-
-        if "device" in network_config.keys():
-            self.device = network_config["device"]
-        else:
-            self.device = network_config["name"]
-
-    def isHost(self):
-        return False
-
-    def getName(self):
-        return self.name
-
-    def getSubnet(self):
-        return self.subnet
-
-    def getGateway(self):
-        return self.gateway
-
-    def getDevice(self):
-        return self.device
-
+from .host import *
+from .bridged import *
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

@@ -16,17 +16,29 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from framework.networks.network import Network
+"""Implementation of the Host Network adapter"""
 
-class HostNetwork(Network):
-    # TODO bridge network configuration
+from framework.network import network
+
+class HostNetwork(network.Network):
+
+    """Host Network adapter"""
+
+    def __init__(self, config):
+        self.net_type = "host"
+        self.name = config["name"]
+
+    def setup(self):
+        """Sets up the network"""
+
+    def destroy(self):
+        """Destroys the network"""
+
+class DefaultNetwork(HostNetwork):
+
+    """Default Host Network"""
+
     def __init__(self):
-        self.type = "host"
+        super().__init__({"name":"host"})
 
-    def isHost(self):
-        return True
-
-    def getName(self):
-        return "host"
-        
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

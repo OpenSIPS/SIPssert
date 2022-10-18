@@ -16,27 +16,32 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
+"""Scenario running functions"""
+
 import os
-import docker
 import importlib
 import time
-from framework import logger
-from framework.tasks import task
-from framework import logger
 from datetime import datetime
 import subprocess
+import docker
+from framework.tasks import task
+from framework import logger
+from framework.network import network
 
 LOGS_DIR = "logs"
 NETWORK_CAP = "net_capture"
 
 class Scenario():
 
+    """Class that implements running a scenario"""
+
     def __init__(self, file, config, controller):
-        self.p = None
+        self.tcpdump = None
         self.controller = controller
         self.config = config
         self.file = file
         self.dirname = os.path.dirname(file)
+        self.name = os.path.basename(self.dirname)
         self.tasks = []
         self.getScenarioTimestamp()
         self.network_device = None
@@ -44,16 +49,16 @@ class Scenario():
         if "network" in config.keys():
             self.network_device = config["network"]
         else:
-            self.network_device = "default_device"
+            self.network_device = None
 
         if "timeout" in config.keys():
             self.timeout = config["timeout"]
         else:
             self.timeout = 0
 
-        for e in config["tasks"]:
-            if "type" in e.keys():
-                task_type = e["type"].lower()
+        for key in config["tasks"]:
+            if "type" in key.keys():
+                task_type = key["type"].lower()
             else:
                 # create a generic task
                 task_type = ""
@@ -70,60 +75,66 @@ class Scenario():
                         c.lower() == normalized_class_name and
                         c.endswith("Task") ]
                 if len(classes) == 0:
-                    logger.slog.debug("unknown task derived from {}".
-                            format(task_type))
+                    logger.slog.debug("unknown task derived from %s", task_type)
                 elif len(classes) != 1:
-                    logger.slog.debug("too many classed derived from {}: {}".
-                            format(task_type, str(classes)))
+                    logger.slog.debug("too many classed derived from %s: %s",
+                                      task_type, str(classes))
                 else:
-                    className = getattr(task_mod, classes[0])
-                    new_task = className(os.path.dirname(self.file),
-                            e, self.controller, self)
+                    class_name = getattr(task_mod, classes[0])
+                    new_task = class_name(os.path.dirname(self.file),
+                            key, self.controller, self)
             except AttributeError:
-                logger.slog.debug(task_type + " not found")
-                pass
+                logger.slog.debug("%s not found", task_type)
 
             if not new_task:
                 logger.slog.debug("creating a generic task")
                 new_task = task.Task(os.path.dirname(self.file),
-                        e, self.controller, self)
-            # TODO: sort out the tasks
+                        key, self.controller, self)
             self.tasks.append(new_task)
-
-    def getTasks(self):
-        return self.tasks
 
     def getNetwork(self):
         return self.network_device
 
     def init(self):
-        for e in self.getTasks():
-            if str(e) == "initialTask":
-                e.run()
+        """Runs the init tasks for a scenario"""
+        for tsk in self.tasks:
+            if str(tsk) == "initialTask":
+                tsk.run()
 
     def cleanup(self):
-        for e in self.getTasks():
-            if str(e) == "cleanupTask":
-                e.run()
+        """Runs the cleanup tasks for a scenario"""
+        for tsk in self.tasks:
+            if str(tsk) == "cleanupTask":
+                tsk.run()
 
     def run(self):
+        """Runs a scenario with all its prerequisits"""
+        logger.slog.debug("%s Test: %s %s", "="*34, self.name, "="*33)
+        self.start_tcpdump()
         try:
             self.init()
-            for e in self.getTasks():
-                if str(e) != "initialTask" and str(e) != "cleanupTask":
-                    e.run()
-        except:
-            logger.slog.error("Error occured during task run")
+            for tsk in self.tasks:
+                if str(tsk) != "initialTask" and str(tsk) != "cleanupTask":
+                    tsk.run()
+        except Exception:
+            logger.slog.exception("Error occured during task run")
         try:
-                self.cleanup()
-        except:
-                logger.slog.error("Error occured during cleanup task")
+            self.cleanup()
+        except Exception:
+            logger.slog.exception("Error occured during cleanup task")
+        self.wait_end()
+        self.stop_tcpdump()
+        self.getLogs()
+        self.getStatus()
+        self.verifyTest()
 
     def update(self):
-        for e in self.getTasks():
-            e.update()
+        """updates the status of a scenario"""
+        for tsk in self.tasks:
+            tsk.update()
 
-    def waitEnd(self):
+    def wait_end(self):
+        """waits for all the tasks within a scenario to end"""
         wait = True
         counter = 0
         if self.timeout != 0:
@@ -131,36 +142,35 @@ class Scenario():
         while wait or (self.timeout!=0 and counter==0):
             wait = False
             # see if we still have "running" "non-daemons"
-            for e in reversed(self.getTasks()):
-                if e.daemon == False and e.container.status != "exited":
+            for tsk in reversed(self.tasks):
+                if tsk.daemon == False and tsk.container.status != "exited":
                     wait = True
             if wait:
                 time.sleep(0.1)  #sleep 100 ms before rechecking
                 self.update()
                 counter -= 1
         if wait:
-            logger.slog.warning(" - WARNING: not all tasks self-terminated, end-forcing due timeout");
+            logger.slog.warning(" - WARNING: not all tasks self-terminated, end-forcing due timeout")
         # stop all remaining containers
         self.stopAll()
 
-    def stopTcpdump(self):
-        if self.p:
-            logger.slog.info(str(datetime.utcnow()) +" - Tcpdump ended!")
-            self.p.terminate()
+    def stop_tcpdump(self):
+        """Stops started tcpdump"""
+        if self.tcpdump:
+            logger.slog.info(" - Tcpdump ended!")
+            self.tcpdump.terminate()
         time.sleep(0.5)
 
     def stopAll(self):
-        for e in self.getTasks():
-            if e.container.status != "exited":
-                e.stop()
-                logger.slog.debug(str(datetime.utcnow()) +" "+ e.name+ " - ExitCode: "+ str(e.get_exit_code()))
-            else:
-                logger.slog.debug(str(datetime.utcnow()) +" "+ e.name+ " - ExitCode: "+ str(e.get_exit_code()))
+        """Stops all the running tasks"""
+        for tsk in self.tasks:
+            if tsk.container.status != "exited":
+                tsk.stop()
+            logger.slog.debug("%s - ExitCode: %s", tsk.name, str(tsk.get_exit_code()))
 
-
-    def createDir(self, dir, searching_dir):
-        if searching_dir not in os.listdir(dir):
-            path = os.path.join(dir, searching_dir)
+    def createDir(self, directory, searching_dir):
+        if searching_dir not in os.listdir(directory):
+            path = os.path.join(directory, searching_dir)
             os.mkdir(path)
             logger.slog.debug(str(datetime.utcnow()) + " - {} dir created successfully!".format(searching_dir))
         else:
@@ -178,16 +188,17 @@ class Scenario():
             logger.slog.debug(str(datetime.utcnow()) + " - Logs for {} fetched successfully!".format(task.container.name))
 
 
-    def startTcpdump(self):
-        if self.network_device == "host":
+    def start_tcpdump(self):
+        """Starts a tcpdump for a scenario"""
+        if not self.network_device or self.network_device == "host":
             res = "any"
         else:
             res = self.network_device
-            
+
         self.createDir(self.dirname, LOGS_DIR)
-        dir = os.path.join(self.dirname, LOGS_DIR)
-        capture_file = os.path.join(dir, str(self.timestamp) + "_cap.pcap")
-        self.p = subprocess.Popen(['tcpdump', '-i', res, '-w', capture_file], stdout=subprocess.PIPE)
+        directory = os.path.join(self.dirname, LOGS_DIR)
+        capture_file = os.path.join(directory, str(self.timestamp) + "_cap.pcap")
+        self.tcpdump = subprocess.Popen(['tcpdump', '-i', res, '-w', capture_file], stdout=subprocess.PIPE)
         # wait for proc to start
         time.sleep(0.5)
 

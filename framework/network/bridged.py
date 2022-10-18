@@ -43,6 +43,7 @@ class BridgedNetwork(network.Network):
             self.name = network_config["name"]
             self.subnet = network_config["subnet"]
             self.gateway = network_config["gateway"]
+            self.created = False
         except KeyError as exc:
             raise BridgedNetworkBadConfig("invalid setting") from exc
 
@@ -66,6 +67,7 @@ class BridgedNetwork(network.Network):
                                                    driver="bridge",
                                                    ipam=ipam_config,
                                                    options=options)
+            self.created = True
         except docker.errors.APIError as err:
             raise BridgedNetworkOperation(f"cannot create bridged adapter {self.name}") from err
         finally:
@@ -74,6 +76,8 @@ class BridgedNetwork(network.Network):
 
     def destroy(self):
         """Destroys the network"""
+        if self.created:
+            return
         try:
             self.controller.docker.networks.get(self.name).remove()
         except docker.errors.NotFound:
@@ -82,5 +86,10 @@ class BridgedNetwork(network.Network):
             logger.slog.exception("could not remove adapter %s!", self.name)
         finally:
             logger.slog.debug("bridged adapter %s deleted!", self.name)
+        self.created = False
+
+    def __del__(self):
+        """Deletes the network in case destroy is missed"""
+        self.destroy()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

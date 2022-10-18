@@ -20,7 +20,7 @@ Defaults env_keep += "PYTHONPATH"
 Available parameters:
 ```
 Config: --config /framework/global_config.yml; Default value: default_config.yml
-Test: --test tests_sets/local_tests/01.calling/; Default value: All (will run all the tests from the sets specified)
+Test: --test 01.calling; Default value: none (will run all the tests from the sets specified)
 ```
 
 Mandatory parameters for running: at least one set of tests
@@ -33,7 +33,7 @@ If testing many sets: list of sets
 sudo -E env PYTHONPATH=. bin/testing-framework tests_sets/local_tests/ tests_sets/opensips.org_tests/ tests_sets/sample_tests/ --config global_config.yml
 ```
 
-If testing only one test from a set: tests_sets/set/ --test tests_sets/set/first_test/ 
+If testing only one test from a set: tests_sets/set/ --test first_test
 ```
-sudo -E env PYTHONPATH=. bin/testing-framework tests_sets/local_tests/ --test /tests_sets/local_tests/03.register_cli/
+sudo -E env PYTHONPATH=. bin/testing-framework tests_sets/local_tests/ --test 03.register_cli
 ```

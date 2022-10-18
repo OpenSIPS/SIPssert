@@ -28,19 +28,19 @@ arg_parser.add_argument('tests',
                         nargs='+')
 
 arg_parser.add_argument('--test',
-                        help='Absolute path of the test. It works only with one set. Default value = All',
-                        type=os.path.abspath,
-                        default='All')
+                        help='Run only specific tests. ' \
+                                'Can be specified multiple times. ' \
+                                'Default value = run all tests',
+                        action='append',
+                        default=[])
 
 arg_parser.add_argument('--config',
                         help='Absolute path of the global config',
                         default="default_config.yml",
                         type=os.path.abspath)
 
-# TODO: add a config path
-
-
 def main():
+    """Framework entrypoint"""
 
     # Parse all arguments
     args = arg_parser.parse_args()

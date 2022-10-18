@@ -30,14 +30,14 @@ class TestSet():
 
     """Main class that runs a set of tests"""
 
-    def __init__(self, set_path, controller, test):
-        self.tests_to_run = test
+    def __init__(self, set_path, controller, tests):
+        self.tests_to_run = tests
         self.name = os.path.basename(set_path)
         self.set_path = set_path
         self.controller = controller
         self.parse_config()
         self.setup_networks()
-        self.set_scenarios()
+        self.build_scenarios()
 
     def parse_config(self):
         """Parses tests set configuration file"""
@@ -61,11 +61,13 @@ class TestSet():
         nets = self.config["networks"] if self.config and "networks" in self.config else None
         self.networks = network.get_networks(self.controller, nets)
 
-    def set_scenarios(self):
+    def build_scenarios(self):
         """Constructs all the scenarios"""
         scenarios = []
         scenarios_paths = []
         for test in sorted(os.listdir(self.set_path)):
+            if len(self.tests_to_run) != 0 and test not in self.tests_to_run:
+                continue
             test_dir = os.path.join(self.set_path, test)
             if os.path.isdir(test_dir):
                 if SCENARIO in os.listdir(test_dir):
@@ -80,18 +82,7 @@ class TestSet():
 
     def run(self):
         """Runs one or all tests in a set"""
-        # TODO: handle this scenario resolution way earlier
-        if os.path.basename(self.tests_to_run) != "All":
-            # we are only interested in a particular scenario
-            scenarios_to_run = [ s for s in self.scenarios if
-                                os.path.basename(s.dirname) ==
-                                os.path.basename(self.tests_to_run) ]
-            if len(scenarios_to_run) != 1:
-                raise Exception("too many/few scenarios")
-        else:
-            scenarios_to_run = self.scenarios
-        # TODO: run init
-        for scen in scenarios_to_run:
+        for scen in self.scenarios:
             scen.run()
 
         # cleanup networks

@@ -16,19 +16,23 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
+"""Implements the controller's logic"""
+
+import os
 import docker
-from datetime import datetime
 from framework import tests_set
 from framework import parser
 from framework import logger
-import os
+
 class Controller:
 
-    def __init__(self, sets_dirs, test, global_config):
+    """Controller class that implements the logic"""
+
+    def __init__(self, sets_dirs, tests, global_config):
         self.sets_dirs = sets_dirs
-        self.test = test
-        p = parser.Parser()
-        self.global_config = p.parse_yaml(global_config)
+        self.tests = tests
+        config_parser = parser.Parser()
+        self.global_config = config_parser.parse_yaml(global_config)
         logger.initLogger(self.global_config["logging"]["controller"])
         self.docker = docker.from_env()
 
@@ -36,11 +40,12 @@ class Controller:
         pass
 
     def run(self):
-        logger.slog.info("=========================== Runing Testing Framework ===========================")
-        for set in self.sets_dirs:
-            test_set = tests_set.TestSet(set, self, self.test)
-            logger.slog.info(23*'='+" Running: {} set! ".format(os.path.basename(set))+23*'=')
-            test_set.run()
+        """Runs all test sets"""
+        logger.slog.info("%s Runing Testing Framework %s", 27*"=", 27*"=")
+        for test_set in self.sets_dirs:
+            test_set_obj = tests_set.TestSet(test_set, self, self.tests)
+            logger.slog.info("%s Running: %s set! %s",
+                             23*"=", os.path.basename(test_set), 23*"=")
+            test_set_obj.run()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
-

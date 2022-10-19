@@ -80,13 +80,13 @@ class BridgedNetwork(network.Network):
             return
         try:
             self.controller.docker.networks.get(self.name).remove()
+            self.created = False
+            logger.slog.debug("bridged adapter %s destroyed!", self.name)
         except docker.errors.NotFound:
-            logger.slog.debug("bridged adapter %s found!", self.name)
+            logger.slog.debug("bridged adapter %s not found!", self.name)
+            self.created = False
         except docker.errors.APIError:
             logger.slog.exception("could not remove adapter %s!", self.name)
-        finally:
-            logger.slog.debug("bridged adapter %s deleted!", self.name)
-        self.created = False
 
     def __del__(self):
         """Deletes the network in case destroy is missed"""

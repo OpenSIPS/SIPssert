@@ -38,6 +38,7 @@ class Scenario():
         self.controller = controller
         self.config = config
         self.file = file
+        self.tlogger = controller.tlogger
         self.dirname = os.path.dirname(file)
         self.name = os.path.basename(self.dirname)
         self.tasks = []
@@ -107,7 +108,7 @@ class Scenario():
 
     def run(self):
         """Runs a scenario with all its prerequisits"""
-        logger.slog.debug("%s Test: %s %s", "="*34, self.name, "="*33)
+        self.tlogger.test_start(self.name)
         self.start_tcpdump()
         try:
             self.init()
@@ -231,12 +232,14 @@ class Scenario():
             self.printStatus()
             logger.slog.info( "TEST FAILED!")
             logger.slog.info(80*"=")
+            self.tlogger.failed()
         else:
             logger.slog.debug(80*"=")
             logger.slog.info("Test: {}".format(os.path.basename(self.dirname)))
             self.printStatus()
             logger.slog.info("TEST PASSED!")
             logger.slog.info(80*"=")
+            self.tlogger.success()
 
     def __del__(self):
         pass

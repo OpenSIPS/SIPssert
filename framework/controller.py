@@ -23,6 +23,7 @@ import docker
 from framework import tests_set
 from framework import parser
 from framework import logger
+from framework import testing
 
 class Controller:
 
@@ -35,17 +36,14 @@ class Controller:
         self.global_config = config_parser.parse_yaml(global_config)
         logger.initLogger(self.global_config["logging"]["controller"])
         self.docker = docker.from_env()
-
-    def __del__(self):
-        pass
+        self.tlogger = testing.Testing("Running Testing framework")
 
     def run(self):
         """Runs all test sets"""
-        logger.slog.info("%s Runing Testing Framework %s", 27*"=", 27*"=")
         for test_set in self.sets_dirs:
             test_set_obj = tests_set.TestSet(test_set, self, self.tests)
-            logger.slog.info("%s Running: %s set! %s",
-                             23*"=", os.path.basename(test_set), 23*"=")
+            self.tlogger.test_set(f"Running test set: {test_set_obj.name}")
             test_set_obj.run()
+        self.tlogger.end()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

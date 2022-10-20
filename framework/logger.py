@@ -101,7 +101,7 @@ def initLogger(config):
 	tlog.setLevel(handlerLevel)
 
 fileHandlerName = "default.log"
-consoleEnabled = True
+consoleEnabled = False
 handlerLevel = "DEBUG"
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

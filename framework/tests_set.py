@@ -31,13 +31,20 @@ class TestSet():
     """Main class that runs a set of tests"""
 
     def __init__(self, set_path, controller, tests):
+        self.controller = controller
         self.tests_to_run = tests
         self.name = os.path.basename(set_path)
         self.set_path = set_path
-        self.controller = controller
+        self.set_logs_dir = controller.run_logs_dir + "/" + self.name
+        self.create_set_logs_dir()
         self.parse_config()
         self.setup_networks()
         self.build_scenarios()
+
+    def create_set_logs_dir(self):
+        """Creates current test set logs directory"""
+        if not os.path.isdir(self.set_logs_dir):
+            os.mkdir(self.set_logs_dir)
 
     def parse_config(self):
         """Parses tests set configuration file"""
@@ -76,7 +83,7 @@ class TestSet():
         for scenario_path in scenarios_paths:
             scenario_parser = parser.Parser()
             scenario_stream = scenario_parser.parse_yaml(scenario_path)
-            scenarios.append(scenario.Scenario(scenario_path, scenario_stream, self.controller))
+            scenarios.append(scenario.Scenario(scenario_path, scenario_stream, self.controller, self.set_logs_dir))
 
         self.scenarios = scenarios
 

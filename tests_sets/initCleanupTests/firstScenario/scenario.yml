@@ -1,17 +1,20 @@
 ---
 network: host
 timeout: 10
-tasks:
+
+init_tasks:
   - type: initTask
     name: initialTask
     image: debian
     extra_params: echo initTask
+tasks:
   - type: uac-sipp              # mandatory, correlates with the Class'es
     name: host_SIP_UAC               # mandatory - just a name (as container name)
     image: ctaloi/sipp          # mandatory - the path/name to the docker image
     config_file: sipp-register.xml
     extra_params: -s framework -ap testingframework -m 1 opensips.org
     daemon: False
+cleanup_tasks:
   - type: cleanupTask
     name: cleanupTask
     image: debian

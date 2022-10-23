@@ -43,6 +43,8 @@ class Scenario():
         self.name = os.path.basename(self.dirname)
         self.scen_logs_dir = set_logs_dir + "/" + self.name
         self.tasks = []
+        self.init_tasks = []
+        self.cleanup_tasks = []
         self.getScenarioTimestamp()
         self.network_device = None
         self.create_scen_logs_dir()
@@ -56,42 +58,49 @@ class Scenario():
             self.timeout = config["timeout"]
         else:
             self.timeout = 0
+        
+        self.create_task_set("tasks", self.tasks)
+        self.create_task_set("init_tasks", self.init_tasks)
+        self.create_task_set("cleanup_tasks", self.cleanup_tasks)
+        
 
-        for key in config["tasks"]:
-            if "type" in key.keys():
-                task_type = key["type"].lower()
-            else:
-                # create a generic task
-                task_type = ""
-
-            new_task = None
-            try:
-                task_mod = getattr(
-                        importlib.import_module("framework.tasks"),
-                        task_type)
-                normalized_task_type = "".join(
-                        [ x for x in task_type if x.isalnum() ])
-                normalized_class_name = normalized_task_type + "task"
-                classes = [ c for c in dir(task_mod) if
-                        c.lower() == normalized_class_name and
-                        c.endswith("Task") ]
-                if len(classes) == 0:
-                    logger.slog.debug("unknown task derived from %s", task_type)
-                elif len(classes) != 1:
-                    logger.slog.debug("too many classed derived from %s: %s",
-                                      task_type, str(classes))
+    def create_task_set(self, task_set_key, task_set):
+        if task_set_key in self.config:
+            for key in self.config[task_set_key]:
+                if "type" in key.keys():
+                    task_type = key["type"].lower()
                 else:
-                    class_name = getattr(task_mod, classes[0])
-                    new_task = class_name(os.path.dirname(self.file),
-                            key, self.controller, self)
-            except AttributeError:
-                logger.slog.debug("%s not found", task_type)
+                    # create a generic task
+                    task_type = ""
 
-            if not new_task:
-                logger.slog.debug("creating a generic task")
-                new_task = task.Task(os.path.dirname(self.file),
-                        key, self.controller, self)
-            self.tasks.append(new_task)
+                new_task = None
+                try:
+                    task_mod = getattr(
+                            importlib.import_module("framework.tasks"),
+                            task_type)
+                    normalized_task_type = "".join(
+                            [ x for x in task_type if x.isalnum() ])
+                    normalized_class_name = normalized_task_type + "task"
+                    classes = [ c for c in dir(task_mod) if
+                            c.lower() == normalized_class_name and
+                            c.endswith("Task") ]
+                    if len(classes) == 0:
+                        logger.slog.debug("unknown task derived from %s", task_type)
+                    elif len(classes) != 1:
+                        logger.slog.debug("too many classed derived from %s: %s",
+                                        task_type, str(classes))
+                    else:
+                        class_name = getattr(task_mod, classes[0])
+                        new_task = class_name(os.path.dirname(self.file),
+                                key, self.controller, self)
+                except AttributeError:
+                    logger.slog.debug("%s not found", task_type)
+
+                if not new_task:
+                    logger.slog.debug("creating a generic task")
+                    new_task = task.Task(os.path.dirname(self.file),
+                            key, self.controller, self)
+                task_set.append(new_task)
 
     def create_scen_logs_dir(self):
         """Creates current scenario logs directory"""
@@ -103,15 +112,13 @@ class Scenario():
 
     def init(self):
         """Runs the init tasks for a scenario"""
-        for tsk in self.tasks:
-            if str(tsk) == "initialTask":
-                tsk.run()
+        for task in self.init_tasks:
+            task.run()
 
     def cleanup(self):
         """Runs the cleanup tasks for a scenario"""
-        for tsk in self.tasks:
-            if str(tsk) == "cleanupTask":
-                tsk.run()
+        for task in self.cleanup_tasks:
+            task.run()
 
     def run(self):
         """Runs a scenario with all its prerequisits"""
@@ -119,9 +126,8 @@ class Scenario():
         self.start_tcpdump()
         try:
             self.init()
-            for tsk in self.tasks:
-                if str(tsk) != "initialTask" and str(tsk) != "cleanupTask":
-                    tsk.run()
+            for task in self.tasks:
+                task.run()
         except Exception:
             logger.slog.exception("Error occured during task run")
         try:
@@ -175,7 +181,21 @@ class Scenario():
 
     def getLogs(self):
         logs_path = self.scen_logs_dir
+        for task in self.init_tasks:
+            name = str(self.timestamp) + "_" + task.container.name
+            log_file = os.path.join(logs_path, name)
+            f = open(log_file, 'w')
+            f.write(task.container.logs().decode('UTF-8'))
+            f.close()
+            logger.slog.debug(str(datetime.utcnow()) + " - Logs for {} fetched successfully!".format(task.container.name))
         for task in self.tasks:
+            name = str(self.timestamp) + "_" + task.container.name
+            log_file = os.path.join(logs_path, name)
+            f = open(log_file, 'w')
+            f.write(task.container.logs().decode('UTF-8'))
+            f.close()
+            logger.slog.debug(str(datetime.utcnow()) + " - Logs for {} fetched successfully!".format(task.container.name))
+        for task in self.cleanup_tasks:
             name = str(self.timestamp) + "_" + task.container.name
             log_file = os.path.join(logs_path, name)
             f = open(log_file, 'w')

@@ -39,6 +39,11 @@ arg_parser.add_argument('--config',
                         default="default_config.yml",
                         type=os.path.abspath)
 
+arg_parser.add_argument('--logsDir',
+                        help='Absolute path of the logs dir',
+                        default="logs/",
+                        type=os.path.abspath)
+
 def main():
     """Framework entrypoint"""
 
@@ -46,7 +51,7 @@ def main():
     args = arg_parser.parse_args()
 
     # Open the Controller
-    ctrl = controller.Controller(args.tests, args.test, args.config)
+    ctrl = controller.Controller(args.tests, args.test, args.config, args.logsDir)
     ctrl.run()
 
 if __name__ == '__main__':

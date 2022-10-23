@@ -33,7 +33,7 @@ class Scenario():
 
     """Class that implements running a scenario"""
 
-    def __init__(self, file, config, controller):
+    def __init__(self, file, config, controller, set_logs_dir):
         self.tcpdump = None
         self.controller = controller
         self.config = config
@@ -41,9 +41,11 @@ class Scenario():
         self.tlogger = controller.tlogger
         self.dirname = os.path.dirname(file)
         self.name = os.path.basename(self.dirname)
+        self.scen_logs_dir = set_logs_dir + "/" + self.name
         self.tasks = []
         self.getScenarioTimestamp()
         self.network_device = None
+        self.create_scen_logs_dir()
 
         if "network" in config.keys():
             self.network_device = config["network"]
@@ -90,6 +92,11 @@ class Scenario():
                 new_task = task.Task(os.path.dirname(self.file),
                         key, self.controller, self)
             self.tasks.append(new_task)
+
+    def create_scen_logs_dir(self):
+        """Creates current scenario logs directory"""
+        if not os.path.isdir(self.scen_logs_dir):
+            os.mkdir(self.scen_logs_dir)
 
     def getNetwork(self):
         return self.network_device
@@ -166,17 +173,8 @@ class Scenario():
                 tsk.stop()
             logger.slog.debug("%s - ExitCode: %s", tsk.name, str(tsk.get_exit_code()))
 
-    def createDir(self, directory, searching_dir):
-        if searching_dir not in os.listdir(directory):
-            path = os.path.join(directory, searching_dir)
-            os.mkdir(path)
-            logger.slog.debug(str(datetime.utcnow()) + " - {} dir created successfully!".format(searching_dir))
-        else:
-            logger.slog.debug(str(datetime.utcnow()) + " - {} dir already exists!".format(searching_dir))
-
     def getLogs(self):
-        self.createDir(self.dirname, LOGS_DIR)
-        logs_path = os.path.join(self.dirname, LOGS_DIR)
+        logs_path = self.scen_logs_dir
         for task in self.tasks:
             name = str(self.timestamp) + "_" + task.container.name
             log_file = os.path.join(logs_path, name)
@@ -192,9 +190,8 @@ class Scenario():
             res = "any"
         else:
             res = self.network_device
-
-        self.createDir(self.dirname, LOGS_DIR)
-        directory = os.path.join(self.dirname, LOGS_DIR)
+ 
+        directory = self.scen_logs_dir
         capture_file = os.path.join(directory, str(self.timestamp) + "_cap.pcap")
         self.tcpdump = subprocess.Popen(['tcpdump', '-i', res, '-w', capture_file],
                                          stdout=subprocess.DEVNULL,
@@ -206,8 +203,7 @@ class Scenario():
         self.timestamp = int(datetime.utcnow().timestamp())
 
     def getStatus(self):
-        self.createDir(self.dirname, LOGS_DIR)
-        logs_path = os.path.join(self.dirname, LOGS_DIR)
+        logs_path = self.scen_logs_dir
         for task in self.tasks:
             name = str(self.timestamp) + "_" + task.container.name + "_STATUS"
             log_file = os.path.join(logs_path, name)

@@ -20,23 +20,36 @@
 
 import os
 import docker
+from datetime import datetime
 from framework import tests_set
 from framework import parser
 from framework import logger
 from framework import testing
 
+
 class Controller:
 
     """Controller class that implements the logic"""
 
-    def __init__(self, sets_dirs, tests, global_config):
+    def __init__(self, sets_dirs, tests, global_config, logs_dir):
         self.sets_dirs = sets_dirs
         self.tests = tests
+        self.logs_dir = logs_dir
+        current_date = datetime.now().strftime("%Y-%m-%d.%H:%M:%S.%f")
+        self.run_logs_dir = self.logs_dir + "/" + current_date
         config_parser = parser.Parser()
         self.global_config = config_parser.parse_yaml(global_config)
         logger.initLogger(self.global_config["logging"]["controller"])
         self.docker = docker.from_env()
+        self.create_run_logs_dir()
         self.tlogger = testing.Testing("Running Testing framework")
+    
+    def create_run_logs_dir(self):
+        """Creates the current run logs directory"""
+        if not os.path.isdir(self.logs_dir):
+            os.mkdir(self.logs_dir)
+        if not os.path.isdir(self.run_logs_dir):
+            os.mkdir(self.run_logs_dir)
 
     def run(self):
         """Runs all test sets"""

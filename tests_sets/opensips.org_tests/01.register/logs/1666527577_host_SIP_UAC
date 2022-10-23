@@ -1,0 +1,76 @@
+------------------------------ Scenario Screen -------- [1-9]: Change Screen --
+  Call-rate(length)   Port   Total-time  Total-calls  Remote-host
+  10.0(0 ms)/1.000s   5060       0.10 s            0  136.243.23.236:5060(UDP)
+
+  0 new calls during 0.108 s period      108 ms scheduler resolution
+  0 calls (limit 30)                     Peak was 0 calls, after 0 s
+  0 Running, 0 Paused, 0 Woken up
+  0 dead call msg (discarded)            0 out-of-call msg (discarded)        
+  3 open sockets                        
+
+                                 Messages  Retrans   Timeout   Unexpected-Msg
+    REGISTER ---------->         0         0         0                  
+         401 <----------         0         0         0         0        
+    REGISTER ---------->         0         0         0                  
+         200 <----------         0         0         0         0        
+------ [+|-|*|/]: Adjust rate ---- [q]: Soft exit ---- [p]: Pause traffic -----
+
+Resolving remote host 'opensips.org'... Done.
+------------------------------ Scenario Screen -------- [1-9]: Change Screen --
+  Call-rate(length)   Port   Total-time  Total-calls  Remote-host
+  10.0(0 ms)/1.000s   5060       0.10 s            1  136.243.23.236:5060(UDP)
+
+  Call limit reached (-m 1), 0.000 s period  0 ms scheduler resolution
+  0 calls (limit 30)                     Peak was 1 calls, after 0 s
+  3 Running, 0 Paused, 0 Woken up
+  0 dead call msg (discarded)            0 out-of-call msg (discarded)        
+  1 open sockets                        
+
+                                 Messages  Retrans   Timeout   Unexpected-Msg
+    REGISTER ---------->         1         0         0                  
+         401 <----------         1         0         0         0        
+    REGISTER ---------->         1         0         0                  
+         200 <----------         1         0         0         0        
+------------------------------ Test Terminated --------------------------------
+
+
+------------------------------ Scenario Screen -------- [1-9]: Change Screen --
+  Call-rate(length)   Port   Total-time  Total-calls  Remote-host
+  10.0(0 ms)/1.000s   5060       0.10 s            1  136.243.23.236:5060(UDP)
+
+  Call limit reached (-m 1), 0.000 s period  0 ms scheduler resolution
+  0 calls (limit 30)                     Peak was 1 calls, after 0 s
+  3 Running, 0 Paused, 0 Woken up
+  0 dead call msg (discarded)            0 out-of-call msg (discarded)        
+  1 open sockets                        
+
+                                 Messages  Retrans   Timeout   Unexpected-Msg
+    REGISTER ---------->         1         0         0                  
+         401 <----------         1         0         0         0        
+    REGISTER ---------->         1         0         0                  
+         200 <----------         1         0         0         0        
+------------------------------ Test Terminated --------------------------------
+
+
+----------------------------- Statistics Screen ------- [1-9]: Change Screen --
+  Start Time             | 2022-10-23	12:19:41.970517	1666527581.970517         
+  Last Reset Time        | 2022-10-23	12:19:42.080990	1666527582.080990         
+  Current Time           | 2022-10-23	12:19:42.081008	1666527582.081008         
+-------------------------+---------------------------+--------------------------
+  Counter Name           | Periodic value            | Cumulative value
+-------------------------+---------------------------+--------------------------
+  Elapsed Time           | 00:00:00:000000           | 00:00:00:110000          
+  Call Rate              |    0.000 cps              |    9.091 cps             
+-------------------------+---------------------------+--------------------------
+  Incoming call created  |        0                  |        0                 
+  OutGoing call created  |        0                  |        1                 
+  Total Call created     |                           |        1                 
+  Current Call           |        0                  |                          
+-------------------------+---------------------------+--------------------------
+  Successful call        |        0                  |        1                 
+  Failed call            |        0                  |        0                 
+-------------------------+---------------------------+--------------------------
+  Call Length            | 00:00:00:000000           | 00:00:00:000000          
+------------------------------ Test Terminated --------------------------------
+
+

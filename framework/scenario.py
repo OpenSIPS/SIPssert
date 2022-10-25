@@ -65,42 +65,44 @@ class Scenario():
         
 
     def create_task_set(self, task_set_key, task_set):
-        if task_set_key in self.config:
-            for key in self.config[task_set_key]:
-                if "type" in key.keys():
-                    task_type = key["type"].lower()
-                else:
-                    # create a generic task
-                    task_type = ""
+        if task_set_key not in self.config:
+            return
+        for key in self.config[task_set_key]:
+            if "type" in key.keys():
+                task_type = key["type"].lower()
+            else:
+                # create a generic task
+                task_type = ""
 
-                new_task = None
-                try:
-                    task_mod = getattr(
-                            importlib.import_module("framework.tasks"),
-                            task_type)
-                    normalized_task_type = "".join(
-                            [ x for x in task_type if x.isalnum() ])
-                    normalized_class_name = normalized_task_type + "task"
-                    classes = [ c for c in dir(task_mod) if
-                            c.lower() == normalized_class_name and
-                            c.endswith("Task") ]
-                    if len(classes) == 0:
-                        logger.slog.debug("unknown task derived from %s", task_type)
-                    elif len(classes) != 1:
-                        logger.slog.debug("too many classed derived from %s: %s",
-                                        task_type, str(classes))
-                    else:
-                        class_name = getattr(task_mod, classes[0])
-                        new_task = class_name(os.path.dirname(self.file),
-                                key, self.controller, self)
-                except AttributeError:
-                    logger.slog.debug("%s not found", task_type)
-
-                if not new_task:
-                    logger.slog.debug("creating a generic task")
-                    new_task = task.Task(os.path.dirname(self.file),
-                            key, self.controller, self)
+            if task_type == "" or task_type == "generic":
+                logger.slog.debug("creating a generic task")
+                new_task = task.Task(os.path.dirname(self.file),
+                        key, self.controller, self)
                 task_set.append(new_task)
+                return
+            try:
+                task_mod = getattr(
+                        importlib.import_module("framework.tasks"),
+                        task_type)
+                normalized_task_type = "".join(
+                        [ x for x in task_type if x.isalnum() ])
+                normalized_class_name = normalized_task_type + "task"
+                classes = [ c for c in dir(task_mod) if
+                        c.lower() == normalized_class_name and
+                        c.endswith("Task") ]
+                if len(classes) == 0:
+                    logger.slog.debug("unknown task derived from %s", task_type)
+                elif len(classes) != 1:
+                    logger.slog.debug("too many classed derived from %s: %s",
+                                    task_type, str(classes))
+                else:
+                    class_name = getattr(task_mod, classes[0])
+                    new_task = class_name(os.path.dirname(self.file),
+                            key, self.controller, self)
+                    task_set.append(new_task)
+            except AttributeError:
+                logger.slog.error("unknown task type %s", task_type)
+                raise Exception("unknown task type {task_type}")
 
     def create_scen_logs_dir(self):
         """Creates current scenario logs directory"""

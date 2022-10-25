@@ -97,6 +97,7 @@ def initLogger(config):
 	logging.setLoggerClass(ColoredLogger)
 	slog = logging.getLogger(__name__ + "System")
 	slog.setLevel(handlerLevel)
+	slog.error(config)
 
 fileHandlerName = "default.log"
 consoleEnabled = False

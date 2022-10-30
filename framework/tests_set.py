@@ -93,7 +93,7 @@ class TestSet():
         for scenario_path in scenarios_paths:
             scenario_parser = parser.Parser()
             scenario_stream = scenario_parser.parse_yaml(scenario_path)
-            scenarios.append(scenario.Scenario(scenario_path, scenario_stream, self.controller, self.set_logs_dir))
+            scenarios.append(scenario.Scenario(scenario_path, scenario_stream, self.controller, self.set_logs_dir, self.variables))
 
         self.scenarios = scenarios
 

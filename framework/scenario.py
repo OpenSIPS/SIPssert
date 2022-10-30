@@ -26,15 +26,17 @@ import subprocess
 from framework.tasks import task
 from framework import logger
 from framework import config
+from framework import parser
 
 LOGS_DIR = "logs"
 NETWORK_CAP = "net_capture"
+VARIABLES = "defines.yml"
 
 class Scenario():
 
     """Class that implements running a scenario"""
 
-    def __init__(self, file, configuration, controller, set_logs_dir):
+    def __init__(self, file, configuration, controller, set_logs_dir, set_vars_dict):
         self.tcpdump = None
         self.controller = controller
         self.configuration = configuration
@@ -44,6 +46,7 @@ class Scenario():
         self.dirname = os.path.dirname(file)
         self.name = os.path.basename(self.dirname)
         self.scen_logs_dir = set_logs_dir + "/" + self.name
+        self.fetch_vars()
         self.tasks = []
         self.init_tasks = []
         self.cleanup_tasks = []
@@ -56,6 +59,14 @@ class Scenario():
         self.tasks = self.config.create_task_set("tasks", self.file, self.controller, self)
         self.init_tasks = self.config.create_task_set("init_tasks", self.file, self.controller, self)
         self.cleanup_tasks = self.config.create_task_set("cleanup_tasks", self.file, self.controller, self)
+
+    def fetch_vars(self):
+        """Check dictionary for custom variables in current test set"""
+        if not VARIABLES in os.listdir(self.dirname):
+            self.variables = None
+            return None
+        var_parser = parser.Parser()
+        self.variables = var_parser.parse_yaml(os.path.join(self.dirname, VARIABLES))
 
     def create_scen_logs_dir(self):
         """Creates current scenario logs directory"""

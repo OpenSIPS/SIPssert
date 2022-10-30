@@ -18,6 +18,7 @@
 
 import os
 import configparser
+import importlib
 from framework import parser
 
 """Implements config layer"""
@@ -84,10 +85,10 @@ class FrameworkConfig:
     def set(self, key, value):
         self.dynamic_options[key] = value
 
-    def create_task_set(self, task_set_key, task_set):
+    def create_task_set(self, task_set_key, fileName, controller, scenario):
         task_set = []
         if task_set_key not in self.config:
-            return
+            return task_set
         for key in self.config[task_set_key]:
             if "type" in key.keys():
                 task_type = key["type"].lower()
@@ -97,8 +98,8 @@ class FrameworkConfig:
 
             if task_type == "" or task_type == "generic":
                 logger.slog.debug("creating a generic task")
-                new_task = task.Task(os.path.dirname(self.file),
-                        key, self.controller, self)
+                new_task = task.Task(os.path.dirname(fileName),
+                        key, controller, scenario)
                 task_set.append(new_task)
                 return
             try:
@@ -118,9 +119,10 @@ class FrameworkConfig:
                                     task_type, str(classes))
                 else:
                     class_name = getattr(task_mod, classes[0])
-                    new_task = class_name(os.path.dirname(self.file),
-                            key, self.controller, self)
+                    new_task = class_name(os.path.dirname(fileName),
+                            key, controller, scenario)
                     task_set.append(new_task)
             except AttributeError:
                 logger.slog.error("unknown task type %s", task_type)
                 raise Exception("unknown task type {task_type}")
+        return task_set

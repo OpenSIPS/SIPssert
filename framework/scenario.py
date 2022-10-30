@@ -25,6 +25,7 @@ from datetime import datetime
 import subprocess
 from framework.tasks import task
 from framework import logger
+from framework import config
 
 LOGS_DIR = "logs"
 NETWORK_CAP = "net_capture"
@@ -33,10 +34,11 @@ class Scenario():
 
     """Class that implements running a scenario"""
 
-    def __init__(self, file, config, controller, set_logs_dir):
+    def __init__(self, file, configuration, controller, set_logs_dir):
         self.tcpdump = None
         self.controller = controller
-        self.config = config
+        self.configuration = configuration
+        self.config = config.FrameworkConfig(configuration, True)
         self.file = file
         self.tlogger = controller.tlogger
         self.dirname = os.path.dirname(file)
@@ -48,61 +50,12 @@ class Scenario():
         self.getScenarioTimestamp()
         self.network_device = None
         self.create_scen_logs_dir()
-
-        if "network" in config.keys():
-            self.network_device = config["network"]
-        else:
-            self.network_device = None
-
-        if "timeout" in config.keys():
-            self.timeout = config["timeout"]
-        else:
-            self.timeout = 0
+        self.network_device = self.config.get("network")
+        self.timeout = self.config.get_or_default("timeout", 0)
         
-        self.create_task_set("tasks", self.tasks)
-        self.create_task_set("init_tasks", self.init_tasks)
-        self.create_task_set("cleanup_tasks", self.cleanup_tasks)
-        
-
-    def create_task_set(self, task_set_key, task_set):
-        if task_set_key not in self.config:
-            return
-        for key in self.config[task_set_key]:
-            if "type" in key.keys():
-                task_type = key["type"].lower()
-            else:
-                # create a generic task
-                task_type = ""
-
-            if task_type == "" or task_type == "generic":
-                logger.slog.debug("creating a generic task")
-                new_task = task.Task(os.path.dirname(self.file),
-                        key, self.controller, self)
-                task_set.append(new_task)
-                return
-            try:
-                task_mod = getattr(
-                        importlib.import_module("framework.tasks"),
-                        task_type)
-                normalized_task_type = "".join(
-                        [ x for x in task_type if x.isalnum() ])
-                normalized_class_name = normalized_task_type + "task"
-                classes = [ c for c in dir(task_mod) if
-                        c.lower() == normalized_class_name and
-                        c.endswith("Task") ]
-                if len(classes) == 0:
-                    logger.slog.debug("unknown task derived from %s", task_type)
-                elif len(classes) != 1:
-                    logger.slog.debug("too many classed derived from %s: %s",
-                                    task_type, str(classes))
-                else:
-                    class_name = getattr(task_mod, classes[0])
-                    new_task = class_name(os.path.dirname(self.file),
-                            key, self.controller, self)
-                    task_set.append(new_task)
-            except AttributeError:
-                logger.slog.error("unknown task type %s", task_type)
-                raise Exception("unknown task type {task_type}")
+        self.tasks = self.config.create_task_set("tasks", self.file, self.controller, self)
+        self.init_tasks = self.config.create_task_set("init_tasks", self.file, self.controller, self)
+        self.cleanup_tasks = self.config.create_task_set("cleanup_tasks", self.file, self.controller, self)
 
     def create_scen_logs_dir(self):
         """Creates current scenario logs directory"""

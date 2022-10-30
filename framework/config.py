@@ -25,9 +25,12 @@ from framework import parser
 
 class FrameworkConfig:
 
-    def __init__(self, config_file, dictionary = False):
+    def __init__(self, config_file, dictionary = False, template_vars = None):
         if dictionary:
             self.config = config_file
+        elif template_vars:
+            config_parser = parser.Parser()
+            self.config = config_parser.parse_yaml_template(config_file, template_vars)
         else:
             config_parser = parser.Parser()
             self.config = config_parser.parse_yaml(config_file)

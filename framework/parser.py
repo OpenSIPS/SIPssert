@@ -17,6 +17,7 @@
 ##
 
 import yaml
+import jinja2
 
 SCENARIO = "scenario.yml"
 LOGS_DIR = "logs"
@@ -35,6 +36,18 @@ class Parser():
                 logger.slog.error(exc)
 
         return yaml_stream
-
+    
+    def parse_yaml_template(self, yaml_file, template_vars):
+        yaml_stream = None
+        environment = jinja2.Environment()
+        with open(yaml_file, 'r') as stream:
+            data = stream.read()
+            template = environment.from_string(data)
+            res = template.render(template_vars)
+            try:
+                yaml_stream = yaml.safe_load(res)
+            except yaml.YAMLError as exc:
+                logger.slog.error(exc)
+        return yaml_stream
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

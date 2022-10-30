@@ -36,17 +36,18 @@ class Scenario():
 
     """Class that implements running a scenario"""
 
-    def __init__(self, file, configuration, controller, set_logs_dir, set_vars_dict):
+    def __init__(self, file, controller, set_logs_dir, set_vars_dict):
         self.tcpdump = None
         self.controller = controller
-        self.configuration = configuration
-        self.config = config.FrameworkConfig(configuration, True)
         self.file = file
         self.tlogger = controller.tlogger
         self.dirname = os.path.dirname(file)
         self.name = os.path.basename(self.dirname)
         self.scen_logs_dir = set_logs_dir + "/" + self.name
         self.fetch_vars()
+        if set_vars_dict:
+            self.variables = set_vars_dict | self.variables
+        self.config = config.FrameworkConfig(file, False, self.variables)
         self.tasks = []
         self.init_tasks = []
         self.cleanup_tasks = []

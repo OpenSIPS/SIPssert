@@ -26,6 +26,7 @@ from framework.network import network
 
 SCENARIO = "scenario.yml"
 CONFIG = "config.yml"
+VARIABLES = "defines.yml"
 
 class TestSet():
 
@@ -37,10 +38,19 @@ class TestSet():
         self.name = os.path.basename(set_path)
         self.set_path = set_path
         self.set_logs_dir = controller.run_logs_dir + "/" + self.name
+        self.fetch_vars()
         self.create_set_logs_dir()
         self.parse_config()
         self.setup_networks()
         self.build_scenarios()
+
+    def fetch_vars(self):
+        """Check dictionary for custom variables in current test set"""
+        if not VARIABLES in os.listdir(self.set_path):
+            self.variables = None
+            return None
+        var_parser = parser.Parser()
+        self.variables = var_parser.parse_yaml(os.path.join(self.set_path, VARIABLES))
 
     def create_set_logs_dir(self):
         """Creates current test set logs directory"""

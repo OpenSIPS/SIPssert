@@ -20,6 +20,7 @@
 
 import os
 from framework import parser
+from framework import config
 from framework import scenario
 from framework.network import network
 
@@ -51,8 +52,7 @@ class TestSet():
         if not CONFIG in os.listdir(self.set_path):
             self.config = None
             return
-        config_parser = parser.Parser()
-        self.config = config_parser.parse_yaml(os.path.join(self.set_path, CONFIG))
+        self.config = config.FrameworkConfig(os.path.join(self.set_path, CONFIG))
 
     def get_network(self, name):
         """returns a created network based on its name"""
@@ -65,7 +65,7 @@ class TestSet():
 
     def setup_networks(self):
         """Setup of all networks involved in the test set"""
-        nets = self.config["networks"] if self.config and "networks" in self.config else None
+        nets = self.config.get("networks")
         self.networks = network.get_networks(self.controller, nets)
 
     def build_scenarios(self):

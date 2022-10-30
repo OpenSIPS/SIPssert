@@ -19,6 +19,7 @@
 import os
 from datetime import datetime
 from framework import logger
+from framework import config
 import time
 import docker
 
@@ -29,48 +30,19 @@ class Task():
     task_default_mount_point = "/home"
     task_default_daemon = False
 
-    def __init__(self, test_dir, config, controller, scenario):
+    def __init__(self, test_dir, configuration, controller, scenario):
         self.scenario = scenario
         self.controller = controller
-        self.config = config
+        self.config = config.FrameworkConfig(configuration, True)
         self.test_dir = test_dir
         self.container = None
         self.root_password = None
-        self.delay_start = 0
-
-        if "name" in self.config:
-            self.name = self.config["name"]
-        else:
-            self.name = self.__class__.__name__
-
-        if "image" in self.config:
-            self.image = self.config["image"]
-        else:
-            self.image = self.task_default_image
-
-        if "ip" in self.config:
-            self.ip = self.config["ip"]
-        else:
-            self.ip = None
-
-        if "delay_start" in self.config:
-            self.delay_start = self.config["delay_start"]
-
-        if "config_file" in self.config:
-            # if an absolute path, leave it as it is
-            if os.path.isabs(self.config["config_file"]):
-                self.config_file = self.config["config_file"]
-            else:
-                # path is relative to the mount point
-                self.config_file = os.path.join(self.get_mount_point(), self.config["config_file"])
-        else:
-            self.config_file = None
-
-        if "daemon" in self.config:
-            self.daemon = self.config["daemon"]
-        else:
-            self.daemon = self.task_default_daemon
-
+        self.name = self.config.get_or_default("name", self.__class__.__name__)
+        self.image = self.config.get_or_default("image", self.task_default_image)
+        self.ip = self.config.get("ip")
+        self.delay_start = self.config.get_or_default("delay_start", 0)
+        self.config_file = self.config.get_config_file(self.task_default_mount_point)
+        self.daemon = self.config.get_or_default("daemon", False)
         if self.image is None:
             raise Exception("task {} does not have an image available".
                     format(self.name))
@@ -81,30 +53,14 @@ class Task():
     def get_task_args(self):
         return []
 
-    def get_ports(self):
-        r = {}
-        if "ports" in self.config:
-            for p in self.config["ports"]:
-                port, proto = p.split("/")
-                r[p] = port
-
-        return r
-
     def get_args(self):
-        if "extra_params" in self.config:
-            extra_params = self.config["extra_params"].split(" ")
-        else:
-            extra_params = []
-        return self.get_task_args() + extra_params
+        return self.get_task_args() + self.config.get_extra_params()
 
     def get_task_env(self):
         return {}
 
     def get_mount_point(self):
-        if "mount_point" in self.config:
-            return self.config["mount_point"]
-        else:
-            return self.task_default_mount_point
+        return self.config.get_or_default("mount_point", self.task_default_mount_point)
 
     def run(self):
         #logger.slog.debug(str(datetime.utcnow()))
@@ -116,7 +72,7 @@ class Task():
             "bind": self.get_mount_point(),
             "mode": "ro"
             }}
-        ports = self.get_ports()
+        ports = self.config.get_ports()
         env = self.get_task_env()
         logger.slog.debug("- Env: {}".format(env))
         net_mode = self.getNetMode()

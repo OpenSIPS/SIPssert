@@ -36,7 +36,7 @@ class Scenario():
 
     """Class that implements running a scenario"""
 
-    def __init__(self, file, controller, set_logs_dir, set_vars_dict):
+    def __init__(self, file, controller, set_logs_dir, set_vars_dict, set_defaults_dict):
         self.tcpdump = None
         self.controller = controller
         self.file = file
@@ -56,10 +56,9 @@ class Scenario():
         self.create_scen_logs_dir()
         self.network_device = self.config.get("network")
         self.timeout = self.config.get_or_default("timeout", 0)
-        
-        self.tasks = self.config.create_task_set("tasks", self.file, self.controller, self)
-        self.init_tasks = self.config.create_task_set("init_tasks", self.file, self.controller, self)
-        self.cleanup_tasks = self.config.create_task_set("cleanup_tasks", self.file, self.controller, self)
+        self.tasks = self.config.create_task_set("tasks", self.file, self.controller, self, set_defaults_dict)
+        self.init_tasks = self.config.create_task_set("init_tasks", self.file, self.controller, self, set_defaults_dict)
+        self.cleanup_tasks = self.config.create_task_set("cleanup_tasks", self.file, self.controller, self, set_defaults_dict)
 
     def fetch_vars(self):
         """Check dictionary for custom variables in current test set"""

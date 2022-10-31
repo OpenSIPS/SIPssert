@@ -41,6 +41,7 @@ class TestSet():
         self.fetch_vars()
         self.create_set_logs_dir()
         self.parse_config()
+        self.defaults = self.config.get_defaults()
         self.setup_networks()
         self.build_scenarios()
 
@@ -91,7 +92,7 @@ class TestSet():
                     scenario_path = os.path.join(test_dir, SCENARIO)
                     scenarios_paths.append(scenario_path)
         for scenario_path in scenarios_paths:
-            scenarios.append(scenario.Scenario(scenario_path, self.controller, self.set_logs_dir, self.variables))
+            scenarios.append(scenario.Scenario(scenario_path, self.controller, self.set_logs_dir, self.variables, self.defaults))
 
         self.scenarios = scenarios
 

@@ -88,11 +88,13 @@ class FrameworkConfig:
     def set(self, key, value):
         self.dynamic_options[key] = value
 
-    def create_task_set(self, task_set_key, fileName, controller, scenario):
+    def create_task_set(self, task_set_key, fileName, controller, scenario, defaults=None):
         task_set = []
         if task_set_key not in self.config:
             return task_set
         for key in self.config[task_set_key]:
+            if key["type"] in defaults.keys():
+                key = defaults[key["type"]] | key
             if "type" in key.keys():
                 task_type = key["type"].lower()
             else:
@@ -129,3 +131,10 @@ class FrameworkConfig:
                 logger.slog.error("unknown task type %s", task_type)
                 raise Exception("unknown task type {task_type}")
         return task_set
+
+    def get_defaults(self):
+        defaults = {}
+        if 'defaults' in self.config.keys():
+            for image_defaults in self.config['defaults']:
+                defaults[image_defaults['type']] = image_defaults['values']
+        return defaults

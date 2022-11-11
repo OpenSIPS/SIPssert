@@ -42,6 +42,9 @@ class TestSet():
         self.create_set_logs_dir()
         self.parse_config()
         self.defaults = self.config.get_defaults()
+        self.init_tasks = self.config.create_test_set_tasks("init_tasks", self.set_path, self.controller, self.defaults)
+        self.cleanup_tasks = self.config.create_test_set_tasks("cleanup_tasks", self.set_path, self.controller, self.defaults)
+        print(self.init_tasks)
         self.setup_networks()
         self.build_scenarios()
 
@@ -96,11 +99,30 @@ class TestSet():
 
         self.scenarios = scenarios
 
+    def init(self):
+        """Runs the init tasks for a test set"""
+        for task in self.init_tasks:
+            task.run()
+
+    def cleanup(self):
+        """Runs the cleanup tasks for a test set"""
+        for task in self.cleanup_tasks:
+            task.run()
+
     def run(self):
         """Runs one or all tests in a set"""
+        try:
+            pass
+            #self.init()
+        except Exception:
+            pass
         for scen in self.scenarios:
             scen.run()
-
+        try:
+            #self.cleanup()
+            pass
+        except Exception:
+            pass
         # cleanup networks
         for net in self.networks:
             net.destroy()

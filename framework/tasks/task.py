@@ -30,8 +30,8 @@ class Task():
     task_default_mount_point = "/home"
     task_default_daemon = False
 
-    def __init__(self, test_dir, configuration, controller, scenario):
-        self.scenario = scenario
+    def __init__(self, test_dir, configuration, controller, netMode):
+        self.netMode = netMode
         self.controller = controller
         self.config = config.FrameworkConfig(configuration, True)
         self.test_dir = test_dir
@@ -102,11 +102,11 @@ class Task():
 
     def connect(self):
         if self.ip:
-            self.controller.docker.networks.get(self.scenario.getNetwork()).\
+            self.controller.docker.networks.get(self.netMode).\
                     connect(self.container, ipv4_address = self.ip)    
 
     def getNetMode(self):
-        if self.scenario.getNetwork() == "host":
+        if self.netMode == "host":
             return "host"
         else:
             return "bridge"

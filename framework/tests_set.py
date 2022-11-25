@@ -44,7 +44,6 @@ class TestSet():
         self.defaults = self.config.get_defaults()
         self.init_tasks = self.config.create_test_set_tasks("init_tasks", self.set_path, self.controller, self.defaults)
         self.cleanup_tasks = self.config.create_test_set_tasks("cleanup_tasks", self.set_path, self.controller, self.defaults)
-        print(self.init_tasks)
         self.setup_networks()
         self.build_scenarios()
 

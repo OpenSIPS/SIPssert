@@ -27,17 +27,7 @@ class Parser():
     def __init__(self):
         pass
     
-    def parse_yaml(self, yaml_file):
-        yaml_stream = None
-        with open(yaml_file, 'r') as stream:
-            try:
-                yaml_stream = yaml.safe_load(stream)
-            except yaml.YAMLError as exc:
-                logger.slog.error(exc)
-
-        return yaml_stream
-    
-    def parse_yaml_template(self, yaml_file, template_vars):
+    def parse_yaml(self, yaml_file, template_vars={}):
         yaml_stream = None
         environment = jinja2.Environment()
         with open(yaml_file, 'r') as stream:

@@ -39,7 +39,7 @@ class Controller:
         self.run_logs_dir = self.logs_dir + "/" + current_date
         config_parser = parser.Parser()
         self.global_config = config_parser.parse_yaml(global_config)
-        logger.initLogger(self.global_config["logging"]["controller"])
+        logger.init_logger(self.global_config["logging"]["controller"])
         self.docker = docker.from_env()
         self.create_run_logs_dir()
         self.tlogger = testing.Testing("Running Testing framework")

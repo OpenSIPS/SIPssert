@@ -20,93 +20,102 @@ logger.py - implements coloured logging for the opensips-cli project
 
 import logging
 
+slog = None # pylint: disable=invalid-name
+
 #These are the sequences need to get colored ouput
 RESET_SEQ = "\033[0m"
 COLOR_SEQ = "\033[1;%dm"
 BOLD_SEQ = "\033[1m"
 
 def formatter_message(message, use_color = True):
-	if use_color:
-		message = message.replace("$RESET", RESET_SEQ).replace("$BOLD", BOLD_SEQ)
-	else:
-		message = message.replace("$RESET", "").replace("$BOLD", "")
-	return message
+    """formats a single message accorging to the settings"""
+    if use_color:
+        message = message.replace("$RESET", RESET_SEQ).replace("$BOLD", BOLD_SEQ)
+    else:
+        message = message.replace("$RESET", "").replace("$BOLD", "")
+    return message
 
 # Custom logger class with multiple destinations
 class ColoredLogger(logging.Logger):
 
-	BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
+    """Class that colors the logs"""
 
-	FORMAT = "$BOLD%(levelname)s$RESET: %(message)s"
-	COLOR_FORMAT = formatter_message(FORMAT, True)
+    BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
-	def __init__(self, name):
-		global consoleEnabled
-		global fileHandlerName
+    FORMAT = "$BOLD%(levelname)s$RESET: %(message)s"
+    COLOR_FORMAT = formatter_message(FORMAT, True)
 
-		logging.Logger.__init__(self, name)
-		color_formatter = ColoredFormatter(self.COLOR_FORMAT)
-		def build_handler_filters(handler: str):
-			def handler_filter(record: logging.LogRecord):
-				if hasattr(record, 'block'):
-					if record.block == handler:
-						return False
-				return True
-			return handler_filter
-		if (consoleEnabled):
-			console = logging.StreamHandler()
-			console.addFilter(build_handler_filters('console'))
-			console.setFormatter(color_formatter)
-			self.addHandler(console)
-		
-		fileHandler = logging.FileHandler(fileHandlerName)
-		fileHandler.addFilter(build_handler_filters('file'))
-		self.addHandler(fileHandler)
-		return
+    def __init__(self, name):
+        global LOG_CONSOLE # pylint: disable=global-statement
+        global LOG_FILE # pylint: disable=global-statement
 
-	def color(self, color, message):
-		return COLOR_SEQ % (30 + color) + message + RESET_SEQ
+        logging.Logger.__init__(self, name)
+        color_formatter = ColoredFormatter(self.COLOR_FORMAT)
+        def build_handler_filters(handler: str):
+            def handler_filter(record: logging.LogRecord):
+                if hasattr(record, 'block'):
+                    if record.block == handler:
+                        return False
+                return True
+            return handler_filter
+        if LOG_CONSOLE:
+            console = logging.StreamHandler()
+            console.addFilter(build_handler_filters('console'))
+            console.setFormatter(color_formatter)
+            self.addHandler(console)
+
+        file_handler = logging.FileHandler(LOG_FILE)
+        file_handler.addFilter(build_handler_filters('file'))
+        self.addHandler(file_handler)
+
+    def color(self, color, message): # pylint: disable=no-self-use
+        """returns the message coloured appropriately"""
+        return COLOR_SEQ % (30 + color) + message + RESET_SEQ
 
 class ColoredFormatter(logging.Formatter):
 
-	LEVELS_COLORS = {
-		'WARNING': ColoredLogger.YELLOW,
-		'INFO': ColoredLogger.MAGENTA,
-		'DEBUG': ColoredLogger.BLUE,
-		'CRITICAL': ColoredLogger.YELLOW,
-		'ERROR': ColoredLogger.RED
-	}
+    """Class that formats a particular message"""
 
-	def __init__(self, msg, use_color = True):
-		logging.Formatter.__init__(self, msg)
-		self.use_color = use_color
+    LEVELS_COLORS = {
+        'WARNING': ColoredLogger.YELLOW,
+        'INFO': ColoredLogger.MAGENTA,
+        'DEBUG': ColoredLogger.BLUE,
+        'CRITICAL': ColoredLogger.YELLOW,
+        'ERROR': ColoredLogger.RED
+    }
 
-	def format(self, record):
-		levelname = record.levelname
-		if self.use_color and levelname in self.LEVELS_COLORS:
-			levelname_color = COLOR_SEQ % (30 + self.LEVELS_COLORS[levelname]) + levelname + RESET_SEQ
-			record.levelname = levelname_color
-		return logging.Formatter.format(self, record)
+    def __init__(self, msg, use_color = True):
+        logging.Formatter.__init__(self, msg)
+        self.use_color = use_color
 
-def initLogger(config):
-	global slog
-	global consoleEnabled
-	global handlerLevel
-	global fileHandlerName
+    def format(self, record):
+        levelname = record.levelname
+        if self.use_color and levelname in self.LEVELS_COLORS:
+            levelname_color = COLOR_SEQ % (30 + self.LEVELS_COLORS[levelname]) + \
+                    levelname + RESET_SEQ
+            record.levelname = levelname_color
+        return logging.Formatter.format(self, record)
 
-	if "console" in config.keys():
-		if config["console"] == False:
-			consoleEnabled = False
-	if "file" in config.keys():
-		fileHandlerName = config["file"]
-	if "level" in config.keys():
-		handlerLevel = config["level"]
-	logging.setLoggerClass(ColoredLogger)
-	slog = logging.getLogger(__name__ + "System")
-	slog.setLevel(handlerLevel)
+def init_logger(config):
+    """Initializes the logger according to config"""
+    global slog # pylint: disable=global-statement,invalid-name
+    global LOG_CONSOLE # pylint: disable=global-statement
+    global LOG_LEVEL # pylint: disable=global-statement
+    global LOG_FILE # pylint: disable=global-statement
 
-fileHandlerName = "default.log"
-consoleEnabled = False
-handlerLevel = "DEBUG"
+    if "console" in config.keys():
+        if config["console"]:
+            LOG_CONSOLE = True
+    if "file" in config.keys():
+        LOG_FILE = config["file"]
+    if "level" in config.keys():
+        LOG_LEVEL = config["level"]
+    logging.setLoggerClass(ColoredLogger)
+    slog = logging.getLogger(__name__ + "System")
+    slog.setLevel(LOG_LEVEL)
+
+LOG_FILE = "default.log"
+LOG_CONSOLE = False
+LOG_LEVEL = "DEBUG"
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

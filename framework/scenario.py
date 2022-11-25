@@ -55,7 +55,7 @@ class Scenario():
         self.network_device = None
         self.create_scen_logs_dir()
         self.network_device = self.config.get("network")
-        self.timeout = self.config.get_or_default("timeout", 0)
+        self.timeout = self.config.get("timeout", 0)
         self.tasks = self.config.create_task_set("tasks", self.file, self.controller, self, set_defaults_dict)
         self.init_tasks = self.config.create_task_set("init_tasks", self.file, self.controller, self, set_defaults_dict)
         self.cleanup_tasks = self.config.create_task_set("cleanup_tasks", self.file, self.controller, self, set_defaults_dict)

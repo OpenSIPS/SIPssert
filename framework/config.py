@@ -36,15 +36,7 @@ class FrameworkConfig:
             self.config = config_parser.parse_yaml(config_file)
         self.dynamic_options = {}
 
-    def get(self, key):
-        if key in self.dynamic_options.keys():  
-            return self.dynamic_options[key]
-        elif key in self.config.keys():
-            return self.config[key]
-        else:
-            return None
-
-    def get_or_default(self, key, default=None):
+    def get(self, key, default=None):
         if key in self.dynamic_options.keys():
             return self.dynamic_options[key]
         elif key in self.config.keys():
@@ -66,7 +58,7 @@ class FrameworkConfig:
                 self.config_file = self.config["config_file"]
             else:
                 # path is relative to the mount point
-                self.config_file = os.path.join(self.get_or_default("mount_point", default_mount_point),
+                self.config_file = os.path.join(self.get("mount_point", default_mount_point),
                 self.config["config_file"])
         else:
             self.config_file = None

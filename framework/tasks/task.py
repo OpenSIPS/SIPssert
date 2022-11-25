@@ -37,12 +37,12 @@ class Task():
         self.test_dir = test_dir
         self.container = None
         self.root_password = None
-        self.name = self.config.get_or_default("name", self.__class__.__name__)
-        self.image = self.config.get_or_default("image", self.task_default_image)
+        self.name = self.config.get("name", self.__class__.__name__)
+        self.image = self.config.get("image", self.task_default_image)
         self.ip = self.config.get("ip")
-        self.delay_start = self.config.get_or_default("delay_start", 0)
+        self.delay_start = self.config.get("delay_start", 0)
         self.config_file = self.config.get_config_file(self.task_default_mount_point)
-        self.daemon = self.config.get_or_default("daemon", False)
+        self.daemon = self.config.get("daemon", False)
         if self.image is None:
             raise Exception("task {} does not have an image available".
                     format(self.name))
@@ -60,7 +60,7 @@ class Task():
         return {}
 
     def get_mount_point(self):
-        return self.config.get_or_default("mount_point", self.task_default_mount_point)
+        return self.config.get("mount_point", self.task_default_mount_point)
 
     def run(self):
         #logger.slog.debug(str(datetime.utcnow()))

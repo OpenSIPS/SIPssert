@@ -41,6 +41,9 @@ class ColoredLogger(logging.Logger):
 	COLOR_FORMAT = formatter_message(FORMAT, True)
 
 	def __init__(self, name):
+		global consoleEnabled
+		global fileHandlerName
+
 		logging.Logger.__init__(self, name)
 		color_formatter = ColoredFormatter(self.COLOR_FORMAT)
 		def build_handler_filters(handler: str):
@@ -87,6 +90,10 @@ class ColoredFormatter(logging.Formatter):
 
 def initLogger(config):
 	global slog
+	global consoleEnabled
+	global handlerLevel
+	global fileHandlerName
+
 	if "console" in config.keys():
 		if config["console"] == False:
 			consoleEnabled = False
@@ -97,7 +104,6 @@ def initLogger(config):
 	logging.setLoggerClass(ColoredLogger)
 	slog = logging.getLogger(__name__ + "System")
 	slog.setLevel(handlerLevel)
-	slog.error(config)
 
 fileHandlerName = "default.log"
 consoleEnabled = False

@@ -1,6 +1,6 @@
 ---
 logging:
   controller:
-    console: True
+    console: False
     file: controller.log
-    level: DEBUG
+    level: INFO

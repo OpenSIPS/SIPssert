@@ -36,7 +36,7 @@ arg_parser.add_argument('--test',
 
 arg_parser.add_argument('--config',
                         help='Absolute path of the global config',
-                        default="default_config.yml",
+                        default="config.yml",
                         type=os.path.abspath)
 
 arg_parser.add_argument('--logsDir',

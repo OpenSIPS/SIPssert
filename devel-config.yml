@@ -1,0 +1,6 @@
+---
+logging:
+  controller:
+    console: True
+    file: controller.log
+    level: DEBUG

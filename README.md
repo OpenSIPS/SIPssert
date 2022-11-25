@@ -19,7 +19,7 @@ Defaults env_keep += "PYTHONPATH"
 
 Available parameters:
 ```
-Config: --config /framework/global_config.yml; Default value: default_config.yml
+Config: --config /framework/global_config.yml; Default value: `config.yml`
 Test: --test 01.calling; Default value: none (will run all the tests from the sets specified)
 ```
 

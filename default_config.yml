@@ -1,6 +1,0 @@
----
-logging:
-  controller:
-    console: False
-    file: default_controller.log
-    level: INFO

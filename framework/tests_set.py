@@ -112,13 +112,13 @@ class TestSet():
         """Runs one or all tests in a set"""
         try:
             pass
-            #self.init()
+            self.init()
         except Exception:
             pass
         for scen in self.scenarios:
             scen.run()
         try:
-            #self.cleanup()
+            self.cleanup()
             pass
         except Exception:
             pass

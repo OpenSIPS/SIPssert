@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env pyth
 ##
 ## TODO: update project's name
 ##
@@ -19,27 +19,97 @@
 import os
 import configparser
 import importlib
-from framework import parser
+import yaml
+import jinja2
+from framework import logger
 
 """Implements config layer"""
 
-class FrameworkConfig:
+class ConfigParseError(yaml.YAMLError):
+    """Throws exception when cannot parse yaml file"""
+    pass
 
-    def __init__(self, config_file, dictionary = False, template_vars = {}):
-        if dictionary:
-            self.config = config_file
-        else:
-            config_parser = parser.Parser()
-            self.config = config_parser.parse_yaml(config_file, template_vars)
-        self.dynamic_options = {}
+class ConfigParamNotFound(Exception):
+    """Throws exception when a parameter cannot be found"""
+    def __init__(self, param):
+        super().__init__(f"mandatory param {param} not found")
 
-    def get(self, key, default=None):
-        if key in self.dynamic_options.keys():
-            return self.dynamic_options[key]
-        elif key in self.config.keys():
-            return self.config[key]
+class ConfigLevel(dict):
+
+    """Implements one level of configuration"""
+
+    def get(self, key, default=None, mandatory=False):
+        """Returns a level or a key"""
+        if key in self.keys():
+            d = super().__getitem__(key)
+        elif mandatory:
+            raise ConfigParamNotFound(key)
         else:
             return default
+        if type(d) is dict:
+            return ConfigLevel(d)
+        else:
+            return d
+
+    def __getitem__(self, key):
+        """Returns a mandatory key or a section from the config"""
+        return self.get(key, None, True)
+
+class Config:
+
+    """Implements the basic configuration class"""
+
+    def __init__(self, config_file_or_dir, config_file = None, template_file = None, template_vars = {}):
+        if config_file:
+            self.config_dir = config_file_or_dir
+            self.config_file = config_file
+        else:
+            self.config_dir = os.path.dirname(config_file_or_dir)
+            self.config_file = os.path.basename(config_file_or_dir)
+        if template_file and template_file in os.listdir(self.config_dir):
+            self.template_file = template_file
+            self.template_file_path = os.path.join(self.config_dir, template_file)
+            self.defines = template_vars | \
+                    self.parse(self.template_file_path, template_vars)
+        else:
+            self.template_file = None
+            self.template_file_path = None
+            self.defines = template_vars
+        if not self.config_file in os.listdir(self.config_dir):
+            self.config_file = None
+            self.config_file_path = None
+            self.config = ConfigLevel({})
+        else:
+            self.config_file_path = os.path.join(self.config_dir, self.config_file)
+            self.config = ConfigLevel(self.parse(self.config_file_path, self.defines))
+
+    def parse(self, yaml_file, template_vars=None):
+        """Parses a yaml file, expanding templates"""
+        yaml_stream = None
+        with open(yaml_file, 'r') as stream:
+            res = stream.read()
+            if template_vars:
+                environment = jinja2.Environment()
+                template = environment.from_string(res)
+                res = template.render(template_vars)
+            try:
+                yaml_stream = yaml.safe_load(res)
+            except yaml.YAMLError as exc:
+                raise ConfigParseError(exc)
+        return yaml_stream
+
+    def __getitem__(self, key):
+        """Returns a key or a section from the config"""
+        return self.config.get(key, None, True)
+
+    def get(self, key, default=None, mandatory=False):
+        """Returns a key or a section from the config"""
+        return self.config.get(key, default, mandatory)
+
+    def get_defines(self):
+        """Returns all the variables defined"""
+        return self.defines
+
 
     def get_extra_params(self):
         if "extra_params" in self.config:
@@ -47,21 +117,6 @@ class FrameworkConfig:
         else:
             extra_params = []
         return extra_params
-
-    def get_config_file(self, default_mount_point=None):
-        if "config_file" in self.config:
-            # if an absolute path, leave it as it is
-            if os.path.isabs(self.config["config_file"]):
-                self.config_file = self.config["config_file"]
-            else:
-                # path is relative to the mount point
-                self.config_file = os.path.join(self.get("mount_point", default_mount_point),
-                self.config["config_file"])
-        else:
-            self.config_file = None
-        return self.config_file
-
-
 
     def get_ports(self):
         r = {}
@@ -73,9 +128,6 @@ class FrameworkConfig:
     
     def get_nets(self):
         return self.config["networks"] if self.config and "networks" in self.config else None
-
-    def set(self, key, value):
-        self.dynamic_options[key] = value
 
     def create_task_set(self, task_set_key, fileName, controller, scenario, defaults=None):
         task_set = []
@@ -93,7 +145,7 @@ class FrameworkConfig:
             if task_type == "" or task_type == "generic":
                 logger.slog.debug("creating a generic task")
                 new_task = task.Task(os.path.dirname(fileName),
-                        key, controller, scenario.getNetwork())
+                        self.config, controller, scenario.getNetwork())
                 task_set.append(new_task)
                 return
             try:
@@ -114,18 +166,18 @@ class FrameworkConfig:
                 else:
                     class_name = getattr(task_mod, classes[0])
                     new_task = class_name(os.path.dirname(fileName),
-                            key, controller, scenario.getNetwork())
+                            self.config, controller, scenario.getNetwork())
                     task_set.append(new_task)
             except AttributeError:
-                logger.slog.error("unknown task type %s", task_type)
-                raise Exception("unknown task type {task_type}")
+                raise Exception(f"unknown task type {task_type}")
         return task_set
 
     def create_test_set_tasks(self, task_set_key, fileName, controller, defaults=None):
         task_set = []
         if task_set_key not in self.config:
             return task_set
-        for key in self.config[task_set_key]:
+        task_set_tasks = self.config[task_set_key]
+        for key in task_set_tasks:
             if key["type"] in defaults.keys():
                 key = defaults[key["type"]] | key
             if "type" in key.keys():
@@ -161,8 +213,7 @@ class FrameworkConfig:
                             key, controller, "host")
                     task_set.append(new_task)
             except AttributeError:
-                logger.slog.error("unknown task type %s", task_type)
-                raise Exception("unknown task type {task_type}")
+                raise Exception(f"unknown task type {task_type}")
         return task_set
 
     def get_defaults(self):

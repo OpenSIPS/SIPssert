@@ -39,7 +39,7 @@ arg_parser.add_argument('--config',
                         default="config.yml",
                         type=os.path.abspath)
 
-arg_parser.add_argument('--logsDir',
+arg_parser.add_argument('--logs_dir',
                         help='Absolute path of the logs dir',
                         default="logs/",
                         type=os.path.abspath)
@@ -51,7 +51,7 @@ def main():
     args = arg_parser.parse_args()
 
     # Open the Controller
-    ctrl = controller.Controller(args.tests, args.test, args.config, args.logsDir)
+    ctrl = controller.Controller(args)
     ctrl.run()
 
 if __name__ == '__main__':

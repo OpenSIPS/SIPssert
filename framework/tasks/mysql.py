@@ -20,10 +20,10 @@ from framework.tasks.task import Task
 
 class MysqlTask(Task):
 
-    task_default_image = "mysql"
     mysql_default_env = {"MYSQL_ALLOW_EMPTY_PASSWORD":"yes"}
-    task_default_daemon = True
-    task_default_mount_point = "/docker-entrypoint-initdb.d"
+    default_image = "mysql"
+    default_daemon = True
+    default_mount_point = "/docker-entrypoint-initdb.d"
 
     def get_task_env(self):
 

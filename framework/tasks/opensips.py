@@ -20,9 +20,9 @@ from framework.tasks.task import Task
 
 class OpenSIPSTask(Task):
 
-    task_default_mount_point = "/etc/opensips"
-    task_default_image = "opensips/opensips"
-    task_default_daemon = True
+    default_mount_point = "/etc/opensips"
+    default_image = "opensips/opensips"
+    default_daemon = True
     
     def get_task_args(self):
 

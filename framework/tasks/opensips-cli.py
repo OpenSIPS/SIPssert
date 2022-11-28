@@ -20,9 +20,9 @@ from framework.tasks.task import Task
 
 class OpenSIPSCliTask(Task):
 
-    task_default_image = "opensips/opensips-cli"
-    task_default_mount_point = "/home"
-    task_default_daemon = True
+    default_image = "opensips/opensips-cli"
+    default_mount_point = "/home"
+    default_daemon = True
     
     def get_task_args(self):
 

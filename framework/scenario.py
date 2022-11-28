@@ -26,7 +26,6 @@ import subprocess
 from framework.tasks import task
 from framework import logger
 from framework import config
-from framework import parser
 
 LOGS_DIR = "logs"
 NETWORK_CAP = "net_capture"
@@ -47,7 +46,7 @@ class Scenario():
         self.fetch_vars()
         if set_vars_dict:
             self.variables = set_vars_dict | self.variables
-        self.config = config.FrameworkConfig(file, False, self.variables)
+        self.config = config.FrameworkConfig(self.dirname, os.path.basename(file), None, self.variables)
         self.tasks = []
         self.init_tasks = []
         self.cleanup_tasks = []

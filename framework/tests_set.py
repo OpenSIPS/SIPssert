@@ -19,9 +19,9 @@
 """Logic that runs a set of tests"""
 
 import os
-from framework import parser
 from framework import config
 from framework import scenario
+from framework import logger
 from framework.network import network
 
 SCENARIO = "scenario.yml"
@@ -38,34 +38,18 @@ class TestSet():
         self.name = os.path.basename(set_path)
         self.set_path = set_path
         self.set_logs_dir = controller.run_logs_dir + "/" + self.name
-        self.fetch_vars()
+        self.config = config.Config(self.set_path, CONFIG, VARIABLES, controller.config.get_defines())
         self.create_set_logs_dir()
-        self.parse_config()
         self.defaults = self.config.get_defaults()
         self.init_tasks = self.config.create_test_set_tasks("init_tasks", self.set_path, self.controller, self.defaults)
         self.cleanup_tasks = self.config.create_test_set_tasks("cleanup_tasks", self.set_path, self.controller, self.defaults)
         self.setup_networks()
         self.build_scenarios()
 
-    def fetch_vars(self):
-        """Check dictionary for custom variables in current test set"""
-        if not VARIABLES in os.listdir(self.set_path):
-            self.variables = None
-            return None
-        var_parser = parser.Parser()
-        self.variables = var_parser.parse_yaml(os.path.join(self.set_path, VARIABLES))
-
     def create_set_logs_dir(self):
         """Creates current test set logs directory"""
         if not os.path.isdir(self.set_logs_dir):
             os.mkdir(self.set_logs_dir)
-
-    def parse_config(self):
-        """Parses tests set configuration file"""
-        if not CONFIG in os.listdir(self.set_path):
-            self.config = None
-            return
-        self.config = config.FrameworkConfig(os.path.join(self.set_path, CONFIG))
 
     def get_network(self, name):
         """returns a created network based on its name"""
@@ -100,8 +84,10 @@ class TestSet():
 
     def init(self):
         """Runs the init tasks for a test set"""
+        logger.slog.debug("start running init tasks")
         for task in self.init_tasks:
             task.run()
+        logger.slog.debug("finish running init tasks")
 
     def cleanup(self):
         """Runs the cleanup tasks for a test set"""
@@ -111,17 +97,19 @@ class TestSet():
     def run(self):
         """Runs one or all tests in a set"""
         try:
-            pass
             self.init()
-        except Exception:
-            pass
-        for scen in self.scenarios:
-            scen.run()
+        except Exception as e:
+            logger.slog.exception(e)
+            return
+        try:
+            for scen in self.scenarios:
+                scen.run()
+        except Exception as e:
+            logger.slog.exception(e)
         try:
             self.cleanup()
-            pass
-        except Exception:
-            pass
+        except Exception as e:
+            logger.slog.exception(e)
         # cleanup networks
         for net in self.networks:
             net.destroy()

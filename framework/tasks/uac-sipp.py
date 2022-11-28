@@ -20,8 +20,8 @@ from framework.tasks.task import Task
 
 class UacSIPPTask(Task):
 
-    task_default_image = "ctaloi/sipp"
-    task_default_daemon = False
+    default_image = "ctaloi/sipp"
+    default_daemon = False
 
     def get_task_args(self):
 

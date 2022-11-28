@@ -18,6 +18,7 @@
 logger.py - implements coloured logging for the opensips-cli project
 """
 
+import os
 import logging
 
 slog = None # pylint: disable=invalid-name
@@ -96,26 +97,26 @@ class ColoredFormatter(logging.Formatter):
             record.levelname = levelname_color
         return logging.Formatter.format(self, record)
 
-def init_logger(config):
+def init_logger(config, logs_dir=None):
     """Initializes the logger according to config"""
     global slog # pylint: disable=global-statement,invalid-name
     global LOG_CONSOLE # pylint: disable=global-statement
     global LOG_LEVEL # pylint: disable=global-statement
     global LOG_FILE # pylint: disable=global-statement
 
-    if "console" in config.keys():
-        if config["console"]:
-            LOG_CONSOLE = True
-    if "file" in config.keys():
-        LOG_FILE = config["file"]
-    if "level" in config.keys():
-        LOG_LEVEL = config["level"]
+    LOG_CONSOLE = config.get("console", DEFAULT_LOG_CONSOLE)
+    log_file = config.get("file", DEFAULT_LOG_FILE)
+    if os.path.isabs(log_file) or not logs_dir:
+        LOG_FILE = log_file
+    else:
+        LOG_FILE = os.path.join(logs_dir, log_file)
+    LOG_LEVEL = config.get("level", DEFAULT_LOG_LEVEL)
     logging.setLoggerClass(ColoredLogger)
     slog = logging.getLogger(__name__ + "System")
     slog.setLevel(LOG_LEVEL)
 
-LOG_FILE = "default.log"
-LOG_CONSOLE = False
-LOG_LEVEL = "DEBUG"
+DEFAULT_LOG_FILE = "default.log"
+DEFAULT_LOG_LEVEL = "DEBUG"
+DEFAULT_LOG_CONSOLE = False
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

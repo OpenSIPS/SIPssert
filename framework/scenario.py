@@ -26,6 +26,7 @@ import subprocess
 from framework.tasks import task
 from framework import logger
 from framework import config
+from framework import tasks_parser
 
 LOGS_DIR = "logs"
 NETWORK_CAP = "net_capture"
@@ -43,10 +44,7 @@ class Scenario():
         self.dirname = os.path.dirname(file)
         self.name = os.path.basename(self.dirname)
         self.scen_logs_dir = set_logs_dir + "/" + self.name
-        self.fetch_vars()
-        if set_vars_dict:
-            self.variables = set_vars_dict | self.variables
-        self.config = config.FrameworkConfig(self.dirname, os.path.basename(file), None, self.variables)
+        config.Config(self.ditname, self.name, VARIABLES, set_vars_dict)
         self.tasks = []
         self.init_tasks = []
         self.cleanup_tasks = []
@@ -55,25 +53,14 @@ class Scenario():
         self.create_scen_logs_dir()
         self.network_device = self.config.get("network")
         self.timeout = self.config.get("timeout", 0)
-        self.tasks = self.config.create_task_set("tasks", self.file, self.controller, self, set_defaults_dict)
-        self.init_tasks = self.config.create_task_set("init_tasks", self.file, self.controller, self, set_defaults_dict)
-        self.cleanup_tasks = self.config.create_task_set("cleanup_tasks", self.file, self.controller, self, set_defaults_dict)
-
-    def fetch_vars(self):
-        """Check dictionary for custom variables in current test set"""
-        if not VARIABLES in os.listdir(self.dirname):
-            self.variables = None
-            return None
-        var_parser = parser.Parser()
-        self.variables = var_parser.parse_yaml(os.path.join(self.dirname, VARIABLES))
+        self.tasks = tasks_parser.create_task_list("tasks", self.file, self.config, self.controller, set_defaults_dict)
+        self.init_tasks = tasks_parser.create_task_list("init_tasks", self.file, self.config, self.controller, set_defaults_dict)
+        self.cleanup_tasks = tasks_parser.create_task_list("cleanup_tasks", self.file, self.config, self.controller, set_defaults_dict)
 
     def create_scen_logs_dir(self):
         """Creates current scenario logs directory"""
         if not os.path.isdir(self.scen_logs_dir):
             os.mkdir(self.scen_logs_dir)
-
-    def getNetwork(self):
-        return self.network_device
 
     def init(self):
         """Runs the init tasks for a scenario"""

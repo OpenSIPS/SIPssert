@@ -22,6 +22,7 @@ import os
 from framework import config
 from framework import scenario
 from framework import logger
+from framework import tasks_parser
 from framework.network import network
 
 SCENARIO = "scenario.yml"
@@ -40,9 +41,11 @@ class TestSet():
         self.set_logs_dir = controller.run_logs_dir + "/" + self.name
         self.config = config.Config(self.set_path, CONFIG, VARIABLES, controller.config.get_defines())
         self.create_set_logs_dir()
-        self.defaults = self.config.get_defaults()
-        self.init_tasks = self.config.create_test_set_tasks("init_tasks", self.set_path, self.controller, self.defaults)
-        self.cleanup_tasks = self.config.create_test_set_tasks("cleanup_tasks", self.set_path, self.controller, self.defaults)
+        self.defaults = self.config.get("defaults", {})
+        self.init_tasks = tasks_parser.create_task_list("init_tasks",
+                self.set_path, self.config, self.controller, self.defaults)
+        self.cleanup_tasks = tasks_parser.create_task_list("cleanup_tasks",
+                self.set_path, self.config, self.controller, self.defaults)
         self.setup_networks()
         self.build_scenarios()
 

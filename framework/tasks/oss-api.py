@@ -35,8 +35,8 @@ class OSSAPITask(Task):
     default_path = ""
     default_params = "{}"
 
-    def __init__(self, test_dir, config, controller, scenario):
-        super().__init__(test_dir, config, controller, scenario)
+    def __init__(self, test_dir, config, controller):
+        super().__init__(test_dir, config, controller)
 
         self.resource = config["resource"]
         self.command = config["command"]

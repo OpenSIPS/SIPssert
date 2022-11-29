@@ -102,6 +102,10 @@ class Config:
         """Returns a key or a section from the config"""
         return self.config.get(key, None, True)
 
+    def __contains__(self, key):
+        """checkes whether a key is part of the config"""
+        return key in self.config
+
     def get(self, key, default=None, mandatory=False):
         """Returns a key or a section from the config"""
         return self.config.get(key, default, mandatory)
@@ -109,116 +113,3 @@ class Config:
     def get_defines(self):
         """Returns all the variables defined"""
         return self.defines
-
-
-    def get_extra_params(self):
-        if "extra_params" in self.config:
-            extra_params = self.config["extra_params"].split(" ")
-        else:
-            extra_params = []
-        return extra_params
-
-    def get_ports(self):
-        r = {}
-        if "ports" in self.config:
-            for p in self.config["ports"]:
-                port, proto = p.split("/")
-                r[p] = port
-        return r
-    
-    def get_nets(self):
-        return self.config["networks"] if self.config and "networks" in self.config else None
-
-    def create_task_set(self, task_set_key, fileName, controller, scenario, defaults=None):
-        task_set = []
-        if task_set_key not in self.config:
-            return task_set
-        for key in self.config[task_set_key]:
-            if key["type"] in defaults.keys():
-                key = defaults[key["type"]] | key
-            if "type" in key.keys():
-                task_type = key["type"].lower()
-            else:
-                # create a generic task
-                task_type = ""
-
-            if task_type == "" or task_type == "generic":
-                logger.slog.debug("creating a generic task")
-                new_task = task.Task(os.path.dirname(fileName),
-                        self.config, controller, scenario.getNetwork())
-                task_set.append(new_task)
-                return
-            try:
-                task_mod = getattr(
-                        importlib.import_module("framework.tasks"),
-                        task_type)
-                normalized_task_type = "".join(
-                        [ x for x in task_type if x.isalnum() ])
-                normalized_class_name = normalized_task_type + "task"
-                classes = [ c for c in dir(task_mod) if
-                        c.lower() == normalized_class_name and
-                        c.endswith("Task") ]
-                if len(classes) == 0:
-                    logger.slog.debug("unknown task derived from %s", task_type)
-                elif len(classes) != 1:
-                    logger.slog.debug("too many classed derived from %s: %s",
-                                    task_type, str(classes))
-                else:
-                    class_name = getattr(task_mod, classes[0])
-                    new_task = class_name(os.path.dirname(fileName),
-                            self.config, controller, scenario.getNetwork())
-                    task_set.append(new_task)
-            except AttributeError:
-                raise Exception(f"unknown task type {task_type}")
-        return task_set
-
-    def create_test_set_tasks(self, task_set_key, fileName, controller, defaults=None):
-        task_set = []
-        if task_set_key not in self.config:
-            return task_set
-        task_set_tasks = self.config[task_set_key]
-        for key in task_set_tasks:
-            if key["type"] in defaults.keys():
-                key = defaults[key["type"]] | key
-            if "type" in key.keys():
-                task_type = key["type"].lower()
-            else:
-                # create a generic task
-                task_type = ""
-
-            if task_type == "" or task_type == "generic":
-                logger.slog.debug("creating a generic task")
-                new_task = task.Task(os.path.dirname(fileName),
-                        key, controller, "host")
-                task_set.append(new_task)
-                return
-            try:
-                task_mod = getattr(
-                        importlib.import_module("framework.tasks"),
-                        task_type)
-                normalized_task_type = "".join(
-                        [ x for x in task_type if x.isalnum() ])
-                normalized_class_name = normalized_task_type + "task"
-                classes = [ c for c in dir(task_mod) if
-                        c.lower() == normalized_class_name and
-                        c.endswith("Task") ]
-                if len(classes) == 0:
-                    logger.slog.debug("unknown task derived from %s", task_type)
-                elif len(classes) != 1:
-                    logger.slog.debug("too many classed derived from %s: %s",
-                                    task_type, str(classes))
-                else:
-                    class_name = getattr(task_mod, classes[0])
-                    new_task = class_name(os.path.dirname(fileName),
-                            key, controller, "host")
-                    task_set.append(new_task)
-            except AttributeError:
-                raise Exception(f"unknown task type {task_type}")
-        return task_set
-
-    def get_defaults(self):
-        defaults = {}
-        if 'defaults' in self.config.keys():
-            for image_defaults in self.config['defaults']:
-                defaults[image_defaults['type']] = image_defaults['values']
-        return defaults

@@ -106,6 +106,10 @@ class Config:
         """checkes whether a key is part of the config"""
         return key in self.config
 
+    def __str__(self):
+        """returns the configuration representation"""
+        return str(self.config)
+
     def get(self, key, default=None, mandatory=False):
         """Returns a key or a section from the config"""
         return self.config.get(key, default, mandatory)

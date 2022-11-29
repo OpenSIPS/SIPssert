@@ -81,16 +81,14 @@ class TestSet():
                     scenario_path = os.path.join(test_dir, SCENARIO)
                     scenarios_paths.append(scenario_path)
         for scenario_path in scenarios_paths:
-            scenarios.append(scenario.Scenario(scenario_path, self.controller, self.set_logs_dir, self.variables, self.defaults))
+            scenarios.append(scenario.Scenario(scenario_path, self.controller, self, self.set_logs_dir, self.defaults))
 
         self.scenarios = scenarios
 
     def init(self):
         """Runs the init tasks for a test set"""
-        logger.slog.debug("start running init tasks")
         for task in self.init_tasks:
             task.run()
-        logger.slog.debug("finish running init tasks")
 
     def cleanup(self):
         """Runs the cleanup tasks for a test set"""

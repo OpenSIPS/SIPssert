@@ -36,18 +36,16 @@ class Scenario():
 
     """Class that implements running a scenario"""
 
-    def __init__(self, file, controller, set_logs_dir, set_vars_dict, set_defaults_dict):
+    def __init__(self, file, controller, test_set, set_logs_dir, set_defaults_dict):
         self.tcpdump = None
         self.controller = controller
         self.file = file
         self.tlogger = controller.tlogger
         self.dirname = os.path.dirname(file)
-        self.name = os.path.basename(self.dirname)
+        self.name = os.path.basename(file)
         self.scen_logs_dir = set_logs_dir + "/" + self.name
-        config.Config(self.ditname, self.name, VARIABLES, set_vars_dict)
-        self.tasks = []
-        self.init_tasks = []
-        self.cleanup_tasks = []
+        self.config = config.Config(self.dirname, self.name, VARIABLES,
+                test_set.config.get_defines())
         self.getScenarioTimestamp()
         self.network_device = None
         self.create_scen_logs_dir()
@@ -78,6 +76,7 @@ class Scenario():
         self.start_tcpdump()
         try:
             self.init()
+            logger.slog.debug(f"start running tasks: {self.tasks}")
             for task in self.tasks:
                 task.run()
         except Exception:

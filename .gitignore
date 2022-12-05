@@ -1,6 +1,6 @@
 *.pyc
 *.pyo
-*.swp
+*.sw[nop]
 *.log
 *.pcap
 __pycach*
@@ -10,3 +10,4 @@ __pycach*
 /MANIFEST
 *egg-info/
 tags
+/logs

@@ -23,6 +23,13 @@ class UacSIPPTask(Task):
     default_image = "ctaloi/sipp"
     default_daemon = False
 
+    def __init__(self, test_dir, config, controller):
+        super().__init__(test_dir, config, controller)
+
+        self.username = config.get("username")
+        self.password = config.get("password")
+        self.proxy = config["proxy"]
+
     def get_task_args(self):
 
         args = []
@@ -34,6 +41,14 @@ class UacSIPPTask(Task):
         else:
             args.append("-sn")
             args.append("uac")
+
+        if self.username:
+            args.append("-s")
+            args.append(self.username)
+
+        if self.password:
+            args.append("-ap")
+            args.append(self.password)
 
         return args
 

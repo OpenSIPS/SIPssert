@@ -38,6 +38,7 @@ class Controller:
         self.config_file = args.config
         current_date = datetime.now().strftime("%Y-%m-%d.%H:%M:%S.%f")
         self.run_logs_dir = os.path.join(self.logs_dir, current_date)
+        self.link_file = os.path.join(self.logs_dir, "latest")
         self.create_run_logs_dir()
         self.config = config.Config(self.config_file)
         logger.init_logger(self.config["logging"]["controller"], self.run_logs_dir)
@@ -50,6 +51,9 @@ class Controller:
             os.mkdir(self.logs_dir)
         if not os.path.isdir(self.run_logs_dir):
             os.mkdir(self.run_logs_dir)
+        if os.path.exists(self.link_file):
+            os.remove(self.link_file)
+        os.symlink(self.run_logs_dir, self.link_file)
 
     def run(self):
         """Runs all test sets"""

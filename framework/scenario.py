@@ -42,9 +42,10 @@ class Scenario():
         self.file = file
         self.tlogger = controller.tlogger
         self.dirname = os.path.dirname(file)
-        self.name = os.path.basename(file)
+        self.scenario = os.path.basename(file)
+        self.name = os.path.basename(self.dirname)
         self.scen_logs_dir = set_logs_dir + "/" + self.name
-        self.config = config.Config(self.dirname, self.name, VARIABLES,
+        self.config = config.Config(self.dirname, self.scenario, VARIABLES,
                 test_set.config.get_defines())
         self.getScenarioTimestamp()
         self.network_device = None
@@ -132,28 +133,12 @@ class Scenario():
 
     def getLogs(self):
         logs_path = self.scen_logs_dir
-        for task in self.init_tasks:
-            name = str(self.timestamp) + "_" + task.container.name
-            log_file = os.path.join(logs_path, name)
+        for task in self.init_tasks + self.tasks + self.cleanup_tasks:
+            log_file = os.path.join(logs_path, task.container.name)
             f = open(log_file, 'w')
             f.write(task.container.logs().decode('UTF-8'))
             f.close()
-            logger.slog.debug(str(datetime.utcnow()) + " - Logs for {} fetched successfully!".format(task.container.name))
-        for task in self.tasks:
-            name = str(self.timestamp) + "_" + task.container.name
-            log_file = os.path.join(logs_path, name)
-            f = open(log_file, 'w')
-            f.write(task.container.logs().decode('UTF-8'))
-            f.close()
-            logger.slog.debug(str(datetime.utcnow()) + " - Logs for {} fetched successfully!".format(task.container.name))
-        for task in self.cleanup_tasks:
-            name = str(self.timestamp) + "_" + task.container.name
-            log_file = os.path.join(logs_path, name)
-            f = open(log_file, 'w')
-            f.write(task.container.logs().decode('UTF-8'))
-            f.close()
-            logger.slog.debug(str(datetime.utcnow()) + " - Logs for {} fetched successfully!".format(task.container.name))
-
+            logger.slog.debug("Logs for {} fetched successfully!".format(task.container.name))
 
     def start_tcpdump(self):
         """Starts a tcpdump for a scenario"""
@@ -163,7 +148,7 @@ class Scenario():
             res = self.network_device
  
         directory = self.scen_logs_dir
-        capture_file = os.path.join(directory, str(self.timestamp) + "_cap.pcap")
+        capture_file = os.path.join(directory, "capture.pcap")
         self.tcpdump = subprocess.Popen(['tcpdump', '-i', res, '-w', capture_file],
                                          stdout=subprocess.DEVNULL,
                                          stderr=subprocess.DEVNULL)
@@ -176,12 +161,11 @@ class Scenario():
     def getStatus(self):
         logs_path = self.scen_logs_dir
         for task in self.tasks:
-            name = str(self.timestamp) + "_" + task.container.name + "_STATUS"
-            log_file = os.path.join(logs_path, name)
+            log_file = os.path.join(logs_path, task.container.name + "_STATUS")
             f = open(log_file, 'w')
-            f.write(task.container.name + " " + str(task.container.image) + " ExitCode: " + str(task.get_exit_code()))
+            f.write(str(task.get_exit_code()))
             f.close()
-            logger.slog.debug(str(datetime.utcnow())+ " - Status for {} fetched successfully!".format(task.container.name))
+            logger.slog.debug("Status for {} fetched successfully!".format(task.container.name))
 
     def printStatus(self):
         for task in self.tasks:
@@ -193,19 +177,14 @@ class Scenario():
             if task.get_exit_code() != 0 and task.daemon == False:
                 ok = False
                 break
+        logger.slog.debug(80*"=")
+        logger.slog.info("Test: {}".format(self.name))
+        self.printStatus()
         if ok == False:
-            logger.slog.debug(80*"=")
-            logger.slog.info("Test: {}".format(os.path.basename(self.dirname)))
-            self.printStatus()
-            logger.slog.info( "TEST FAILED!")
-            logger.slog.info(80*"=")
+            logger.slog.info("TEST FAILED!")
             self.tlogger.failed()
         else:
-            logger.slog.debug(80*"=")
-            logger.slog.info("Test: {}".format(os.path.basename(self.dirname)))
-            self.printStatus()
             logger.slog.info("TEST PASSED!")
-            logger.slog.info(80*"=")
             self.tlogger.success()
 
     def __del__(self):

@@ -35,8 +35,8 @@ class OSSAPITask(Task):
     default_path = ""
     default_params = "{}"
 
-    def __init__(self, test_dir, config, controller):
-        super().__init__(test_dir, config, controller)
+    def __init__(self, config):
+        super().__init__(config)
 
         self.resource = config["resource"]
         self.command = config["command"]
@@ -53,7 +53,7 @@ class OSSAPITask(Task):
                 '''-H "Content-Type: application/json" ''' + \
                 f'''-d '{{ "jsonrpc": 2.0, "method": "{self.command}", ''' + \
                 f'''"params": {json.dumps(self.params)}, "id": "{uuid.uuid4()}" }}' ''' + \
-                """2>/dev/null | jq '.result'"""
+                """2>/dev/null | jq -e 'if has("result") then .["result"] else .["error"] | halt_error(1) end'"""
 
         args = ["sh", "-c", command]
 

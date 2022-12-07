@@ -16,22 +16,24 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from framework.tasks.task import Task
+"""SIPP User-Agent Server class"""
 
-class UasSIPPTask(Task):
+from framework.tasks.sipp import SIPPTask
 
-    default_image = "ctaloi/sipp"
-    default_daemon = True
+class UasSIPPTask(SIPPTask):
+
+    """UAS SIPP class"""
+    def __init__(self, test_dir, config, controller):
+        super().__init__(test_dir, config, controller)
+        if not self.service:
+            self.service = self.username
 
     def get_task_args(self):
 
-        args = []
+        """Returns the arguments the container uses to start"""
 
-        # handle config
-        if self.config_file:
-            args.append("-sf")
-            args.append(self.config_file)
-        else:
+        args = super().get_task_args()
+        if not self.config_file:
             args.append("-sn")
             args.append("uas")
 

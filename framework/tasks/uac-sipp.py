@@ -16,39 +16,34 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from framework.tasks.task import Task
+"""SIPP User-Agent Client class"""
 
-class UacSIPPTask(Task):
+from framework.tasks.sipp import SIPPTask
 
-    default_image = "ctaloi/sipp"
-    default_daemon = False
+class UacSIPPTask(SIPPTask):
 
+    """UAC SIPP class"""
     def __init__(self, test_dir, config, controller):
         super().__init__(test_dir, config, controller)
-
-        self.username = config.get("username")
-        self.password = config.get("password")
-        self.proxy = config["proxy"]
+        if not self.proxy:
+            raise ConfigParamNotFound("proxy")
+        self.caller = config.get("caller", self.username)
+        # overwrite the username/service with the destination 
+        if not self.service:
+            self.service = config.get("destination", self.username)
 
     def get_task_args(self):
 
-        args = []
+        """Returns the arguments the container uses to start"""
 
-        # handle config
-        if self.config_file:
-            args.append("-sf")
-            args.append(self.config_file)
-        else:
+        args = super().get_task_args()
+        if not self.config_file:
             args.append("-sn")
             args.append("uac")
-
-        if self.username:
-            args.append("-s")
-            args.append(self.username)
-
-        if self.password:
-            args.append("-ap")
-            args.append(self.password)
+        if self.caller:
+            args.append("-key")
+            args.append("caller")
+            args.append(self.caller)
 
         return args
 

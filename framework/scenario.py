@@ -22,10 +22,10 @@ import os
 import importlib
 import time
 from datetime import datetime
-import subprocess
 from framework.tasks import task
 from framework import logger
 from framework import config
+from framework import tracer
 from framework import tasks_list
 
 LOGS_DIR = "logs"
@@ -37,7 +37,6 @@ class Scenario():
     """Class that implements running a scenario"""
 
     def __init__(self, file, controller, test_set, set_logs_dir, set_defaults_dict):
-        self.tcpdump = None
         self.controller = controller
         self.file = file
         self.tlogger = controller.tlogger
@@ -47,9 +46,9 @@ class Scenario():
         self.scen_logs_dir = set_logs_dir + "/" + self.name
         self.config = config.Config(self.dirname, self.scenario, VARIABLES,
                 test_set.config.get_defines())
-        self.network_device = None
         self.create_scen_logs_dir()
         self.network_device = self.config.get("network")
+        self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", self.network_device)
         self.timeout = self.config.get("timeout", 0)
         self.tasks = tasks_list.TasksList("tasks", self.file, self.scen_logs_dir,
                 self.config, self.controller, set_defaults_dict)
@@ -76,7 +75,7 @@ class Scenario():
     def run(self):
         """Runs a scenario with all its prerequisits"""
         self.tlogger.test_start(self.name)
-        self.start_tcpdump()
+        self.tracer.start()
         try:
             self.init_tasks.run()
             try:
@@ -89,41 +88,13 @@ class Scenario():
             self.cleanup_tasks.run(force_all=True)
         except Exception:
             logger.slog.exception("Error occured during cleanup task")
-        self.stop_tcpdump()
+        self.tracer.stop()
         self.verify_test()
 
     def update(self):
         """updates the status of a scenario"""
         for tsk in self.tasks:
             tsk.update()
-
-    def stop_tcpdump(self):
-        """Stops started tcpdump"""
-        if self.tcpdump:
-            self.tcpdump.terminate()
-        time.sleep(0.5)
-
-    def stopAll(self):
-        """Stops all the running tasks"""
-        for tsk in self.tasks:
-            if tsk.container.status != "exited":
-                tsk.stop()
-            tsk.finish(self.scen_logs_dir)
-
-    def start_tcpdump(self):
-        """Starts a tcpdump for a scenario"""
-        if not self.network_device or self.network_device == "host":
-            res = "any"
-        else:
-            res = self.network_device
- 
-        directory = self.scen_logs_dir
-        capture_file = os.path.join(directory, "capture.pcap")
-        self.tcpdump = subprocess.Popen(['tcpdump', '-i', res, '-w', capture_file],
-                                         stdout=subprocess.DEVNULL,
-                                         stderr=subprocess.DEVNULL)
-        # wait for proc to start
-        time.sleep(0.5)
 
     def verify_test(self):
         ok = True

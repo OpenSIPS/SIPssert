@@ -16,27 +16,11 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-"""SIPP User-Agent Server class"""
+from framework.tasks.task import Task
 
-from framework.tasks.sipp import SIPPTask
+class GenericTask(Task):
 
-class UasSIPPTask(SIPPTask):
-
-    """UAS SIPP class"""
-    def __init__(self, config):
-        super().__init__(config)
-        if not self.service:
-            self.service = self.username
-
-    def get_task_args(self):
-
-        """Returns the arguments the container uses to start"""
-
-        args = super().get_task_args()
-        if not self.config_file:
-            args.append("-sn")
-            args.append("uas")
-
-        return args
+    """Class that implements a generic task"""
+    pass
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

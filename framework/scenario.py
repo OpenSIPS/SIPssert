@@ -26,7 +26,7 @@ import subprocess
 from framework.tasks import task
 from framework import logger
 from framework import config
-from framework import tasks_parser
+from framework import tasks_list
 
 LOGS_DIR = "logs"
 NETWORK_CAP = "net_capture"
@@ -47,14 +47,16 @@ class Scenario():
         self.scen_logs_dir = set_logs_dir + "/" + self.name
         self.config = config.Config(self.dirname, self.scenario, VARIABLES,
                 test_set.config.get_defines())
-        self.getScenarioTimestamp()
         self.network_device = None
         self.create_scen_logs_dir()
         self.network_device = self.config.get("network")
         self.timeout = self.config.get("timeout", 0)
-        self.tasks = tasks_parser.create_task_list("tasks", self.file, self.config, self.controller, set_defaults_dict)
-        self.init_tasks = tasks_parser.create_task_list("init_tasks", self.file, self.config, self.controller, set_defaults_dict)
-        self.cleanup_tasks = tasks_parser.create_task_list("cleanup_tasks", self.file, self.config, self.controller, set_defaults_dict)
+        self.tasks = tasks_list.TasksList("tasks", self.file, self.scen_logs_dir,
+                self.config, self.controller, set_defaults_dict)
+        self.init_tasks = tasks_list.TasksList("init_tasks", self.file, self.scen_logs_dir,
+                self.config, self.controller, set_defaults_dict)
+        self.cleanup_tasks = tasks_list.TasksList("cleanup_tasks", self.file, self.scen_logs_dir,
+                self.config, self.controller, set_defaults_dict)
 
     def create_scen_logs_dir(self):
         """Creates current scenario logs directory"""
@@ -76,47 +78,24 @@ class Scenario():
         self.tlogger.test_start(self.name)
         self.start_tcpdump()
         try:
-            self.init()
-            logger.slog.debug(f"start running tasks: {self.tasks}")
-            for task in self.tasks:
-                task.run()
+            self.init_tasks.run()
+            try:
+                self.tasks.run()
+            except Exception:
+                logger.slog.exception("Error occured during tasks run")
         except Exception:
-            logger.slog.exception("Error occured during task run")
+            logger.slog.exception("Error occured during init tasks")
         try:
-            self.cleanup()
+            self.cleanup_tasks.run(force_all=True)
         except Exception:
             logger.slog.exception("Error occured during cleanup task")
-        self.wait_end()
         self.stop_tcpdump()
-        self.getLogs()
-        self.getStatus()
-        self.verifyTest()
+        self.verify_test()
 
     def update(self):
         """updates the status of a scenario"""
         for tsk in self.tasks:
             tsk.update()
-
-    def wait_end(self):
-        """waits for all the tasks within a scenario to end"""
-        wait = True
-        counter = 0
-        if self.timeout != 0:
-            counter = self.timeout * 10; # 1000 ms / 100 (a cycle) -> 10 cycles per sec
-        while wait or (self.timeout!=0 and counter==0):
-            wait = False
-            # see if we still have "running" "non-daemons"
-            for tsk in reversed(self.tasks):
-                if tsk.daemon == False and tsk.container.status != "exited":
-                    wait = True
-            if wait:
-                time.sleep(0.1)  #sleep 100 ms before rechecking
-                self.update()
-                counter -= 1
-        if wait:
-            logger.slog.warning(" - WARNING: not all tasks self-terminated, end-forcing due timeout")
-        # stop all remaining containers
-        self.stopAll()
 
     def stop_tcpdump(self):
         """Stops started tcpdump"""
@@ -129,13 +108,7 @@ class Scenario():
         for tsk in self.tasks:
             if tsk.container.status != "exited":
                 tsk.stop()
-            logger.slog.debug("%s - ExitCode: %s", tsk.name, str(tsk.get_exit_code()))
-
-    def getLogs(self):
-        logs_path = self.scen_logs_dir
-        for task in self.init_tasks + self.tasks + self.cleanup_tasks:
-            log_file = os.path.join(logs_path, task.container.name)
-            task.get_logs(log_file)
+            tsk.finish(self.scen_logs_dir)
 
     def start_tcpdump(self):
         """Starts a tcpdump for a scenario"""
@@ -152,16 +125,7 @@ class Scenario():
         # wait for proc to start
         time.sleep(0.5)
 
-    def getScenarioTimestamp(self):
-        self.timestamp = int(datetime.utcnow().timestamp())
-
-    def getStatus(self):
-        logs_path = self.scen_logs_dir
-        for task in self.tasks:
-            log_file = os.path.join(logs_path, task.container.name + "_STATUS")
-            task.get_status(log_file)
-
-    def verifyTest(self):
+    def verify_test(self):
         ok = True
         for task in self.tasks:
             if task.get_exit_code() != 0 and task.daemon == False:

@@ -22,14 +22,14 @@ import os
 from framework import config
 from framework import scenario
 from framework import logger
-from framework import tasks_parser
+from framework import tasks_list
 from framework.network import network
 
 SCENARIO = "scenario.yml"
 CONFIG = "config.yml"
 VARIABLES = "defines.yml"
 
-class TestSet():
+class TestsSet():
 
     """Main class that runs a set of tests"""
 
@@ -40,12 +40,14 @@ class TestSet():
         self.set_path = set_path
         self.set_logs_dir = controller.run_logs_dir + "/" + self.name
         self.config = config.Config(self.set_path, CONFIG, VARIABLES, controller.config.get_defines())
-        self.create_set_logs_dir()
         self.defaults = self.config.get("defaults", {})
-        self.init_tasks = tasks_parser.create_task_list("init_tasks",
-                self.set_path, self.config, self.controller, self.defaults)
-        self.cleanup_tasks = tasks_parser.create_task_list("cleanup_tasks",
-                self.set_path, self.config, self.controller, self.defaults)
+        self.init_tasks_logs_dir = os.path.join(self.set_logs_dir, "init_tasks")
+        self.cleanup_tasks_logs_dir = os.path.join(self.set_logs_dir, "cleanup_tasks")
+        self.init_tasks = tasks_list.TasksList("init_tasks", self.set_path,
+                self.init_tasks_logs_dir, self.config, self.controller, self.defaults)
+        self.cleanup_tasks = tasks_list.TasksList("cleanup_tasks", self.set_path,
+                self.cleanup_tasks_logs_dir, self.config, self.controller, self.defaults)
+        self.create_set_logs_dir()
         self.setup_networks()
         self.build_scenarios()
 
@@ -53,6 +55,10 @@ class TestSet():
         """Creates current test set logs directory"""
         if not os.path.isdir(self.set_logs_dir):
             os.mkdir(self.set_logs_dir)
+        if len(self.init_tasks) > 0 and not os.path.isdir(self.init_tasks_logs_dir):
+            os.mkdir(self.init_tasks_logs_dir)
+        if len(self.cleanup_tasks) > 0 and not os.path.isdir(self.cleanup_tasks_logs_dir):
+            os.mkdir(self.cleanup_tasks_logs_dir)
 
     def get_network(self, name):
         """returns a created network based on its name"""
@@ -85,11 +91,6 @@ class TestSet():
 
         self.scenarios = scenarios
 
-    def init(self):
-        """Runs the init tasks for a test set"""
-        for task in self.init_tasks:
-            task.run()
-
     def cleanup(self):
         """Runs the cleanup tasks for a test set"""
         for task in self.cleanup_tasks:
@@ -98,7 +99,7 @@ class TestSet():
     def run(self):
         """Runs one or all tests in a set"""
         try:
-            self.init()
+            self.init_tasks.run()
         except Exception as e:
             logger.slog.exception(e)
             return
@@ -107,10 +108,7 @@ class TestSet():
                 scen.run()
         except Exception as e:
             logger.slog.exception(e)
-        try:
-            self.cleanup()
-        except Exception as e:
-            logger.slog.exception(e)
+        self.cleanup_tasks.run(force_all=True)
         # cleanup networks
         for net in self.networks:
             net.destroy()

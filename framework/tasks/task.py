@@ -31,14 +31,18 @@ class Task():
     default_config_file = None
     default_mount_point = '/home'
 
-    def __init__(self, test_dir, configuration, controller):
+    def __init__(self, configuration):
         self.config = configuration
         self.net_mode = self.config.get("network", None)
-        self.controller = controller
-        self.test_dir = test_dir
+        self.finished = False
+        self.controller = None
+        self.test_dir = None
+        self.volumes = {}
+        self.logs_dir = None
         self.container = None
         self.root_password = None
         self.name = self.config.get("name", self.__class__.__name__)
+        self.log = logger.IdenfierAdapter(self.name)
         self.image = self.config.get("image", self.default_image)
         self.ip = self.config.get("ip")
         self.delay_start = self.config.get("delay_start", 0)
@@ -51,8 +55,44 @@ class Task():
             raise Exception("task {} does not have an image available".
                     format(self.name))
 
-    def __str__(self):
+    def __repr__(self):
         return self.name
+
+    def set_logs_dir(self, path):
+        self.logs_dir = path
+
+    def add_volume_dir(self, path, dest=None, mode="ro"):
+        self.volumes[path] = {
+                "bind": dest if dest else self.mount_point,
+                "mode": mode
+        }
+
+    def create(self, controller):
+        self.controller = controller
+        args = self.get_args()
+
+        ports = self.get_ports()
+        env = self.get_task_env()
+        net_mode = self.get_net_mode()
+        self.container = self.controller.docker.containers.create(
+                self.image,
+                self.get_args(),
+                detach=True,
+                volumes=self.volumes,
+                ports=ports,
+                name=self.name,
+                environment=env,
+                network_mode=net_mode)
+        self.log.info("container created")
+        self.log.debug("container {}: {}".format(self.image, args))
+
+        if net_mode == "bridge" and self.ip:
+            try:
+                self.controller.docker.networks.get(self.net_mode).\
+                        connect(self.container, ipv4_address = self.ip)
+                self.log.debug("network attached")
+            except docker.errors.APIError as err:
+                self.log.exception(err)
 
     def get_task_args(self):
         return []
@@ -80,52 +120,16 @@ class Task():
     def get_task_env(self):
         return {}
 
-    def get_mount_point(self):
-        return self.mount_point
-
     def run(self):
-        logger.slog.info("[{}] args: {}".format(self, self.get_args()))
-
-        volumes = { self.test_dir: {
-            "bind": self.get_mount_point(),
-            "mode": "ro"
-            }}
-        ports = self.get_ports()
-        env = self.get_task_env()
-        net_mode = self.getNetMode()
-        self.container = self.controller.docker.containers.create(
-                self.image,
-                self.get_args(),
-                detach=True,
-                volumes=volumes,
-                ports=ports,
-                name=self.name,
-                environment=env,
-                network_mode=net_mode)
-        logger.slog.debug("[{}] created".format(self))
-
-        if net_mode == "bridge":
-            try:
-                self.connect()
-                logger.slog.debug("[{}] network created".format(self))
-            except docker.errors.APIError as err:
-                logger.slog.critical(type(err))
-        else: pass
-
         time.sleep(self.delay_start)
         try:
             self.container.start()
-            logger.slog.debug("[{}] started".format(self))
+            self.log.info("started")
         except docker.errors.APIError as err:
-            logger.slog.critical(type(err))
+            self.log.exception(err)
         
 
-    def connect(self):
-        if self.ip:
-            self.controller.docker.networks.get(self.net_mode).\
-                    connect(self.container, ipv4_address = self.ip)    
-
-    def getNetMode(self):
+    def get_net_mode(self):
         if not self.net_mode or self.netMode == "host":
             return "host"
         else:
@@ -133,7 +137,7 @@ class Task():
 
     def stop(self):
         self.container.stop()
-        logger.slog.debug("[{}] container stopped".format(self))
+        self.log.debug("container stopped")
 
     def get_exit_code(self):
         return self.container.attrs["State"]["ExitCode"]
@@ -145,18 +149,39 @@ class Task():
         #self.container.remove()
         self.container = None
 
-    def get_logs(self, path):
-        f = open(path, 'w')
-        f.write(self.container.logs().decode('UTF-8'))
-        f.close()
-        logger.slog.debug("[{}] logs fetched".format(self))
+    def write(self, suffix, data):
+        if not self.logs_dir:
+            return
+        path = os.path.join(self.logs_dir, f"{self.name}.{suffix}")
+        with open(path, 'w') as f:
+            f.write(data)
 
-    def get_status(self, path):
+    def write_logs(self):
+        logs = self.container.logs().decode('UTF-8')
+        self.write("log", logs)
+        self.log.debug("logs fetched")
+
+    def write_status(self):
         status = self.get_exit_code()
-        f = open(path, 'w')
-        f.write(str(status))
-        f.close()
-        logger.slog.debug("[{}] exited with {}".format(self, status))
+        self.write("status", str(status))
+        self.log.debug("exited with status {}".format(status))
+
+    def has_ended(self):
+        if self.daemon:
+            return False
+        self.update()
+        return self.container.status == "exited"
+
+    def wait_end(self):
+        while not self.has_ended(self):
+            time.sleep(0.1)
+
+    def finish(self):
+        if self.finished:
+            return
+        self.write_logs()
+        self.write_status()
+        self.finished = True
 
     def __del__(self):
         if self.container:

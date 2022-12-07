@@ -73,6 +73,18 @@ class ColoredLogger(logging.Logger):
         """returns the message coloured appropriately"""
         return COLOR_SEQ % (30 + color) + message + RESET_SEQ
 
+class IdenfierAdapter(logging.LoggerAdapter):
+
+    """Class that enhances the logging with an identifier"""
+
+    def __init__(self, identifier):
+        global slog # pylint: disable=global-statement,invalid-name
+        super().__init__(slog, extra={'id': identifier})
+
+    def process(self, msg, kwargs):
+        """returns the processed log format"""
+        return '[%s] %s' %(self.extra['id'], msg), kwargs
+
 class ColoredFormatter(logging.Formatter):
 
     """Class that formats a particular message"""

@@ -23,8 +23,8 @@ from framework.tasks.sipp import SIPPTask
 class UacSIPPTask(SIPPTask):
 
     """UAC SIPP class"""
-    def __init__(self, test_dir, config, controller):
-        super().__init__(test_dir, config, controller)
+    def __init__(self, config):
+        super().__init__(config)
         if not self.proxy:
             raise ConfigParamNotFound("proxy")
         self.caller = config.get("caller", self.username)

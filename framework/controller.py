@@ -58,7 +58,7 @@ class Controller:
     def run(self):
         """Runs all test sets"""
         for test_set in self.sets_dirs:
-            test_set_obj = tests_set.TestSet(test_set, self, self.tests)
+            test_set_obj = tests_set.TestsSet(test_set, self, self.tests)
             self.tlogger.test_set(f"Running test set: {test_set_obj.name}")
             test_set_obj.run()
         self.tlogger.end()

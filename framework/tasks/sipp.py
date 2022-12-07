@@ -31,8 +31,8 @@ class SIPPTask(Task):
     default_image = "ctaloi/sipp"
     default_daemon = False
 
-    def __init__(self, test_dir, config, controller):
-        super().__init__(test_dir, config, controller)
+    def __init__(self, config):
+        super().__init__(config)
 
         self.username = config.get("username")
         self.password = config.get("password")

@@ -84,10 +84,7 @@ class Task():
         return self.mount_point
 
     def run(self):
-        #logger.slog.debug(str(datetime.utcnow()))
-        logger.slog.debug("- Name: {}".format(self))
-        logger.slog.debug("- Image: {}".format(self.image))
-        logger.slog.debug("- Args: {}".format(self.get_args()))
+        logger.slog.info("[{}] args: {}".format(self, self.get_args()))
 
         volumes = { self.test_dir: {
             "bind": self.get_mount_point(),
@@ -95,7 +92,6 @@ class Task():
             }}
         ports = self.get_ports()
         env = self.get_task_env()
-        logger.slog.debug("- Env: {}".format(env))
         net_mode = self.getNetMode()
         self.container = self.controller.docker.containers.create(
                 self.image,
@@ -106,10 +102,12 @@ class Task():
                 name=self.name,
                 environment=env,
                 network_mode=net_mode)
+        logger.slog.debug("[{}] created".format(self))
 
         if net_mode == "bridge":
             try:
                 self.connect()
+                logger.slog.debug("[{}] network created".format(self))
             except docker.errors.APIError as err:
                 logger.slog.critical(type(err))
         else: pass
@@ -117,6 +115,7 @@ class Task():
         time.sleep(self.delay_start)
         try:
             self.container.start()
+            logger.slog.debug("[{}] started".format(self))
         except docker.errors.APIError as err:
             logger.slog.critical(type(err))
         
@@ -134,6 +133,7 @@ class Task():
 
     def stop(self):
         self.container.stop()
+        logger.slog.debug("[{}] container stopped".format(self))
 
     def get_exit_code(self):
         return self.container.attrs["State"]["ExitCode"]
@@ -144,6 +144,19 @@ class Task():
     def remove(self):
         #self.container.remove()
         self.container = None
+
+    def get_logs(self, path):
+        f = open(path, 'w')
+        f.write(self.container.logs().decode('UTF-8'))
+        f.close()
+        logger.slog.debug("[{}] logs fetched".format(self))
+
+    def get_status(self, path):
+        status = self.get_exit_code()
+        f = open(path, 'w')
+        f.write(str(status))
+        f.close()
+        logger.slog.debug("[{}] exited with {}".format(self, status))
 
     def __del__(self):
         if self.container:

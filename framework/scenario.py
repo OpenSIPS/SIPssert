@@ -135,10 +135,7 @@ class Scenario():
         logs_path = self.scen_logs_dir
         for task in self.init_tasks + self.tasks + self.cleanup_tasks:
             log_file = os.path.join(logs_path, task.container.name)
-            f = open(log_file, 'w')
-            f.write(task.container.logs().decode('UTF-8'))
-            f.close()
-            logger.slog.debug("Logs for {} fetched successfully!".format(task.container.name))
+            task.get_logs(log_file)
 
     def start_tcpdump(self):
         """Starts a tcpdump for a scenario"""
@@ -162,14 +159,7 @@ class Scenario():
         logs_path = self.scen_logs_dir
         for task in self.tasks:
             log_file = os.path.join(logs_path, task.container.name + "_STATUS")
-            f = open(log_file, 'w')
-            f.write(str(task.get_exit_code()))
-            f.close()
-            logger.slog.debug("Status for {} fetched successfully!".format(task.container.name))
-
-    def printStatus(self):
-        for task in self.tasks:
-            logger.slog.debug( "Name: {}, ExitCode: {}".format(task.container.name, str(task.get_exit_code())))
+            task.get_status(log_file)
 
     def verifyTest(self):
         ok = True
@@ -177,14 +167,11 @@ class Scenario():
             if task.get_exit_code() != 0 and task.daemon == False:
                 ok = False
                 break
-        logger.slog.debug(80*"=")
-        logger.slog.info("Test: {}".format(self.name))
-        self.printStatus()
         if ok == False:
-            logger.slog.info("TEST FAILED!")
+            logger.slog.info("Test: {} FAIL!".format(self.name))
             self.tlogger.failed()
         else:
-            logger.slog.info("TEST PASSED!")
+            logger.slog.info("Test: {} PASS!".format(self.name))
             self.tlogger.success()
 
     def __del__(self):

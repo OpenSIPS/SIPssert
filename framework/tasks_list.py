@@ -23,6 +23,8 @@ from framework import logger
 
 """Implements the behavior of a list of tasks"""
 
+TIMEOUT_GRANULARITY = 0.1 # seconds
+
 class TasksList(list):
     """Handles a list of Tasks"""
 
@@ -66,25 +68,33 @@ class TasksList(list):
         wait = True
         counter = 0
         if self.timeout != 0:
-            counter = self.timeout * 10; # 1000 ms / 100 (a cycle) -> 10 cycles per sec
-        while wait or (self.timeout!=0 and counter==0):
+            counter = self.timeout / TIMEOUT_GRANULARITY
+            logger.slog.debug("enforcing timeout={} cycles={}".format(self.timeout, counter))
+        while wait and (self.timeout == 0 or counter!=0):
             wait = False
             # see if we still have "running" "non-daemons"
-            for tsk in reversed(self.running_tasks):
+            for tsk in reversed(self.running_tasks[:]):
                 if tsk.daemon == True:
                     continue
                 if not tsk.has_ended():
                     wait = True
+                else:
+                    tsk.finish()
+                    self.running_tasks.remove(tsk)
             if wait:
-                time.sleep(0.1)  #sleep 100 ms before rechecking
+                time.sleep(TIMEOUT_GRANULARITY)
                 counter -= 1
-        if wait:
+        if wait and len(self.running_tasks) != 0:
             logger.slog.warning("not all tasks self-terminated, end-forcing due timeout")
+            logger.slog.debug("remaining tasks {}".format(self.running_tasks))
         # stop all remaining containers, including daemons
         for tsk in self.running_tasks:
             if not tsk.has_ended():
+                if not tsk.daemon:
+                    logger.slog.warning("forcefully stopping {}".format(tsk))
                 tsk.stop()
-            tsk.finish()
+                tsk.finish()
+        self.running_tasks = []
 
     def create_task(self, definition, task_dir, logs_dir,
             controller, defaults=None):

@@ -56,6 +56,10 @@ class Scenario():
                 self.config, self.controller, set_defaults_dict)
         self.cleanup_tasks = tasks_list.TasksList("cleanup_tasks", self.file, self.scen_logs_dir,
                 self.config, self.controller, set_defaults_dict)
+        if self.timeout != 0:
+            self.init_tasks.set_timeout(self.timeout)
+            self.tasks.set_timeout(self.timeout)
+            self.cleanup_tasks.set_timeout(self.timeout)
 
     def create_scen_logs_dir(self):
         """Creates current scenario logs directory"""

@@ -54,6 +54,7 @@ class Task():
         if self.image is None:
             raise Exception("task {} does not have an image available".
                     format(self.name))
+        self.exit_code = None
 
     def __repr__(self):
         return self.name
@@ -137,10 +138,12 @@ class Task():
 
     def stop(self):
         self.container.stop()
-        self.log.debug("container stopped")
+        self.log.info("container stopped")
 
     def get_exit_code(self):
-        return self.container.attrs["State"]["ExitCode"]
+        if not self.exit_code:
+            self.exit_code = self.container.attrs["State"]["ExitCode"]
+        return self.exit_code
 
     def update(self):
         self.container.reload()

@@ -101,12 +101,7 @@ class Scenario():
             tsk.update()
 
     def verify_test(self):
-        ok = True
-        for task in self.tasks:
-            if task.get_exit_code() != 0 and task.daemon == False:
-                ok = False
-                break
-        if ok == False:
+        if self.tasks.status != 0:
             logger.slog.info("Test: {} FAIL!".format(self.name))
             self.tlogger.failed()
         else:

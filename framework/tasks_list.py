@@ -1,4 +1,4 @@
-#!/usr/bin/env pyth
+#!/usr/bin/env python
 ##
 ## TODO: update project's name
 ##
@@ -32,6 +32,7 @@ class TasksList(list):
             config, controller, defaults=None):
         super().__init__([])
         self.timeout = 0
+        self.status = None
         self.running_tasks = []
         if task_set_key not in config:
             return
@@ -45,6 +46,9 @@ class TasksList(list):
         self.timeout = timeout
 
     def run(self, force_all=False, wait=True):
+        if super().__len__() == 0:
+            self.status = 0
+            return
         exc = None
         logger.slog.debug("running tasks {}".format(self))
         for task in self:
@@ -80,6 +84,9 @@ class TasksList(list):
                     wait = True
                 else:
                     tsk.finish()
+                    status = tsk.get_exit_code()
+                    if not self.status or self.status < status:
+                        self.status = status
                     self.running_tasks.remove(tsk)
             if wait:
                 time.sleep(TIMEOUT_GRANULARITY)
@@ -94,6 +101,12 @@ class TasksList(list):
                     logger.slog.warning("forcefully stopping {}".format(tsk))
                 tsk.stop()
                 tsk.finish()
+                if not tsk.daemon:
+                    status = 99 # timeout?
+                else:
+                    status = tsk.get_exit_code()
+                if not self.status or self.status < status:
+                    self.status = status
         self.running_tasks = []
 
     def create_task(self, definition, task_dir, logs_dir,

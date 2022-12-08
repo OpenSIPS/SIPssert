@@ -29,16 +29,20 @@ class TasksList(list):
     """Handles a list of Tasks"""
 
     def __init__(self, task_set_key, task_dir, logs_dir,
-            config, controller, defaults=None):
+            config, controller, container_prefix=None, defaults=None):
         super().__init__([])
         self.timeout = 0
         self.status = None
+        self.task_dir = task_dir
+        self.logs_dir = logs_dir
+        self.controller = controller
+        self.container_prefix = container_prefix
+        self.defaults = defaults
         self.running_tasks = []
         if task_set_key not in config:
             return
         for definition in config[task_set_key]:
-            task = self.create_task(definition,
-                    task_dir, logs_dir, controller, defaults)
+            task = self.create_task(definition)
             if task:
                 self.append(task)
 
@@ -109,11 +113,10 @@ class TasksList(list):
                     self.status = status
         self.running_tasks = []
 
-    def create_task(self, definition, task_dir, logs_dir,
-            controller, defaults=None):
+    def create_task(self, definition):
         """Creates a task based on its definition"""
-        if definition["type"] in defaults.keys():
-            definition = defaults[definition["type"]] | definition
+        if definition["type"] in self.defaults.keys():
+            definition = self.defaults[definition["type"]] | definition
         if "type" in definition.keys():
             task_type = definition["type"].lower()
         else:
@@ -138,9 +141,9 @@ class TasksList(list):
             else:
                 class_name = getattr(task_mod, classes[0])
                 new_task = class_name(definition)
-                new_task.set_logs_dir(logs_dir)
-                new_task.add_volume_dir(os.path.dirname(task_dir))
-                new_task.create(controller)
+                new_task.set_logs_dir(self.logs_dir)
+                new_task.add_volume_dir(os.path.dirname(self.task_dir))
+                new_task.create(self.controller, self.container_prefix)
                 return new_task
         except AttributeError:
             raise Exception(f"unknown task type {task_type}")

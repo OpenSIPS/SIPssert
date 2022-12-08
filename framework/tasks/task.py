@@ -22,6 +22,7 @@ from framework import logger
 from framework import config
 import time
 import docker
+import re
 
 
 class Task():
@@ -42,6 +43,7 @@ class Task():
         self.container = None
         self.root_password = None
         self.name = self.config.get("name", self.__class__.__name__)
+        self.set_container_name(self.name)
         self.log = logger.IdenfierAdapter(self.name)
         self.image = self.config.get("image", self.default_image)
         self.ip = self.config.get("ip")
@@ -59,6 +61,9 @@ class Task():
     def __repr__(self):
         return self.name
 
+    def set_container_name(self, name):
+        self.container_name = re.sub(r'[^a-zA-Z0-9_\.\-]', "_", name)
+
     def set_logs_dir(self, path):
         self.logs_dir = path
 
@@ -68,9 +73,12 @@ class Task():
                 "mode": mode
         }
 
-    def create(self, controller):
+    def create(self, controller, prefix=None):
         self.controller = controller
         args = self.get_args()
+
+        if prefix:
+            self.set_container_name(prefix + "." + self.container_name)
 
         ports = self.get_ports()
         env = self.get_task_env()
@@ -81,11 +89,11 @@ class Task():
                 detach=True,
                 volumes=self.volumes,
                 ports=ports,
-                name=self.name,
+                name=self.container_name,
                 environment=env,
                 network_mode=net_mode)
-        self.log.info("container created")
-        self.log.debug("container {}: {}".format(self.image, args))
+        self.log.info("container {} created".format(self.container_name))
+        self.log.debug("running {}: {}".format(self.image, args))
 
         if net_mode == "bridge" and self.ip:
             try:

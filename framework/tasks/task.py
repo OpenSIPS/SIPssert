@@ -131,12 +131,8 @@ class Task():
 
     def run(self):
         time.sleep(self.delay_start)
-        try:
-            self.container.start()
-            self.log.info("started")
-        except docker.errors.APIError as err:
-            self.log.exception(err)
-        
+        self.container.start()
+        self.log.info("started")
 
     def get_net_mode(self):
         if not self.net_mode or self.netMode == "host":

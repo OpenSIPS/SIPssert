@@ -23,8 +23,8 @@ from framework.tasks.sipp import SIPPTask
 class UasSIPPTask(SIPPTask):
 
     """UAS SIPP class"""
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, test_dir, config):
+        super().__init__(test_dir, config)
         if not self.service:
             self.service = self.username
 

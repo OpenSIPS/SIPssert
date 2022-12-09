@@ -140,9 +140,10 @@ class TasksList(list):
                                 task_type, str(classes))
             else:
                 class_name = getattr(task_mod, classes[0])
-                new_task = class_name(definition)
+                directory = os.path.dirname(self.task_dir)
+                new_task = class_name(directory, definition)
                 new_task.set_logs_dir(self.logs_dir)
-                new_task.add_volume_dir(os.path.dirname(self.task_dir))
+                new_task.add_volume_dir(directory)
                 new_task.create(self.controller, self.container_prefix)
                 return new_task
         except AttributeError:

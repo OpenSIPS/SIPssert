@@ -32,12 +32,12 @@ class Task():
     default_config_file = None
     default_mount_point = '/home'
 
-    def __init__(self, configuration):
+    def __init__(self, test_dir, configuration):
         self.config = configuration
         self.net_mode = self.config.get("network", None)
         self.finished = False
         self.controller = None
-        self.test_dir = None
+        self.test_dir = test_dir
         self.volumes = {}
         self.logs_dir = None
         self.container = None

@@ -36,14 +36,13 @@ class Scenario():
 
     """Class that implements running a scenario"""
 
-    def __init__(self, file, controller, test_set, set_logs_dir, set_defaults_dict):
+    def __init__(self, scenario_file, controller, test_set, set_logs_dir, set_defaults_dict):
         self.controller = controller
-        self.file = file
         self.tlogger = controller.tlogger
-        self.dirname = os.path.dirname(file)
-        self.scenario = os.path.basename(file)
+        self.dirname = os.path.dirname(scenario_file)
+        self.scenario = os.path.basename(scenario_file)
         self.name = os.path.basename(self.dirname)
-        self.scen_logs_dir = set_logs_dir + "/" + self.name
+        self.scen_logs_dir = os.path.join(set_logs_dir, self.name)
         self.config = config.Config(self.dirname, self.scenario, VARIABLES,
                 test_set.config.get_defines())
         self.create_scen_logs_dir()
@@ -51,11 +50,11 @@ class Scenario():
         self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", self.network_device)
         self.timeout = self.config.get("timeout", 0)
         container_prefix = f"{test_set.name}/{self.name}"
-        self.tasks = tasks_list.TasksList("tasks", self.file, self.scen_logs_dir,
+        self.tasks = tasks_list.TasksList("tasks", self.dirname, self.scen_logs_dir,
                 self.config, self.controller, container_prefix, set_defaults_dict)
-        self.init_tasks = tasks_list.TasksList("init_tasks", self.file, self.scen_logs_dir,
+        self.init_tasks = tasks_list.TasksList("init_tasks", self.dirname, self.scen_logs_dir,
                 self.config, self.controller, container_prefix, set_defaults_dict)
-        self.cleanup_tasks = tasks_list.TasksList("cleanup_tasks", self.file, self.scen_logs_dir,
+        self.cleanup_tasks = tasks_list.TasksList("cleanup_tasks", self.dirname, self.scen_logs_dir,
                 self.config, self.controller, container_prefix, set_defaults_dict)
         if self.timeout != 0:
             self.init_tasks.set_timeout(self.timeout)

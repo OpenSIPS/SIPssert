@@ -38,7 +38,7 @@ class TestsSet():
         self.tests_to_run = tests
         self.name = os.path.basename(set_path)
         self.set_path = set_path
-        self.set_logs_dir = controller.run_logs_dir + "/" + self.name
+        self.set_logs_dir = os.path.join(controller.run_logs_dir, self.name)
         self.config = config.Config(self.set_path, CONFIG, VARIABLES, controller.config.get_defines())
         self.defaults = self.config.get("defaults", {})
         self.init_tasks_logs_dir = os.path.join(self.set_logs_dir, "init_tasks")

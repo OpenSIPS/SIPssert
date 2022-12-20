@@ -68,8 +68,10 @@ class Task():
         self.logs_dir = path
 
     def add_volume_dir(self, path, dest=None, mode="ro"):
+        mount_point = dest if dest else self.mount_point
+        self.log.info("mounting {} to {}".format(path, mount_point))
         self.volumes[path] = {
-                "bind": dest if dest else self.mount_point,
+                "bind": mount_point,
                 "mode": mode
         }
 

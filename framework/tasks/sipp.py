@@ -75,6 +75,10 @@ class SIPPTask(Task):
             args.append("-p")
             args.append(str(self.port))
 
+        if self.ip:
+            args.append("-i")
+            args.append(self.ip)
+
         for k, v in self.keys.items():
             args.append("-key")
             args.append(str(k))

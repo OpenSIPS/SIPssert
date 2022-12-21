@@ -85,15 +85,24 @@ class Task():
         ports = self.get_ports()
         env = self.get_task_env()
         net_mode = self.get_net_mode()
-        self.container = self.controller.docker.containers.create(
-                self.image,
-                self.get_args(),
-                detach=True,
-                volumes=self.volumes,
-                ports=ports,
-                name=self.container_name,
-                environment=env,
-                network_mode=net_mode)
+        image_ok = False
+        while not image_ok:
+            try:
+                self.container = self.controller.docker.containers.create(
+                        self.image,
+                        self.get_args(),
+                        detach=True,
+                        volumes=self.volumes,
+                        ports=ports,
+                        name=self.container_name,
+                        environment=env,
+                        network_mode=net_mode)
+                image_ok = True
+            except docker.errors.ImageNotFound as e:
+                image_name = e.explanation.split(" ")[-1]
+                self.log.info("pulling image {}". format(image_name))
+                self.controller.docker.images.pull(image_name)
+
         self.log.info("container {} created".format(self.container_name))
         self.log.debug("running {}: {}".format(self.image, args))
 

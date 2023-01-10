@@ -29,7 +29,7 @@ class TasksList(list):
     """Handles a list of Tasks"""
 
     def __init__(self, task_set_key, task_dir, logs_dir,
-            config, controller, container_prefix=None, defaults=None):
+            config, controller, container_prefix=None, defaults={}):
         super().__init__([])
         self.timeout = 0
         self.status = None
@@ -115,13 +115,13 @@ class TasksList(list):
 
     def create_task(self, definition):
         """Creates a task based on its definition"""
-        if definition["type"] in self.defaults.keys():
-            definition = self.defaults[definition["type"]] | definition
         if "type" in definition.keys():
             task_type = definition["type"].lower()
         else:
             # create a generic task
             task_type = "generic"
+        if task_type in self.defaults.keys():
+            definition = self.defaults[task_type] | definition
 
         try:
             task_mod = getattr(

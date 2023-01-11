@@ -57,32 +57,8 @@ class TasksList(list):
     def get_tasks_to_run(self, current_time):
         tasks_to_run = []
         for tsk in self.pending_tasks:
-            if tsk.state == State.CREATED:
-                # TODO: drop this hack and check dependencies
-                if tsk.delay_start:
-                    # find the previous element in list
-                    tsk_prev = None
-                    for tsk_tmp in self:
-                        if tsk == tsk_tmp:
-                            break
-                        tsk_prev = tsk_tmp
-                    if not tsk_prev:
-                        relative_time = self.initial_time
-                    elif tsk_prev.state < State.ACTIVE or not tsk_prev.start_time:
-                        continue
-                    else:
-                        relative_time = tsk_prev.start_time
-                    if current_time - relative_time < tsk.delay_start:
-                        continue
-                else:
-                    # find the previous element in list
-                    tsk_prev = None
-                    for tsk_tmp in self:
-                        if tsk == tsk_tmp:
-                            break
-                        tsk_prev = tsk_tmp
-                    if tsk_prev and tsk_prev.state < State.ACTIVE:
-                        continue
+            if tsk.state == State.CREATED and \
+                    tsk.satisfied(self, current_time):
                 tasks_to_run.append(tsk)
         return tasks_to_run
 

@@ -20,6 +20,7 @@ import os
 from datetime import datetime
 from framework import logger
 from framework import config
+from framework.tasks import dependencies
 from enum import Enum
 import time
 import docker
@@ -43,7 +44,6 @@ class Task():
     def __init__(self, test_dir, configuration):
         self.config = configuration
         self.net_mode = self.config.get("network", None)
-        self.finished = False
         self.controller = None
         self.test_dir = test_dir
         self.volumes = {}
@@ -56,7 +56,11 @@ class Task():
         self.log = logger.IdenfierAdapter(self.name)
         self.image = self.config.get("image", self.default_image)
         self.ip = self.config.get("ip")
+        self.deps = dependencies.parse_dependencies(self.config.get("require"))
+        # keep this for backwards compatibility
         self.delay_start = self.config.get("delay_start", 0)
+        if int(self.delay_start) != 0:
+            self.deps.append(dependencies.TaskDepDelay(self.delay_start))
         self.mount_point = self.config.get("mount_point", self.default_mount_point)
         self.config_file = self.config.get("config_file", self.default_config_file)
         if self.config_file and not os.path.isabs(self.config_file):
@@ -165,7 +169,6 @@ class Task():
 
     def stop(self):
         self.container.stop(timeout=0)
-        self.state = State.ENDED
 
     def get_exit_code(self):
         if not self.exit_code:
@@ -196,25 +199,22 @@ class Task():
         self.write("status", str(status))
         self.log.debug("exited with status {}".format(status))
 
-    def has_ended(self):
-        if self.daemon:
-            return False
-        self.update()
-        return self.state == State.ENDED or self.container.status == "exited"
-
-    def wait_end(self):
-        while not self.has_ended(self):
-            time.sleep(0.1)
-
     def has_finished(self):
-        return self.finished
+        return self.state == State.ENDED
 
     def finish(self):
         if self.has_finished():
             return
         self.write_logs()
         self.write_status()
-        self.finished = True
+        self.end_time = time.time()
+        self.state = State.ENDED
+
+    def satisfied(self, task_list, current_time):
+        for dep in self.deps:
+            if not dep.satisfied(self, task_list, current_time):
+                return False
+        return True
 
     def __del__(self):
         if self.container:

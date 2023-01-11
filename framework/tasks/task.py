@@ -61,6 +61,7 @@ class Task():
         self.delay_start = self.config.get("delay_start", 0)
         if int(self.delay_start) != 0:
             self.deps.append(dependencies.TaskDepDelay(self.delay_start))
+        self.ready_deps = dependencies.parse_dependencies(self.config.get("ready"))
         self.mount_point = self.config.get("mount_point", self.default_mount_point)
         self.config_file = self.config.get("config_file", self.default_config_file)
         if self.config_file and not os.path.isabs(self.config_file):
@@ -212,6 +213,12 @@ class Task():
 
     def satisfied(self, task_list, current_time):
         for dep in self.deps:
+            if not dep.satisfied(self, task_list, current_time):
+                return False
+        return True
+
+    def ready(self, task_list, current_time):
+        for dep in self.ready_deps:
             if not dep.satisfied(self, task_list, current_time):
                 return False
         return True

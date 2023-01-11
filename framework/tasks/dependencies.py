@@ -45,7 +45,7 @@ class TaskDepAfter(TaskDep):
             # this must be a string, and represents the name of the task
             self.task_name = info
 
-    def satisfied(self, task, task_list, current_time, active = False):
+    def satisfied(self, task, task_list, current_time, active = False, ready = False):
         """returns true if task_name has finished"""
         task_dep = task_list.get_task(self.task_name)
         if not task_dep:
@@ -55,13 +55,15 @@ class TaskDepAfter(TaskDep):
             return False
         # if not started yet, dependency is not fulfilled
         if task_dep.daemon or active:
-          if task_dep.state < State.ACTIVE:
-            return False
-          relative_time = task_dep.start_time
+            if task_dep.state < State.ACTIVE:
+                return False
+            if ready and not task_dep.ready(task_list, current_time):
+                return False
+            relative_time = task_dep.start_time
         else:
-          if task_dep.state < State.ENDED:
-             return False
-          relative_time = task_dep.end_time
+            if task_dep.state < State.ENDED:
+                return False
+            relative_time = task_dep.end_time
         if self.wait != 0 and current_time - relative_time < self.wait:
             return False
         return True
@@ -70,7 +72,14 @@ class TaskDepStarted(TaskDepAfter):
     """Implements the 'Started' dependency"""
 
     def satisfied(self, task, task_list, current_time):
-        return super().satisfied(task, task_list, current_time, True)
+        return super().satisfied(task, task_list, current_time, True, False)
+
+class TaskDepReady(TaskDepAfter):
+    """Implements the 'Ready' dependency"""
+
+    def satisfied(self, task, task_list, current_time):
+        return super().satisfied(task, task_list, current_time, True, True)
+
 
 class TaskDepWait(TaskDep):
     """Implements the 'Wait' dependency"""
@@ -80,7 +89,11 @@ class TaskDepWait(TaskDep):
 
     def satisfied(self, task, task_list, current_time):
         """waits for wait time from run start""" 
-        return current_time - task_list.initial_time >= self.wait
+        if task.state > State.CREATED:
+            relative_time = task.start_time
+        else:
+            relative_time = task_list.start_time
+        return current_time - relative_time >= self.wait
 
 class TaskDepDelay(TaskDep):
     """Implements the 'Delay' dependency"""
@@ -97,7 +110,7 @@ class TaskDepDelay(TaskDep):
                 break
             tsk_prev = tsk_tmp
         if not tsk_prev:
-            relative_time = task_list.initial_time
+            relative_time = task_list.start_time
         elif tsk_prev.state < State.ACTIVE or not tsk_prev.start_time:
             return False
         else:
@@ -125,6 +138,8 @@ def parse_dependencies(deps):
                 td = TaskDepStarted(dep[keys_dict["started"]])
             elif "wait" in keys_dict:
                 td = TaskDepWait(dep[keys_dict["wait"]])
+            elif "ready" in keys_dict:
+                td = TaskDepReady(dep[keys_dict["ready"]])
             else:
                 raise Exception("Unknown dependency {}".format(dep))
             if td:

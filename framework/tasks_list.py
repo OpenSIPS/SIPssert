@@ -123,8 +123,8 @@ class TasksList(list):
             self.update_status(TestStatus.PASS if status == "0" else TestStatus.FAIL)
 
     def run(self, force_all=False):
-        self.initial_time = time.time()
-        last_events_time = self.initial_time
+        self.start_time = time.time()
+        last_events_time = self.start_time
         exc = None
         while len(self.pending_tasks) > 0 or len(self.running_tasks) > 0:
 
@@ -149,7 +149,7 @@ class TasksList(list):
             # if there are no other pending tasks, check to see if
             # we have any more non-daemon tasks to run
             finish_time = time.time()
-            if self.timeout and finish_time - self.initial_time >= self.timeout:
+            if self.timeout and finish_time - self.start_time >= self.timeout:
                 logger.slog.warning("timeout {} reached".
                         format(self.timeout))
                 break

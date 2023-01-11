@@ -20,6 +20,7 @@
 Object that implements the testing logging
 """
 import os
+from enum import Enum
 
 class bcolors:
     HEADER = '\033[95m'
@@ -32,7 +33,29 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-statuses = {"STATUS_PASS" : 'PASS', "STATUS_FAIL" : 'FAIL'}
+class TestStatus(Enum):
+    UNKN, PASS, FAIL, TOUT = range(4)
+
+    def __str__(self):
+        return super().__str__()[len(self.__class__.__name__) + 1:]
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __len__(self):
+        return len(str(self))
+
+    def __lt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value < other.value
+        return NotImplemented
+
+statuses = {
+        TestStatus.UNKN: bcolors.WARNING,
+        TestStatus.PASS: bcolors.OKGREEN,
+        TestStatus.FAIL: bcolors.FAIL,
+        TestStatus.TOUT: bcolors.FAIL,
+}
 
 class Testing:
     """Class that implements the testing framework"""
@@ -71,14 +94,21 @@ class Testing:
     def success(self, reason=None):
         """indicates a specific test has finished with success
             if test is not defined, the last test is considered"""
-        self.emit_status(statuses["STATUS_PASS"], bcolors.OKGREEN, reason)
-        self.success_no += 1
+        self.status(TestStatus.PASS, reason)
 
     def failed(self, reason=None):
         """indicates that a test has finished with failure
             if test is not defined, the last test is considered"""
-        self.emit_status(statuses["STATUS_FAIL"], bcolors.FAIL, reason)
-        self.failed_no += 1
+        self.status(TestStatus.FAIL, reason)
+
+    def status(self, status, reason=None):
+        """indicates the test has finished with a custom status
+            if test is not defined, the last test is considered"""
+        if status == TestStatus.PASS:
+            self.success_no += 1
+        else:
+            self.failed_no += 1
+        self.emit_status(str(status), statuses[status], reason)
 
     def end(self):
         """Finishes the testing process and writes a summary"""
@@ -98,7 +128,7 @@ class Testing:
         self.summary_size = min(40, os.get_terminal_size().columns)
         self.max_status_len = 0
         for status_name in statuses:
-            if len(statuses[status_name]) > self.max_status_len:
+            if len(status_name) > self.max_status_len:
                 self.max_status_len = len(statuses[status_name])
         #available space for a test header to allow its status to fit in the table
         self.test_name_avail = self.tab_size - self.max_status_len

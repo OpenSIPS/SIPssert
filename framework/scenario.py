@@ -66,16 +66,6 @@ class Scenario():
         if not os.path.isdir(self.scen_logs_dir):
             os.mkdir(self.scen_logs_dir)
 
-    def init(self):
-        """Runs the init tasks for a scenario"""
-        for task in self.init_tasks:
-            task.run()
-
-    def cleanup(self):
-        """Runs the cleanup tasks for a scenario"""
-        for task in self.cleanup_tasks:
-            task.run()
-
     def run(self):
         """Runs a scenario with all its prerequisits"""
         self.tlogger.test_start(self.name)
@@ -93,20 +83,7 @@ class Scenario():
         except Exception:
             logger.slog.exception("Error occured during cleanup task")
         self.tracer.stop()
-        self.verify_test()
-
-    def update(self):
-        """updates the status of a scenario"""
-        for tsk in self.tasks:
-            tsk.update()
-
-    def verify_test(self):
-        if self.tasks.status != 0:
-            logger.slog.info("Test: {} FAIL!".format(self.name))
-            self.tlogger.failed()
-        else:
-            logger.slog.info("Test: {} PASS!".format(self.name))
-            self.tlogger.success()
+        self.tlogger.status(self.tasks.status)
 
     def __del__(self):
         pass

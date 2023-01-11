@@ -20,10 +20,18 @@ import os
 from datetime import datetime
 from framework import logger
 from framework import config
+from enum import Enum
 import time
 import docker
 import re
 
+class State(Enum):
+    PENDING, CREATED, ACTIVE, ENDED = range(4)
+
+    def __lt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value < other.value
+        return NotImplemented
 
 class Task():
     
@@ -42,6 +50,7 @@ class Task():
         self.logs_dir = None
         self.container = None
         self.root_password = None
+        self.start_time = None
         self.name = self.config.get("name", self.__class__.__name__)
         self.set_container_name(self.name)
         self.log = logger.IdenfierAdapter(self.name)
@@ -57,6 +66,7 @@ class Task():
             raise Exception("task {} does not have an image available".
                     format(self.name))
         self.exit_code = None
+        self.state = State.PENDING
 
     def __repr__(self):
         return self.name
@@ -113,6 +123,7 @@ class Task():
                 self.log.debug("network attached")
             except docker.errors.APIError as err:
                 self.log.exception(err)
+        self.state = State.CREATED
 
     def get_task_args(self):
         return []
@@ -141,8 +152,9 @@ class Task():
         return {}
 
     def run(self):
-        time.sleep(self.delay_start)
         self.container.start()
+        self.start_time = time.time()
+        self.state = State.ACTIVE
         self.log.info("started")
 
     def get_net_mode(self):
@@ -152,8 +164,8 @@ class Task():
             return "bridge"
 
     def stop(self):
-        self.container.stop()
-        self.log.info("container stopped")
+        self.container.stop(timeout=0)
+        self.state = State.ENDED
 
     def get_exit_code(self):
         if not self.exit_code:
@@ -188,14 +200,17 @@ class Task():
         if self.daemon:
             return False
         self.update()
-        return self.container.status == "exited"
+        return self.state == State.ENDED or self.container.status == "exited"
 
     def wait_end(self):
         while not self.has_ended(self):
             time.sleep(0.1)
 
+    def has_finished(self):
+        return self.finished
+
     def finish(self):
-        if self.finished:
+        if self.has_finished():
             return
         self.write_logs()
         self.write_status()

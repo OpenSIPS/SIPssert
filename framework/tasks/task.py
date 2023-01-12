@@ -66,6 +66,7 @@ class Task():
         self.config_file = self.config.get("config_file", self.default_config_file)
         if self.config_file and not os.path.isabs(self.config_file):
             self.config_file = os.path.join(self.mount_point, self.config_file)
+        self.labels = self.parse_labels()
         self.daemon = self.config.get("daemon", self.default_daemon)
         if self.image is None:
             raise Exception("task {} does not have an image available".
@@ -89,6 +90,18 @@ class Task():
                 "bind": mount_point,
                 "mode": mode
         }
+
+    def parse_labels(self):
+        labels = self.config.get("labels", [])
+        if not isinstance(labels, list):
+            labels = [labels]
+        label = self.config.get("label")
+        if label:
+            labels.append(label)
+        return labels
+
+    def match(self, name):
+        return self.name == name or name in self.labels
 
     def create(self, controller, prefix=None):
         self.controller = controller

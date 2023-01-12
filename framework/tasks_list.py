@@ -70,7 +70,7 @@ class TasksList(list):
 
     def get_task(self, name):
         for tsk in self:
-            if tsk.name == name:
+            if tsk.match(name):
                 return tsk
         return None
 

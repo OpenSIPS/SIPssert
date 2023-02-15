@@ -127,7 +127,7 @@ def init_logger(config, logs_dir=None):
     slog = logging.getLogger(__name__ + "System")
     slog.setLevel(LOG_LEVEL)
 
-DEFAULT_LOG_FILE = "default.log"
+DEFAULT_LOG_FILE = "controller.log"
 DEFAULT_LOG_LEVEL = "DEBUG"
 DEFAULT_LOG_CONSOLE = False
 

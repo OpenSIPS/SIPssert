@@ -128,7 +128,7 @@ def init_logger(config, logs_dir=None):
     slog.setLevel(LOG_LEVEL)
 
 DEFAULT_LOG_FILE = "controller.log"
-DEFAULT_LOG_LEVEL = "DEBUG"
+DEFAULT_LOG_LEVEL = "INFO"
 DEFAULT_LOG_CONSOLE = False
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

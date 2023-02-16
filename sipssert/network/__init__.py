@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -16,11 +16,9 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from framework.tasks.task import Task
+"""Package that exposes all available networks"""
 
-class GenericTask(Task):
-
-    """Class that implements a generic task"""
-    pass
+from .host import *
+from .bridged import *
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

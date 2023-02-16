@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 """Implementation of the brided network type"""
 
 import docker
-from framework.network import network
-from framework import logger
+from sipssert.network import network
+from sipssert import logger
 
 class BridgedNetworkBadConfig(network.NetworkBadConfig): # pylint: disable=too-few-public-methods
     """Invalid config for Bridged Network"""

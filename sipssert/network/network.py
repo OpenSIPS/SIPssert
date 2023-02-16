@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 """Abstract class that defines the required fields for a network type"""
 
 from abc import ABC, abstractmethod
-import framework.network
+import sipssert.network
 
 class NetworkError(Exception):
     """Generic Network Exception"""
@@ -49,7 +49,7 @@ def get_networks(controller, config):
 
     # "host" network is always available
     if not config:
-        return [framework.network.DefaultNetwork()]
+        return [sipssert.network.DefaultNetwork()]
 
     networks = []
     # check if they have same name, or host name
@@ -68,9 +68,9 @@ def get_networks(controller, config):
     for net in config:
         net_type = "bridged" if "type" not in net else net["type"]
         if net_type == "bridged":
-            network = framework.network.BridgedNetwork(controller, net)
+            network = sipssert.network.BridgedNetwork(controller, net)
         elif net_type == "host":
-            network = framework.network.HostNetwork(net)
+            network = sipssert.network.HostNetwork(net)
         else:
             raise NetworkBadConfig(f"unknown type {net_type}")
         networks.append(network)

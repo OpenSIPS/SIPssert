@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -16,27 +16,10 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from framework.tasks.task import Task
+import pkgutil
 
-class MysqlTask(Task):
-
-    mysql_default_env = {"MYSQL_ALLOW_EMPTY_PASSWORD":"yes"}
-    default_image = "mysql"
-    default_daemon = True
-    default_mount_point = "/docker-entrypoint-initdb.d"
-
-    def get_task_env(self):
-
-        env_dict = {}
-
-        if "root_password" in self.config:
-            self.root_password = self.config["root_password"]
-
-        if self.root_password:
-            env_dict["MYSQL_ROOT_PASSWORD"] = self.root_password
-        else:
-            env_dict = self.mysql_default_env
-
-        return env_dict
+__path__ = pkgutil.extend_path(__path__, __name__)
+for importer, modname, ispkg in pkgutil.walk_packages(path=__path__, prefix=__name__+'.'):
+    __import__(modname)
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

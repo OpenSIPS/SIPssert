@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -16,22 +16,26 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from framework.tasks.task import Task
+"""SIPP User-Agent Server class"""
 
-class OpenSIPSTask(Task):
+from sipssert.tasks.sipp import SIPPTask
 
-    default_mount_point = "/etc/opensips"
-    default_image = "opensips/opensips"
-    default_daemon = True
-    
+class UasSIPPTask(SIPPTask):
+
+    """UAS SIPP class"""
+    def __init__(self, test_dir, config):
+        super().__init__(test_dir, config)
+        if not self.service:
+            self.service = self.username
+
     def get_task_args(self):
 
-        args = []
+        """Returns the arguments the container uses to start"""
 
-        # handle config
-        if self.config_file:
-            args.append("-f")
-            args.append(self.config_file)
+        args = super().get_task_args()
+        if not self.config_file:
+            args.append("-sn")
+            args.append("uas")
 
         return args
 

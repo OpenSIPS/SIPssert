@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
 import os
 import time
 import importlib
-from framework import logger
-from framework.tasks.task import State
-from framework.testing import TestStatus
+from sipssert import logger
+from sipssert.tasks.task import State
+from sipssert.testing import TestStatus
 
 """Implements the behavior of a list of tasks"""
 
@@ -176,7 +176,7 @@ class TasksList(list):
 
         try:
             task_mod = getattr(
-                    importlib.import_module("framework.tasks"),
+                    importlib.import_module("sipssert.tasks"),
                     task_type)
             normalized_task_type = "".join(
                     [ x for x in task_type if x.isalnum() ])

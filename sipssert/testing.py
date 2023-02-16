@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ statuses = {
 }
 
 class Testing:
-    """Class that implements the testing framework"""
+    """Class that implements the SIPssert Testing Framework"""
 
     def emit(self, message, end='\n'):
         """emits a message to output"""

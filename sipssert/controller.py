@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -21,10 +21,10 @@
 import os
 import docker
 from datetime import datetime
-from framework import tests_set
-from framework import config
-from framework import logger
-from framework import testing
+from sipssert import tests_set
+from sipssert import config
+from sipssert import logger
+from sipssert import testing
 
 
 class Controller:
@@ -43,7 +43,7 @@ class Controller:
         self.config = config.Config(self.config_file)
         logger.init_logger(self.config["logging"]["controller"], self.run_logs_dir)
         self.docker = docker.from_env()
-        self.tlogger = testing.Testing("Running Testing framework")
+        self.tlogger = testing.Testing("Running SIPssert Testing Framework")
     
     def create_run_logs_dir(self):
         """Creates the current run logs directory"""

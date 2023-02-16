@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -16,27 +16,27 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-"""SIPP User-Agent Server class"""
+from sipssert.tasks.task import Task
 
-from framework.tasks.sipp import SIPPTask
+class MysqlTask(Task):
 
-class UasSIPPTask(SIPPTask):
+    mysql_default_env = {"MYSQL_ALLOW_EMPTY_PASSWORD":"yes"}
+    default_image = "mysql"
+    default_daemon = True
+    default_mount_point = "/docker-entrypoint-initdb.d"
 
-    """UAS SIPP class"""
-    def __init__(self, test_dir, config):
-        super().__init__(test_dir, config)
-        if not self.service:
-            self.service = self.username
+    def get_task_env(self):
 
-    def get_task_args(self):
+        env_dict = {}
 
-        """Returns the arguments the container uses to start"""
+        if "root_password" in self.config:
+            self.root_password = self.config["root_password"]
 
-        args = super().get_task_args()
-        if not self.config_file:
-            args.append("-sn")
-            args.append("uas")
+        if self.root_password:
+            env_dict["MYSQL_ROOT_PASSWORD"] = self.root_password
+        else:
+            env_dict = self.mysql_default_env
 
-        return args
+        return env_dict
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

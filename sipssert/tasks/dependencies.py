@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 """Implements the logic of a task dependencies"""
 
-from framework import logger
-from framework.tasks.task import State
+from sipssert import logger
+from sipssert.tasks.task import State
 
 class TaskDep:
     """Holds information about a task dependency"""

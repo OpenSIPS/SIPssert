@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 import uuid
 import json
-from framework.tasks.task import Task
+from sipssert.tasks.task import Task
 
 class OSSAPITask(Task):
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@ import os
 import importlib
 import time
 from datetime import datetime
-from framework.tasks import task
-from framework import logger
-from framework import config
-from framework import tracer
-from framework import tasks_list
+from sipssert.tasks import task
+from sipssert import logger
+from sipssert import config
+from sipssert import tracer
+from sipssert import tasks_list
 
 LOGS_DIR = "logs"
 NETWORK_CAP = "net_capture"

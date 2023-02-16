@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -16,9 +16,23 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-"""Package that exposes all available networks"""
+from sipssert.tasks.task import Task
 
-from .host import *
-from .bridged import *
+class OpenSIPSTask(Task):
+
+    default_mount_point = "/etc/opensips"
+    default_image = "opensips/opensips"
+    default_daemon = True
+    
+    def get_task_args(self):
+
+        args = []
+
+        # handle config
+        if self.config_file:
+            args.append("-f")
+            args.append(self.config_file)
+
+        return args
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

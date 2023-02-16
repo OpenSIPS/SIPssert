@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -16,29 +16,23 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-"""Implementation of the Host Network adapter"""
+from sipssert.tasks.task import Task
 
-from framework.network import network
+class OpenSIPSCliTask(Task):
 
-class HostNetwork(network.Network):
+    default_image = "opensips/opensips-cli"
+    default_mount_point = "/home"
+    default_daemon = True
+    
+    def get_task_args(self):
 
-    """Host Network adapter"""
+        args = []
 
-    def __init__(self, config):
-        self.net_type = "host"
-        self.name = config["name"]
+        # handle config
+        if self.config_file:
+            args.append("-c")
+            args.append(self.config_file)
 
-    def setup(self):
-        """Sets up the network"""
-
-    def destroy(self):
-        """Destroys the network"""
-
-class DefaultNetwork(HostNetwork):
-
-    """Default Host Network"""
-
-    def __init__(self):
-        super().__init__({"name":"host"})
+        return args
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

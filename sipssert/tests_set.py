@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
 """Logic that runs a set of tests"""
 
 import os
-from framework import config
-from framework import scenario
-from framework import logger
-from framework import tasks_list
-from framework.network import network
+from sipssert import config
+from sipssert import scenario
+from sipssert import logger
+from sipssert import tasks_list
+from sipssert.network import network
 
 SCENARIO = "scenario.yml"
 CONFIG = "config.yml"

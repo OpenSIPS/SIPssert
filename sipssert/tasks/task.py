@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 
 import os
 from datetime import datetime
-from framework import logger
-from framework import config
-from framework.tasks import dependencies
+from sipssert import logger
+from sipssert import config
+from sipssert.tasks import dependencies
 from enum import Enum
 import time
 import docker

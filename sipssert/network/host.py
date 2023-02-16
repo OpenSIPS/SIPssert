@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -15,5 +15,30 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
+
+"""Implementation of the Host Network adapter"""
+
+from sipssert.network import network
+
+class HostNetwork(network.Network):
+
+    """Host Network adapter"""
+
+    def __init__(self, config):
+        self.net_type = "host"
+        self.name = config["name"]
+
+    def setup(self):
+        """Sets up the network"""
+
+    def destroy(self):
+        """Destroys the network"""
+
+class DefaultNetwork(HostNetwork):
+
+    """Default Host Network"""
+
+    def __init__(self):
+        super().__init__({"name":"host"})
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

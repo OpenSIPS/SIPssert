@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -16,29 +16,35 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-"""Sleep runner class"""
+"""SIPP User-Agent Client class"""
 
-import os
-from framework import logger
-from framework.tasks.task import Task
+from sipssert.tasks.sipp import SIPPTask
 
-class SleepTask(Task):
+class UacSIPPTask(SIPPTask):
 
-    """Sleep class"""
-
-    default_image = "debian"
-
+    """UAC SIPP class"""
     def __init__(self, test_dir, config):
-
         super().__init__(test_dir, config)
-        self.seconds = config.get("seconds", 0)
-        self.milliseconds = config.get("milliseconds", 0) / 1000
-        if self.seconds > self.milliseconds:
-            self.timeout = self.milliseconds
-        else:
-            self.timeout = self.seconds
+        if not self.proxy:
+            raise ConfigParamNotFound("proxy")
+        self.caller = config.get("caller", self.username)
+        # overwrite the username/service with the destination 
+        if not self.service:
+            self.service = config.get("destination", self.username)
 
     def get_task_args(self):
-        return [ "sleep", str(self.timeout) ]
+
+        """Returns the arguments the container uses to start"""
+
+        args = super().get_task_args()
+        if not self.config_file:
+            args.append("-sn")
+            args.append("uac")
+        if self.caller:
+            args.append("-key")
+            args.append("caller")
+            args.append(self.caller)
+
+        return args
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

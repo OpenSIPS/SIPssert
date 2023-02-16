@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ##
-## TODO: update project's name
+## This file is part of the SIPssert Testing Framework project
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -15,11 +15,5 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
-
-import pkgutil
-
-__path__ = pkgutil.extend_path(__path__, __name__)
-for importer, modname, ispkg in pkgutil.walk_packages(path=__path__, prefix=__name__+'.'):
-    __import__(modname)
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

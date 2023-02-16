@@ -27,19 +27,19 @@ arg_parser.add_argument('tests',
                         type=os.path.abspath,
                         nargs='+')
 
-arg_parser.add_argument('--test',
+arg_parser.add_argument('-t', '--test',
                         help='Run only specific tests. ' \
                                 'Can be specified multiple times. ' \
                                 'Default value = run all tests',
                         action='append',
                         default=[])
 
-arg_parser.add_argument('--config',
+arg_parser.add_argument('-c', '--config',
                         help='Absolute path of the global config',
                         default="config.yml",
                         type=os.path.abspath)
 
-arg_parser.add_argument('--logs_dir',
+arg_parser.add_argument('-l', '--logs-dir',
                         help='Absolute path of the logs dir',
                         default="logs/",
                         type=os.path.abspath)

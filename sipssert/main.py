@@ -20,8 +20,9 @@
 import os
 import argparse
 from sipssert import controller
+from sipssert import info
 
-arg_parser = argparse.ArgumentParser(description='SIPssert Testing Framework')
+arg_parser = argparse.ArgumentParser(description=info.__description__)
 
 arg_parser.add_argument('tests',
                         help='Absolute path of the tests director',
@@ -44,6 +45,12 @@ arg_parser.add_argument('-l', '--logs-dir',
                         help='Absolute path of the logs dir',
                         default="logs/",
                         type=os.path.abspath)
+
+arg_parser.add_argument('-v', '--version',
+                        action='version',
+                        help='Returns the version of the tool',
+                        version=f'%(prog)s {info.__version__}')
+
 
 def main():
     """Framework entrypoint"""

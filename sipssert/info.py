@@ -17,9 +17,9 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from .info import __name__
-from .info import __version__
-from .info import __copyright__
-from .info import __description__
+__version__ = "0.1.0"
+__name__ = "sipssert"
+__copyright__ = "Copyright (C) 2023 OpenSIPS Solution"
+__description__ = "SIPssert Testing Framework"
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

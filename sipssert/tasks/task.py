@@ -193,7 +193,8 @@ class Task():
 
     def get_exit_code(self):
         if not self.exit_code:
-            self.exit_code = self.container.attrs["State"]["ExitCode"]
+            self.update()
+            self.exit_code = int(self.container.attrs["State"]["ExitCode"])
         return self.exit_code
 
     def update(self):

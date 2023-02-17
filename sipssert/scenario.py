@@ -47,16 +47,16 @@ class Scenario():
         self.config = config.Config(self.dirname, self.scenario, VARIABLES,
                 test_set.config.get_defines())
         self.create_scen_logs_dir()
-        self.network_device = self.config.get("network")
-        self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", self.network_device)
+        self.network = self.config.get("network", test_set.network)
+        self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", self.network)
         self.timeout = self.config.get("timeout", 0)
         container_prefix = f"{test_set.name}/{self.name}"
         self.tasks = tasks_list.TasksList("tasks", self.dirname, self.scen_logs_dir,
-                self.config, self.controller, container_prefix, set_defaults_dict)
+                self.config, self.network, self.controller, container_prefix, set_defaults_dict)
         self.init_tasks = tasks_list.TasksList("init_tasks", self.dirname, self.scen_logs_dir,
-                self.config, self.controller, container_prefix, set_defaults_dict)
+                self.config, self.network, self.controller, container_prefix, set_defaults_dict)
         self.cleanup_tasks = tasks_list.TasksList("cleanup_tasks", self.dirname, self.scen_logs_dir,
-                self.config, self.controller, container_prefix, set_defaults_dict)
+                self.config, self.network, self.controller, container_prefix, set_defaults_dict)
         if self.timeout != 0:
             self.init_tasks.set_timeout(self.timeout)
             self.tasks.set_timeout(self.timeout)

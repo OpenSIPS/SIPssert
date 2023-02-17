@@ -44,7 +44,7 @@ class Task():
 
     def __init__(self, test_dir, configuration):
         self.config = configuration
-        self.net_mode = self.config.get("network", None)
+        self.network = self.config.get("network", None)
         self.controller = None
         self.test_dir = test_dir
         self.volumes = {}
@@ -135,13 +135,19 @@ class Task():
         self.log.info("container {} created".format(self.container_name))
         self.log.debug("running {}: {}".format(self.image, args))
 
-        if net_mode == "bridge" and self.ip:
+        if net_mode == "bridge":
             try:
-                self.controller.docker.networks.get(self.net_mode).\
+                self.controller.docker.networks.get(self.network).\
                         connect(self.container, ipv4_address = self.ip)
-                self.log.debug("network attached")
+                self.log.debug("attached ip {} in network {}".format(self.ip, self.network))
             except docker.errors.APIError as err:
                 self.log.exception(err)
+                raise err
+            if self.network != "bridge":
+                try:
+                    self.controller.docker.networks.get("bridge").disconnect(self.container)
+                except docker.errors.APIError as err:
+                    self.log.exception(err)
         self.state = State.CREATED
 
     def get_task_args(self):
@@ -177,7 +183,7 @@ class Task():
         self.log.info("started")
 
     def get_net_mode(self):
-        if not self.net_mode or self.netMode == "host":
+        if not self.network or self.network == "host":
             return "host"
         else:
             return "bridge"

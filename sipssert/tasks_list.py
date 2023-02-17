@@ -32,12 +32,13 @@ class TasksList(list):
     """Handles a list of Tasks"""
 
     def __init__(self, task_set_key, task_dir, logs_dir,
-            config, controller, container_prefix=None, defaults={}):
+            config, network, controller, container_prefix=None, defaults={}):
         super().__init__([])
         self.timeout = 0
         self.status = TestStatus.UNKN
         self.task_dir = task_dir
         self.logs_dir = logs_dir
+        self.network = network
         self.controller = controller
         self.container_prefix = container_prefix
         self.defaults = defaults
@@ -47,6 +48,11 @@ class TasksList(list):
         if task_set_key not in config:
             return
         for definition in config[task_set_key]:
+            if self.network and "network" not in definition:
+                definition["network"] = self.network
+                logger.slog.debug("network={}".format(self.network));
+            else:
+                logger.slog.debug("no network");
             task = self.create_task(definition)
             if task:
                 self.append(task)
@@ -139,8 +145,10 @@ class TasksList(list):
                 self.pending_tasks.remove(task)
                 try:
                     task.run()
-                    # move it in the running tasks
-                    self.running_tasks.append(task)
+                    if task.daemon:
+                        self.daemon_tasks.append(task)
+                    else:
+                        self.running_tasks.append(task)
                 except Exception as e:
                     if not force_all:
                         # remove all the pending tasks

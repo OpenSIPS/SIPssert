@@ -119,13 +119,14 @@ def init_logger(config, logs_dir=None):
     global LOG_LEVEL # pylint: disable=global-statement
     global LOG_FILE # pylint: disable=global-statement
 
-    LOG_CONSOLE = config.get("console", DEFAULT_LOG_CONSOLE)
-    log_file = config.get("file", DEFAULT_LOG_FILE)
+    LOG_CONSOLE = config.get("console", DEFAULT_LOG_CONSOLE) if config else DEFAULT_LOG_CONSOLE
+    log_file = config.get("file", DEFAULT_LOG_FILE) if config else DEFAULT_LOG_FILE
+    LOG_LEVEL = config.get("level", DEFAULT_LOG_LEVEL) if config else DEFAULT_LOG_LEVEL
+
     if os.path.isabs(log_file) or not logs_dir:
         LOG_FILE = log_file
     else:
         LOG_FILE = os.path.join(logs_dir, log_file)
-    LOG_LEVEL = config.get("level", DEFAULT_LOG_LEVEL)
     logging.setLoggerClass(ColoredLogger)
     slog = logging.getLogger(__name__ + "System")
     slog.setLevel(LOG_LEVEL)

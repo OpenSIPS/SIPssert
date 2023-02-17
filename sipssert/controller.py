@@ -42,7 +42,11 @@ class Controller:
         self.link_file = os.path.join(self.logs_dir, "latest")
         self.create_run_logs_dir()
         self.config = config.Config(self.config_file)
-        logger.init_logger(self.config["logging"]["controller"], self.run_logs_dir)
+        if self.config.get("logging"):
+            logging = self.config.get("logging").get("controller")
+        else:
+            logging = None
+        logger.init_logger(logging, self.run_logs_dir)
         self.docker = docker.from_env()
         self.tlogger = testing.Testing("Running SIPssert Testing Framework")
     

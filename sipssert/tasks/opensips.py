@@ -34,6 +34,11 @@ class OpenSIPSTask(Task):
             args.append("-f")
             args.append(self.config_file)
 
+        listener = self.config.get("listener")
+        if listener:
+            args.append("-l")
+            args.append(listener)
+
         return args
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

@@ -17,13 +17,25 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
+import os
 from sipssert.tasks.task import Task
 
 class OpenSIPSCliTask(Task):
 
     default_image = "opensips/opensips-cli"
     default_mount_point = "/home"
-    default_daemon = True
+    default_daemon = False
+
+    default_port = 8888
+    default_ip = '127.0.0.1'
+    default_path = 'mi'
+
+    def __init__(self, test_dir, config):
+        super().__init__(test_dir, config)
+        self.script = config.get("script")
+
+        if self.script and not os.path.isabs(self.script):
+            self.script = os.path.join(self.mount_point, self.script)
     
     def get_task_args(self):
 
@@ -31,8 +43,17 @@ class OpenSIPSCliTask(Task):
 
         # handle config
         if self.config_file:
-            args.append("-c")
+            args.append("-f")
             args.append(self.config_file)
+
+        ip = self.config.get("mi_ip", self.default_ip)
+        port = self.config.get("mi_port", self.default_port)
+        path = self.config.get("mi_path", self.default_path)
+        args.append("-o")
+        args.append(f"url=http://{ip}:{port}/{path}")
+
+        if self.script:
+            args.append(self.script)
 
         return args
 

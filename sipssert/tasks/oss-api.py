@@ -22,7 +22,7 @@
 
 import uuid
 import json
-from sipssert.tasks.task import Task
+from sipssert.task import Task
 
 class OSSAPITask(Task):
 

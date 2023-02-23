@@ -17,7 +17,7 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from sipssert.tasks.task import Task
+from sipssert.task import Task
 
 class MysqlTask(Task):
 

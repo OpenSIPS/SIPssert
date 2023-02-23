@@ -23,7 +23,7 @@ import os
 import importlib
 import time
 from datetime import datetime
-from sipssert.tasks import task
+from sipssert import task
 from sipssert import logger
 from sipssert import config
 from sipssert import tracer

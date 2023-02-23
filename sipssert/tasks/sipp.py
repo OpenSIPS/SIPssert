@@ -21,7 +21,7 @@
 
 import os
 from sipssert import logger
-from sipssert.tasks.task import Task
+from sipssert.task import Task
 
 SCENARIO_NAME = "sipp.xml"
 

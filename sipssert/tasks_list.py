@@ -21,7 +21,7 @@ import os
 import time
 import importlib
 from sipssert import logger
-from sipssert.tasks.task import State
+from sipssert.task import State
 from sipssert.testing import TestStatus
 
 """Implements the behavior of a list of tasks"""

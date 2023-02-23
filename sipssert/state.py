@@ -17,28 +17,14 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-from sipssert.task import Task
+from enum import Enum
 
-class OpenSIPSTask(Task):
+class State(Enum):
+    PENDING, CREATED, ACTIVE, ENDED = range(4)
 
-    default_mount_point = "/etc/opensips"
-    default_image = "opensips/opensips"
-    default_daemon = True
-    
-    def get_task_args(self):
-
-        args = []
-
-        # handle config
-        if self.config_file:
-            args.append("-f")
-            args.append(self.config_file)
-
-        listener = self.config.get("listener")
-        if listener:
-            args.append("-l")
-            args.append(listener)
-
-        return args
+    def __lt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value < other.value
+        return NotImplemented
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

@@ -20,7 +20,7 @@
 """Implements the logic of a task dependencies"""
 
 from sipssert import logger
-from sipssert.tasks.task import State
+from sipssert.state import State
 
 class TaskDep:
     """Holds information about a task dependency"""

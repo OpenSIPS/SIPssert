@@ -21,19 +21,12 @@ import os
 from datetime import datetime
 from sipssert import logger
 from sipssert import config
-from sipssert.tasks import dependencies
+from sipssert import dependencies
+from sipssert.state import State
 from enum import Enum
 import time
 import docker
 import re
-
-class State(Enum):
-    PENDING, CREATED, ACTIVE, ENDED = range(4)
-
-    def __lt__(self, other):
-        if self.__class__ is other.__class__:
-            return self.value < other.value
-        return NotImplemented
 
 class Task():
     

@@ -18,7 +18,7 @@
 ##
 
 import os
-from sipssert.tasks.task import Task
+from sipssert.task import Task
 
 class OpenSIPSCliTask(Task):
 

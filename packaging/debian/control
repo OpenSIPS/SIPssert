@@ -1,0 +1,22 @@
+Source: sipssert
+Section: python
+Priority: optional
+Maintainer: Razvan Crainea <razvan@opensips.org>
+Build-Depends: debhelper (>= 9), dh-python, python3-dev
+Standards-Version: 3.9.8
+Homepage: https://github.com/OpenSIPS/sipssert
+
+Package: SIPssert
+Architecture: all
+Multi-Arch: foreign
+Depends: python3, ${misc:Depends}, ${python3:Depends}, python3-sqlalchemy, python3-sqlalchemy-utils, python3-openssl, python3-mysqldb, python3-pymysql
+Description: SIPssert Testing Framework
+ SIPssert Testing Framework is a tool used for facilitating the automation and
+ testing of complex VoIP setups, that involve multiple types of components and
+ various interactions between them. Its purpose is to provide a set of
+ components that can be easily scripted and orchestrate them in order to run,
+ test/check their behavior and provide troubleshooting information to the goal
+ of validating that a setup is running correctly for a particular set of
+ defined scenarios. In a nutshell, SIP Flows is a framework able to execute a
+ set of tasks and check whether their execution lead to an expected behavior,
+ defined in a scenario.

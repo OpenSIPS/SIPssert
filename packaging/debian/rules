@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+
+VERSION=$(shell python -Bc 'import sys; sys.path.append("."); from sipssert.info import __version__; print(__version__)')
+NAME=sipssert
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+.PHONY: tar
+tar:
+	tar --transform 's,^\.,$(NAME),' \
+		--exclude=.git \
+		--exclude=.gitignore \
+		--exclude=*.swp \
+		--exclude=build \
+		-czf ../$(NAME)_$(VERSION).orig.tar.gz .

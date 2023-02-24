@@ -1,0 +1,6 @@
+version=3
+
+opts=filenamemangle=s/.+\/v?(\d\S*)\.tar\.gz/sipssert-$1\.tar\.gz/ \
+  https://github.com/OpenSIPS/sipssert/tags .*/v?(\d\S*)\.tar\.gz
+
+https://github.com/OpenSIPS/sipssert/releases /OpenSIPS/sipssert/archive/(.+)\.tar\.gz

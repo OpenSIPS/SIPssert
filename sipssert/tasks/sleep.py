@@ -32,12 +32,7 @@ class SleepTask(Task):
     def __init__(self, test_dir, config):
 
         super().__init__(test_dir, config)
-        self.seconds = config.get("seconds", 0)
-        self.milliseconds = config.get("milliseconds", 0) / 1000
-        if self.seconds > self.milliseconds:
-            self.timeout = self.milliseconds
-        else:
-            self.timeout = self.seconds
+        self.timeout = config.get("timeout", 0)
 
     def get_task_args(self):
         return [ "sleep", str(self.timeout) ]

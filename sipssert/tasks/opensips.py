@@ -34,10 +34,14 @@ class OpenSIPSTask(Task):
             args.append("-f")
             args.append(self.config_file)
 
-        listener = self.config.get("listener")
-        if listener:
+        socket = self.config.get("socket")
+        if socket:
             args.append("-l")
-            args.append(listener)
+            args.append(socket)
+
+        for socket in self.config.get("sockets", []):
+            args.append("-l")
+            args.append(socket)
 
         return args
 

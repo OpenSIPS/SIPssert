@@ -1,4 +1,0 @@
----
-# right now, all networks here should be bridged
-globals:
-  host_ip: 127.0.0.1

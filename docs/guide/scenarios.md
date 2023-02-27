@@ -34,7 +34,7 @@ where each component has multiple tests sets organized per feature.
 
 ## Defines
 
-[Defines](../config/defines.md) are used to specify certain configuration
+[Defines](../config/define.md) are used to specify certain configuration
 settings in a single place as variables, and then use those variables along the
 tests set and scenario. If, for example, you have a setting that should be
 shared among multiple tasks, it is a good idea to define a variable for that

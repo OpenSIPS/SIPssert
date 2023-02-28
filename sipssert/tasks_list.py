@@ -50,9 +50,6 @@ class TasksList(list):
         for definition in config[task_set_key]:
             if self.network and "network" not in definition:
                 definition["network"] = self.network
-                logger.slog.debug("network={}".format(self.network));
-            else:
-                logger.slog.debug("no network");
             task = self.create_task(definition)
             if task:
                 self.append(task)

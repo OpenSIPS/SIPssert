@@ -186,7 +186,7 @@ The SIP Flows tool also accepts as parameters the following values:
 * `-l|--logs-dir DIR` - directory where the logging files should be stored (Default
 is `logs/`)
 * `-c|--config CONFIG` - [Global Configuration](docs/config/global.md) file (Default
-is `config.yml')
+is `global.yml')
 * `-t|--test TEST` - run only a certain scenario/test, identified by `TEST`
 * `-v|--version` - prints the current version
 

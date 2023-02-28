@@ -44,8 +44,11 @@ class Scenario():
         self.scenario = os.path.basename(scenario_file)
         self.name = os.path.basename(self.dirname)
         self.scen_logs_dir = os.path.join(set_logs_dir, self.name)
-        self.config = config.Config(self.dirname, self.scenario, VARIABLES,
-                test_set.config.get_defines())
+        try:
+            self.config = config.Config(self.dirname, self.scenario, VARIABLES,
+                    test_set.config.get_defines())
+        except config.ConfigParseError:
+            raise Exception("could not parse {}".format(self.scenario))
         self.create_scen_logs_dir()
         self.network = self.config.get("network", test_set.network)
         self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", self.network)

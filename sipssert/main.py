@@ -38,7 +38,7 @@ arg_parser.add_argument('-t', '--test',
 
 arg_parser.add_argument('-c', '--config',
                         help='Absolute path of the global config',
-                        default="config.yml",
+                        default="global.yml",
                         type=os.path.abspath)
 
 arg_parser.add_argument('-l', '--logs-dir',

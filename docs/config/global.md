@@ -2,7 +2,7 @@
 
 This configuration file is used to tune global runtime parameters, such as
 logging. It should be defined as a [YAML](https://yaml.org/) and its path
-defaults to `config.yml`.
+defaults to `global.yml`.
 
 ## Settings
 

@@ -41,7 +41,10 @@ class Controller:
         self.run_logs_dir = os.path.join(self.logs_dir, current_date)
         self.link_file = os.path.join(self.logs_dir, "latest")
         self.create_run_logs_dir()
-        self.config = config.Config(self.config_file)
+        try:
+            self.config = config.Config(self.config_file)
+        except config.ConfigParseError:
+            raise Exception("could not parse {}".format(self.config_file))
         if self.config.get("logging"):
             logging = self.config.get("logging").get("controller")
         else:

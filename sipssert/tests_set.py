@@ -40,7 +40,10 @@ class TestsSet():
         self.name = os.path.basename(set_path)
         self.set_path = set_path
         self.set_logs_dir = os.path.join(controller.run_logs_dir, self.name)
-        self.config = config.Config(self.set_path, CONFIG, VARIABLES, controller.config.get_defines())
+        try:
+            self.config = config.Config(self.set_path, CONFIG, VARIABLES, controller.config.get_defines())
+        except config.ConfigParseError:
+            raise Exception("could not parse {}".format(CONFIG))
         self.defaults = self.config.get("defaults", {})
         self.init_tasks_logs_dir = os.path.join(self.set_logs_dir, "init_tasks")
         self.cleanup_tasks_logs_dir = os.path.join(self.set_logs_dir, "cleanup_tasks")

@@ -154,12 +154,22 @@ class Task():
             extra_params = []
         return extra_params
 
+    def parse_port(self, p):
+        if isinstance(p, str):
+            return p.split("/")
+        else:
+            return p, None
+
     def get_ports(self):
         r = {}
         if "ports" in self.config:
             for p in self.config["ports"]:
-                port, proto = p.split("/")
+                port, proto = self.parse_port(p)
                 r[p] = port
+        if "port" in self.config:
+            p = self.config["port"]
+            port, proto = self.parse_port(p)
+            r[p] = port
         return r
     
 

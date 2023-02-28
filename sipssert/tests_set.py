@@ -117,8 +117,9 @@ class TestsSet():
         except Exception as e:
             logger.slog.exception(e)
         self.cleanup_tasks.run(force_all=True)
-        # cleanup networks
-        for net in self.networks:
-            net.destroy()
+        if not self.controller.no_delete:
+            # cleanup networks
+            for net in self.networks:
+                net.destroy()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

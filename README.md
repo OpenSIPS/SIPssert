@@ -188,6 +188,8 @@ is `logs/`)
 * `-c|--config CONFIG` - [Global Configuration](docs/config/global.md) file (Default
 is `global.yml')
 * `-t|--test TEST` - run only a certain scenario/test, identified by `TEST`
+* `-n|--no-delete` - do not delete the resources after run (**NOTICE**: you
+will have to manually delete both containers and networks)
 * `-v|--version` - prints the current version
 
 ### Scenarios

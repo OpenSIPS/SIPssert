@@ -182,6 +182,8 @@ class Task():
             return "bridge"
 
     def stop(self):
+        if self.controller and self.controller.no_delete:
+            return
         self.container.stop(timeout=0)
 
     def get_exit_code(self):
@@ -238,6 +240,8 @@ class Task():
         return True
 
     def __del__(self):
+        if self.controller and self.controller.no_delete:
+            return
         if self.container:
             self.container.stop()
             self.container.remove()

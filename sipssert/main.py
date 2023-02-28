@@ -46,6 +46,11 @@ arg_parser.add_argument('-l', '--logs-dir',
                         default="logs/",
                         type=os.path.abspath)
 
+arg_parser.add_argument('-n', '--no-delete',
+                        help='Do not delete resources after run',
+                        default=False,
+                        action='store_true')
+
 arg_parser.add_argument('-v', '--version',
                         action='version',
                         help='Returns the version of the tool',

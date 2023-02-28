@@ -34,6 +34,7 @@ class Task():
     default_daemon = False
     default_config_file = None
     default_mount_point = '/home'
+    default_stop_timeout = 0
 
     def __init__(self, test_dir, configuration):
         self.config = configuration
@@ -56,6 +57,7 @@ class Task():
         if int(self.delay_start) != 0:
             self.deps.append(dependencies.TaskDepDelay(self.delay_start))
         self.ready_deps = dependencies.parse_dependencies(self.config.get("ready"))
+        self.stop_timeout = self.config.get("stop_timeout", self.default_stop_timeout)
         self.mount_point = self.config.get("mount_point", self.default_mount_point)
         self.config_file = self.config.get("config_file", self.default_config_file)
         if self.config_file and not os.path.isabs(self.config_file):
@@ -194,7 +196,7 @@ class Task():
     def stop(self):
         if self.controller and self.controller.no_delete:
             return
-        self.container.stop(timeout=0)
+        self.container.stop(timeout=self.stop_timeout)
 
     def get_exit_code(self):
         if not self.exit_code:

@@ -40,5 +40,5 @@ Create a user using the OpenSIPS CLI tool.
 ```
  - name: Create a User
    type: opensips-cli
-   extra_params: -x add user testing@opensips.org
+   args: -x add user testing@opensips.org
 ```

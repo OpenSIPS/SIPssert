@@ -6,8 +6,7 @@ it has no internal logic - it is a simple mapping to a docker container.
 ## Settings
 
 * `image`: mandatory node, representing the docker image to execute
-* `extra_params`: optional params, passed to the image when the container is
-run
+* `args`: optional arguments, passed to the image when the container is run
 
 ## Example
 
@@ -17,5 +16,5 @@ Running a `debian` docker container that prints the date
  - name: Date
    type: generic
    image: debian
-   extra_params: date
+   args: date
 ```

@@ -148,13 +148,15 @@ class Task():
     def get_task_args(self):
         return []
 
-    def get_extra_params(self):
-        """Returns extra parameters from the config"""
-        if "extra_params" in self.config:
-            extra_params = self.config["extra_params"].split(" ")
+    def get_config_args(self):
+        """Returns arguments specified in the config"""
+        if "args" in self.config:
+            args = self.config["args"]
+            if not isinstance(args, list):
+                args = args.split(" ")
         else:
-            extra_params = []
-        return extra_params
+            args = []
+        return args
 
     def parse_port(self, p):
         if isinstance(p, str):
@@ -176,7 +178,7 @@ class Task():
     
 
     def get_args(self):
-        return self.get_task_args() + self.get_extra_params()
+        return self.get_task_args() + self.get_config_args()
 
     def get_task_env(self):
         return {}

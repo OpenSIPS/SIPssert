@@ -17,12 +17,20 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
+import os
 from sipssert.task import Task
 
 class MysqlClientTask(Task):
 
     mysql_default_env = {}
     default_image = "opensips/mysql-client"
+
+    def __init__(self, test_dir, config):
+        super().__init__(test_dir, config)
+        self.script = config.get("script")
+
+        if self.script and not os.path.isabs(self.script):
+            self.script = os.path.join(self.mount_point, self.script)
 
     def get_task_env(self):
 
@@ -37,12 +45,12 @@ class MysqlClientTask(Task):
             env_dict["MYSQL_PASSWORD"] = self.password
 
         if "host" in self.config:
-            self.password = self.config["host"]
+            self.host = self.config["host"]
             env_dict["MYSQL_HOST"] = self.host
 
         if "port" in self.config:
             self.port = self.config["port"]
-            env_dict["MYSQL_PORT"] = self.host
+            env_dict["MYSQL_PORT"] = self.port
 
         if "database" in self.config:
             self.database = self.config["database"]
@@ -57,5 +65,11 @@ class MysqlClientTask(Task):
             env_dict["MYSQL_OPTIONS"] = self.mysql_options
 
         return env_dict
+
+    def get_task_args(self):
+        args = []
+        if self.script:
+            args.append(self.script)
+        return args
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

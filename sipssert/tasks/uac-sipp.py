@@ -26,8 +26,17 @@ class UacSIPPTask(SIPPTask):
     """UAC SIPP class"""
     def __init__(self, test_dir, config):
         super().__init__(test_dir, config)
-        if not self.proxy:
+        self.remote = config.get("remote")
+        if not self.remote and not self.proxy:
             raise ConfigParamNotFound("proxy")
+        if not self.proxy:
+            self.proxy = self.remote
+            self.remote = None
+        elif self.remote:
+            # we have both - swap them
+            tmp = self.remote
+            self.remote = self.proxy
+            self.proxy = tmp
         self.caller = config.get("caller", self.username)
         # overwrite the username/service with the destination 
         if not self.service:
@@ -45,6 +54,9 @@ class UacSIPPTask(SIPPTask):
             args.append("-key")
             args.append("caller")
             args.append(self.caller)
+        if self.remote:
+            args.append("-rsa")
+            args.append(self.remote)
 
         return args
 

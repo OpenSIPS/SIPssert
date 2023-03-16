@@ -152,7 +152,9 @@ class Task():
         """Returns arguments specified in the config"""
         if "args" in self.config:
             args = self.config["args"]
-            if not isinstance(args, list):
+            if isinstance(args, int):
+                args = [str(args)]
+            elif not isinstance(args, list):
                 args = args.split(" ")
         else:
             args = []

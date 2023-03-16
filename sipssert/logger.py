@@ -22,6 +22,7 @@ logger.py - implements coloured logging for the opensips-cli project
 """
 
 import os
+import time
 import logging
 
 slog = None # pylint: disable=invalid-name
@@ -46,15 +47,19 @@ class ColoredLogger(logging.Logger):
 
     BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
+    TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
     FORMAT = "$BOLD%(levelname)s$RESET: %(message)s"
-    COLOR_FORMAT = formatter_message(FORMAT, True)
 
     def __init__(self, name):
         global LOG_CONSOLE # pylint: disable=global-statement
         global LOG_FILE # pylint: disable=global-statement
+        global LOG_TIMESTAMP # pylint: disable=global-statement
 
         logging.Logger.__init__(self, name)
-        color_formatter = ColoredFormatter(self.COLOR_FORMAT)
+        if LOG_TIMESTAMP:
+            self.FORMAT = "%(asctime)s " + self.FORMAT
+        color_format = formatter_message(self.FORMAT, True)
+        color_formatter = ColoredFormatter(color_format, self.TIME_FORMAT)
         def build_handler_filters(handler: str):
             def handler_filter(record: logging.LogRecord):
                 if hasattr(record, 'block'):
@@ -100,8 +105,8 @@ class ColoredFormatter(logging.Formatter):
         'ERROR': ColoredLogger.RED
     }
 
-    def __init__(self, msg, use_color = True):
-        logging.Formatter.__init__(self, msg)
+    def __init__(self, msg, time_format, use_color = True):
+        logging.Formatter.__init__(self, msg, time_format)
         self.use_color = use_color
 
     def format(self, record):
@@ -112,14 +117,22 @@ class ColoredFormatter(logging.Formatter):
             record.levelname = levelname_color
         return logging.Formatter.format(self, record)
 
+    def formatTime(self, record, datefmt=ColoredLogger.TIME_FORMAT):
+        ct = self.converter(record.created)
+        t = time.strftime(datefmt, ct)
+        s = "%s.%03d" % (t, record.msecs)
+        return s
+
 def init_logger(config, logs_dir=None):
     """Initializes the logger according to config"""
     global slog # pylint: disable=global-statement,invalid-name
     global LOG_CONSOLE # pylint: disable=global-statement
     global LOG_LEVEL # pylint: disable=global-statement
     global LOG_FILE # pylint: disable=global-statement
+    global LOG_TIMESTAMP # pylint: disable=global-statement
 
     LOG_CONSOLE = config.get("console", DEFAULT_LOG_CONSOLE) if config else DEFAULT_LOG_CONSOLE
+    LOG_TIMESTAMP = config.get("timestamp", DEFAULT_LOG_TIMESTAMP) if config else DEFAULT_LOG_TIMESTAMP
     log_file = config.get("file", DEFAULT_LOG_FILE) if config else DEFAULT_LOG_FILE
     LOG_LEVEL = config.get("level", DEFAULT_LOG_LEVEL) if config else DEFAULT_LOG_LEVEL
 
@@ -134,5 +147,6 @@ def init_logger(config, logs_dir=None):
 DEFAULT_LOG_FILE = "controller.log"
 DEFAULT_LOG_LEVEL = "INFO"
 DEFAULT_LOG_CONSOLE = False
+DEFAULT_LOG_TIMESTAMP = True
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

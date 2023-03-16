@@ -13,6 +13,7 @@ The global configuration file consists of the following settings:
     * `file`: the file where controller logging is dumped (Default: `controller.log`)
     * `console`: boolean indicating whether the logging should be dumped at console or not (Default: `false`)
     * `level`: debugging level of the controller (Default: `INFO`)
+    * `timestamp`: adds timestamp to genereated logs (Default: `true`)
 
 ## Example
 

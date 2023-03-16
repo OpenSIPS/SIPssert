@@ -4,3 +4,4 @@ logging:
     console: False
     file: controller.log
     level: INFO
+    timestamp: True

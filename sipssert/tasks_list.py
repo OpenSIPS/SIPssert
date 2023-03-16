@@ -167,6 +167,7 @@ class TasksList(list):
         self.terminate()
         if len(self) > 0:
             logger.slog.debug("finished running tasks {}".format(self))
+            logger.slog.debug("tasks executed in {:.3f}s".format(time.time() - self.start_time))
         if exc:
             raise exc
 

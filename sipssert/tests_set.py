@@ -20,6 +20,7 @@
 """Logic that runs a set of tests"""
 
 import os
+import time
 from sipssert import config
 from sipssert import scenario
 from sipssert import logger
@@ -106,6 +107,7 @@ class TestsSet():
 
     def run(self):
         """Runs one or all tests in a set"""
+        start_time = time.time()
         try:
             self.init_tasks.run()
         except Exception as e:
@@ -121,5 +123,6 @@ class TestsSet():
             # cleanup networks
             for net in self.networks:
                 net.destroy()
+        logger.slog.debug("tests set executed in {:.3f}s".format(time.time() - start_time))
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

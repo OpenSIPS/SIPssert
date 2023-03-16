@@ -72,6 +72,7 @@ class Scenario():
 
     def run(self):
         """Runs a scenario with all its prerequisits"""
+        start_time = time.time()
         self.tlogger.test_start(self.name)
         self.tracer.start()
         try:
@@ -87,6 +88,7 @@ class Scenario():
         except Exception:
             logger.slog.exception("Error occured during cleanup task")
         self.tracer.stop()
+        logger.slog.debug("scenario executed in {:.3f}s".format(time.time() - start_time))
         self.tlogger.status(self.tasks.status)
 
     def __del__(self):

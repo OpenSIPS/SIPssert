@@ -3,6 +3,8 @@
 This configuration file is used to tune global runtime parameters, such as
 logging. It should be defined as a [YAML](https://yaml.org/) and its path
 defaults to `global.yml`.
+If a `defines.yml` file exists in the same directory, it is loaded and its
+definitions are expanded according to the Jinja2 format.
 
 ## Settings
 

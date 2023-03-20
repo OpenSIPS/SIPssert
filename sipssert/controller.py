@@ -43,7 +43,7 @@ class Controller:
         self.link_file = os.path.join(self.logs_dir, "latest")
         self.create_run_logs_dir()
         try:
-            self.config = config.Config(self.config_file)
+            self.config = config.Config(self.config_file, None, "defines.yml")
         except config.ConfigParseError:
             raise Exception("could not parse {}".format(self.config_file))
         if self.config.get("logging"):

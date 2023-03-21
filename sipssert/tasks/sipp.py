@@ -38,6 +38,8 @@ class SIPPTask(Task):
         self.username = config.get("username")
         self.password = config.get("password")
         self.port = config.get("port", None)
+        if self.port:
+            self.port, _ = self.parse_port(self.port)
         self.keys = config.get("keys", {})
         self.calls = config.get("calls", "1")
         self.duration = str(config.get("duration", "5000"))

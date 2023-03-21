@@ -260,6 +260,6 @@ class Task():
             return
         if self.container:
             self.container.stop()
-            self.container.remove()
+            self.container.remove(v=True)
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

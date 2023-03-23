@@ -23,6 +23,7 @@ import importlib
 from sipssert import logger
 from sipssert.task import State
 from sipssert.testing import TestStatus
+from sipssert.config import ConfigLevel
 
 """Implements the behavior of a list of tasks"""
 
@@ -173,6 +174,25 @@ class TasksList(list):
             logger.slog.debug("finished running tasks {}".format(self))
             logger.slog.debug("tasks executed in {:.3f}s".format(time.time() - self.start_time))
 
+    def merge_dicts(self, dict1, dict2):
+        """
+        Recursive merge dictionaries.
+
+        :param dict1: Base dictionary to merge.
+        :param dict2: Dictionary to merge on top of base dictionary.
+        :return: Merged dictionary
+        """
+        for key, val in dict1.items():
+            if isinstance(val, dict):
+                dict2_node = dict2.setdefault(key, {})
+                self.merge_dicts(val, dict2_node)
+            else:
+                if key not in dict2:
+                    dict2[key] = val
+
+        return dict2
+
+
     def create_task(self, definition):
         """Creates a task based on its definition"""
         if "type" in definition.keys():
@@ -181,7 +201,7 @@ class TasksList(list):
             # create a generic task
             task_type = "generic"
         if task_type in self.defaults.keys():
-            definition = self.defaults[task_type] | definition
+            definition = ConfigLevel(self.merge_dicts(self.defaults[task_type], dict(definition)))
 
         try:
             task_mod = getattr(

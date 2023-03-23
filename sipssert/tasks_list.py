@@ -107,7 +107,7 @@ class TasksList(list):
                 else:
                     self.running_tasks.remove(tsk)
 
-    def terminate(self):
+    def terminate(self, exc):
         if len(self.pending_tasks) > 0:
             logger.slog.warning("tasks {} not scheduled".
                     format(self.pending_tasks))
@@ -126,11 +126,15 @@ class TasksList(list):
             status = tsk.get_exit_code()
             self.update_status(TestStatus.PASS if status == 0 else TestStatus.FAIL)
 
+        if exc:
+            logger.slog.error(exc)
+            self.update_status(TestStatus.FAIL)
+
     def run(self, force_all=False):
         self.start_time = time.time()
         last_events_time = self.start_time
         exc = None
-        while len(self.pending_tasks) > 0 or len(self.running_tasks) > 0:
+        while (len(self.pending_tasks) > 0 or len(self.running_tasks) > 0) and exc is None:
 
             current_time = time.time()
             self.handle_events(last_events_time, current_time)
@@ -139,7 +143,6 @@ class TasksList(list):
             if len(tasks_to_run) > 0:
                 logger.slog.debug("running tasks {}".format(tasks_to_run))
             for task in tasks_to_run:
-                self.pending_tasks.remove(task)
                 try:
                     task.run()
                     if task.daemon:
@@ -148,10 +151,11 @@ class TasksList(list):
                         self.running_tasks.append(task)
                 except Exception as e:
                     if not force_all:
-                        # remove all the pending tasks
-                        self.pending_tasks.clear()
-                        # but wait for the running ones to clear
                         exc = e
+                        break
+                self.pending_tasks.remove(task)
+            if exc:
+                break
             # if there are no other pending tasks, check to see if
             # we have any more non-daemon tasks to run
             finish_time = time.time()
@@ -164,12 +168,10 @@ class TasksList(list):
                 if timeout > 0:
                     time.sleep(timeout)
 
-        self.terminate()
+        self.terminate(exc)
         if len(self) > 0:
             logger.slog.debug("finished running tasks {}".format(self))
             logger.slog.debug("tasks executed in {:.3f}s".format(time.time() - self.start_time))
-        if exc:
-            raise exc
 
     def create_task(self, definition):
         """Creates a task based on its definition"""

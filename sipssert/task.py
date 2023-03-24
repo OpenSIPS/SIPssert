@@ -156,6 +156,8 @@ class Task():
                 args = [str(args)]
             elif not isinstance(args, list):
                 args = args.split(" ")
+            else:
+                args = [ str(x) for x in args ]
         else:
             args = []
         return args

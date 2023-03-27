@@ -38,6 +38,16 @@ will fail.
 * `network`: a valid network's name, as defined in the tests set
 [networks](config/tests-set.md#networks) settings; if missing, the scenario's
 `network` configuration is used
+* `networks`: a list of network configurations that need to be assigned to the
+task, in addition to the default `network`; if the element is a string, it
+represents the name of the network to be assigned, otherwise, it can be an
+object consisting of the following nodes:
+ * `network`: mandatory, the network adaptor's name , as defined in the 
+[networks](config/tests-set.md#networks) settings;
+ * `ip`: optional, an IP within the network's range to be assigned;
+ * `disabled`: a boolean that indicates that although the network has been
+enabled, it should not be used (useful when defining a network at the tests
+set level, but it is not needed for this task); defaults to `false`.
 * `require`: defines the dependencies the task requires to execute, as
 described in the [dependencies](dependencies.md) page; if missing, no
 dependencies are used.
@@ -60,11 +70,14 @@ to reference it in the dependencies of a different task; if missing, no label
 is defined and the task can only be identified by its name
 * `labels`: a list of labels, with the same meaning of the single `label`
 * `ip`: the IP address that should be assigned to the container when running in
-the `bridge` network mode; if missing, a random IP within the range is assigned
+the `bridge` network mode; if missing, a random IP within the range is
+assigned; this value is being considered only for the `network` adaptor, the
+adaptors in the `networks` node should have their own `ip` settings
 * `port`: the port address that should be opened for the container when
 running in `bridge` network mode; if missing, no port forwarding is created;
 the format is `port[/protocol]`, where `protocol` can be either `udp`, `tcp` or
-`sctp`, or missing
+`sctp`, or missing; the port is being opened for any available network adaptor,
+either in `network`, or in the `networks` one, if not explicitely overwritten.
 * `ports`: a list of `port` nodes, used to exposed multiple ports
 * `stop_timeout`: timeout to wait for a container to stop; if missing, or not
 overwritten, it defaults to `0`/immediate stop

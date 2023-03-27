@@ -50,14 +50,19 @@ class TestsSet():
         self.init_tasks_logs_dir = os.path.join(self.set_logs_dir, "init_tasks")
         self.cleanup_tasks_logs_dir = os.path.join(self.set_logs_dir, "cleanup_tasks")
         # we need to create the networks before creating the tasks
-        self.network = self.config.get("network")
+        self.default_network = self.config.get("network")
+        self.default_networks = self.config.get("networks")
+        if self.default_networks and not isinstance(self.default_networks, list):
+            self.default_networks = [self.default_networks]
         self.setup_networks()
         self.init_tasks = tasks_list.TasksList("init_tasks", self.set_path,
-                self.init_tasks_logs_dir, self.config, self.network,
-                self.controller, f"{self.name}/init_tasks", self.defaults)
+                self.init_tasks_logs_dir, self.config, self.controller,
+                self.default_network, self.default_networks,
+                f"{self.name}/init_tasks", self.defaults)
         self.cleanup_tasks = tasks_list.TasksList("cleanup_tasks", self.set_path,
-                self.cleanup_tasks_logs_dir, self.config, self.network,
-                self.controller, f"{self.name}/cleanup_tasks", self.defaults)
+                self.cleanup_tasks_logs_dir, self.config, self.controller,
+                self.default_network, self.default_networks,
+                f"{self.name}/cleanup_tasks", self.defaults)
         self.create_set_logs_dir()
         self.build_scenarios()
 
@@ -81,7 +86,7 @@ class TestsSet():
 
     def setup_networks(self):
         """Setup of all networks involved in the test set"""
-        nets = self.config.get("networks")
+        nets = self.config.get("bridge_networks")
         self.networks = network.get_networks(self.controller, nets)
 
     def build_scenarios(self):

@@ -33,13 +33,14 @@ class TasksList(list):
     """Handles a list of Tasks"""
 
     def __init__(self, task_set_key, task_dir, logs_dir,
-            config, network, controller, container_prefix=None, defaults={}):
+            config, controller, network, networks, container_prefix=None, defaults={}):
         super().__init__([])
         self.timeout = 0
         self.status = TestStatus.UNKN
         self.task_dir = task_dir
         self.logs_dir = logs_dir
         self.network = network
+        self.networks = networks
         self.controller = controller
         self.container_prefix = container_prefix
         self.defaults = defaults
@@ -51,6 +52,8 @@ class TasksList(list):
         for definition in config[task_set_key]:
             if self.network and "network" not in definition:
                 definition["network"] = self.network
+            if self.networks and "networks" not in definition:
+                definition["networks"] = self.networks
             task = self.create_task(definition)
             if task:
                 self.append(task)

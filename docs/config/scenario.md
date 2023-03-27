@@ -11,6 +11,8 @@ Each scenario can have one of the following settings:
 * `network`: describes the network device used for this scenario; available
 values are described in tests set [Networks](tests-set.md#neworks); this value
 is optional, and if missing, the tests set `network` value is considered
+* `networks`: similar with `network`, but defines additional networks to be
+used; if missing, no extra network is being used
 * `timeout`: a timeout, expressed in seconds, for running the entire scenario;
 this value is optional, and if it is missing, the tasks do not timeout ever
 * `init_tasks`: a list of tasks as described in [Tasks](../tasks.md) that

@@ -50,16 +50,23 @@ class Scenario():
         except config.ConfigParseError:
             raise Exception("could not parse {}".format(self.scenario))
         self.create_scen_logs_dir()
-        self.network = self.config.get("network", test_set.network)
-        self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", self.network)
+        self.network = self.config.get("network", test_set.default_network)
+        self.networks = self.config.get("networks", test_set.default_networks)
+        nets = self.networks if self.networks else []
+        if self.network:
+            nets.append(self.network)
+        self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", nets)
         self.timeout = self.config.get("timeout", 0)
         container_prefix = f"{test_set.name}/{self.name}"
         self.tasks = tasks_list.TasksList("tasks", self.dirname, self.scen_logs_dir,
-                self.config, self.network, self.controller, container_prefix, set_defaults_dict)
+                self.config, self.controller, self.network, self.networks,
+                container_prefix, set_defaults_dict)
         self.init_tasks = tasks_list.TasksList("init_tasks", self.dirname, self.scen_logs_dir,
-                self.config, self.network, self.controller, container_prefix, set_defaults_dict)
+                self.config, self.controller, self.network, self.networks,
+                container_prefix, set_defaults_dict)
         self.cleanup_tasks = tasks_list.TasksList("cleanup_tasks", self.dirname, self.scen_logs_dir,
-                self.config, self.network, self.controller, container_prefix, set_defaults_dict)
+                self.config, self.controller, self.network, self.networks,
+                container_prefix, set_defaults_dict)
         if self.timeout != 0:
             self.init_tasks.set_timeout(self.timeout)
             self.tasks.set_timeout(self.timeout)

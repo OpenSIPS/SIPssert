@@ -29,8 +29,12 @@ class Tracer():
 
     """Class that implements the network capturing"""
 
-    def __init__(self, directory, name, net=None):
-        self.interface = "any" if not net or net == "host" else net
+    def __init__(self, directory, name, net=[]):
+        # TODO: use tshark instead of tcpdump
+        if len(net) == 0 or (len(net) == 1 and net == "host") or len(net) > 1:
+            self.interface = "any"
+        else:
+            self.interface = net[0]
         self.capture_file = os.path.join(directory, f"{name}.pcap")
         self.process = None
 

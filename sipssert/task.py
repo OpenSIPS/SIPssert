@@ -39,6 +39,7 @@ class Task():
     def __init__(self, test_dir, configuration):
         self.config = configuration
         self.network = self.config.get("network", None)
+        self.networks = self.config.get("networks", [])
         self.controller = None
         self.test_dir = test_dir
         self.volumes = {}
@@ -51,6 +52,7 @@ class Task():
         self.log = logger.IdenfierAdapter(self.name)
         self.image = self.config.get("image", self.default_image)
         self.ip = self.config.get("ip")
+        self.resolve_networks()
         self.deps = dependencies.parse_dependencies(self.config.get("require"))
         # keep this for backwards compatibility
         self.delay_start = self.config.get("delay_start", 0)
@@ -72,6 +74,40 @@ class Task():
 
     def __repr__(self):
         return self.name
+
+    def resolve_networks(self):
+        self.ports = self.get_ports()
+        if self.networks and not isinstance(self.networks, list):
+            self.networks = [ self.networks ]
+        self.host_network = self.get_net_mode()
+        if self.host_network:
+            if self.ports:
+                self.log.warn("'port'/'ports' are incompatible with 'host' network")
+                self.ports = None
+            # if we have a host network, then no other networks can be used
+            if self.networks and len(self.networks) > 0:
+                self.log.warn(self.networks)
+                nets = self.networks
+                self.networks = None
+                for network in nets:
+                    if not 'disabled' in network or not network['disabled']:
+                        self.log.warn("'host' network used - ignoring 'networks' settings")
+                        return
+            return
+        nets = []
+        if self.network:
+            nets.append((self.network, self.ip))
+        for net in self.networks:
+            if isinstance(net, str):
+                nets.append((net, None))
+            else:
+                if "network" in net:
+                    if "disabled" in net and net.disabled:
+                        continue
+                    ip = net["ip"] if "ip" in net else None
+                    nets.append((net['network'], ip))
+
+        self.networks = nets
 
     def set_container_name(self, name):
         self.container_name = re.sub(r'[^a-zA-Z0-9_\.\-]', "_", name)
@@ -106,9 +142,7 @@ class Task():
         if prefix:
             self.set_container_name(prefix + "." + self.container_name)
 
-        ports = self.get_ports()
         env = self.get_task_env()
-        net_mode = self.get_net_mode()
         image_ok = False
         while not image_ok:
             try:
@@ -117,10 +151,10 @@ class Task():
                         self.get_args(),
                         detach=True,
                         volumes=self.volumes,
-                        ports=ports,
+                        ports=self.ports,
                         name=self.container_name,
                         environment=env,
-                        network_mode=net_mode)
+                        network_mode=self.host_network)
                 image_ok = True
             except docker.errors.ImageNotFound as e:
                 image_name = e.explanation.split(" ")[-1]
@@ -130,15 +164,19 @@ class Task():
         self.log.info("container {} created".format(self.container_name))
         self.log.debug("running {}: {}".format(self.image, args))
 
-        if net_mode == "bridge":
-            try:
-                self.controller.docker.networks.get(self.network).\
-                        connect(self.container, ipv4_address = self.ip)
-                self.log.debug("attached ip {} in network {}".format(self.ip, self.network))
-            except docker.errors.APIError as err:
-                self.log.exception(err)
-                raise err
-            if self.network != "bridge":
+        if not self.host_network:
+            bridge = False
+            for network in self.networks:
+                if network == "bridge":
+                    bridge = True
+                try:
+                    self.controller.docker.networks.get(network[0]).\
+                            connect(self.container, ipv4_address = network[1])
+                    self.log.debug("attached ip {} in network {}".format(network[1], network[0]))
+                except docker.errors.APIError as err:
+                    self.log.exception(err)
+                    raise err
+            if not bridge:
                 try:
                     self.controller.docker.networks.get("bridge").disconnect(self.container)
                 except docker.errors.APIError as err:
@@ -194,10 +232,9 @@ class Task():
         self.log.info("started")
 
     def get_net_mode(self):
-        if not self.network or self.network == "host":
+        if not self.network and len(self.networks) == 0:
             return "host"
-        else:
-            return "bridge"
+        return "host" if self.network == "host" else None
 
     def stop(self):
         if self.controller and self.controller.no_delete:

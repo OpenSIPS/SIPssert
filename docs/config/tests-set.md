@@ -9,11 +9,14 @@ are considered.
 
 A tests set can have one of the following settings:
 
-* `networks`: a list of network descriptoprs that the scenarios within this
-tests set might use; check below more information about [Networks](#networks).
+* `bridge_networks`: a list of bridge network descriptors that the scenarios
+within this tests set might use; check below more information about
+[Networks](#networks).
 * `network`: describes the network device used for this scenario; available
 values are described in [Networks](#networks); this value is optional, and if
 missing, `host` is considered the default.
+* `networks`: additional networks that are automatically assigned to all tasks
+within this tests set. If missing, no aditional networks are being assigned.
 * `defaults`: consists of a dictionary that specify a set of default settings
 for the tasks that are being initiated within this tests set; more about this in
 [Defaults](#defaults) section.
@@ -80,7 +83,7 @@ An example of a tests set that defines the osbr0 network and uses it by
 default, as well as setting OpenSIPS IP within that network can be described
 below:
 ```
-networks:
+bridge_networks:
   - name: osbr0
     subnet: 192.168.52.0/24
     gateway: 192.168.52.1

@@ -26,6 +26,7 @@ from sipssert import tests_set
 from sipssert import config
 from sipssert import logger
 from sipssert import testing
+from sipssert import tests_filters
 
 
 class Controller:
@@ -34,7 +35,8 @@ class Controller:
 
     def __init__(self, args):
         self.sets_dirs = args.tests
-        self.tests = args.test
+        self.filters = (tests_filters.ParseTestsFilters(args.test), 
+                        tests_filters.ParseTestsFilters(args.exclude))
         self.logs_dir = args.logs_dir
         self.config_file = args.config
         self.no_delete = args.no_delete
@@ -69,7 +71,7 @@ class Controller:
         for test_set in self.sets_dirs:
             if not os.path.isdir(test_set):
                 continue
-            test_set_obj = tests_set.TestsSet(test_set, self, self.tests)
+            test_set_obj = tests_set.TestsSet(test_set, self, self.filters)
             self.tlogger.test_set(f"Running test set: {test_set_obj.name}")
             test_set_obj.run()
         self.tlogger.end()

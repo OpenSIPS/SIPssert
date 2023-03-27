@@ -187,7 +187,11 @@ The SIP Flows tool also accepts as parameters the following values:
 is `logs/`)
 * `-c|--config CONFIG` - [Global Configuration](docs/config/global.md) file (Default
 is `global.yml')
-* `-t|--test TEST` - run only a certain scenario/test, identified by `TEST`
+* `-t|--test [SET/]TEST` - pattern that specifies which scenarios/tests should
+be run; if `SET` is specified, only tests within that test set are being matched
+* `-e|--exclude [SET/]TEST` - similar to `-t/--test`, but specifies the tests
+that should be excluded from the execution; if both include and exclude match
+a test, the test will not be run
 * `-n|--no-delete` - do not delete the resources after run (**NOTICE**: you
 will have to manually delete both containers and networks)
 * `-v|--version` - prints the current version

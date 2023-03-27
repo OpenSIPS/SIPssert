@@ -25,6 +25,7 @@ from sipssert import config
 from sipssert import scenario
 from sipssert import logger
 from sipssert import tasks_list
+from sipssert import tests_filters
 from sipssert.network import network
 
 SCENARIO = "scenario.yml"
@@ -35,9 +36,9 @@ class TestsSet():
 
     """Main class that runs a set of tests"""
 
-    def __init__(self, set_path, controller, tests):
+    def __init__(self, set_path, controller, filters):
         self.controller = controller
-        self.tests_to_run = tests
+        self.filters = filters
         self.name = os.path.basename(set_path)
         self.set_path = set_path
         self.set_logs_dir = os.path.join(controller.run_logs_dir, self.name)
@@ -88,7 +89,7 @@ class TestsSet():
         scenarios = []
         scenarios_paths = []
         for test in sorted(os.listdir(self.set_path)):
-            if len(self.tests_to_run) != 0 and test not in self.tests_to_run:
+            if not tests_filters.CanExecute(self.name, test, self.filters):
                 continue
             test_dir = os.path.join(self.set_path, test)
             if os.path.isdir(test_dir):

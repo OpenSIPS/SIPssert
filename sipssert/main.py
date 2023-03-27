@@ -30,10 +30,19 @@ arg_parser.add_argument('tests',
                         nargs='+')
 
 arg_parser.add_argument('-t', '--test',
-                        help='Run only specific tests. ' \
+                        help='Pattern that specify the tests to run. ' \
                                 'Can be specified multiple times. ' \
                                 'Default value = run all tests',
                         action='append',
+                        metavar='[SET/]TEST',
+                        default=[])
+
+arg_parser.add_argument('-e', '--exclude',
+                        help='Pattern that specify the tests to exclude. ' \
+                                'Can be specified multiple times. ' \
+                                'Default value = do not exclude any test',
+                        action='append',
+                        metavar='[SET/]TEST',
                         default=[])
 
 arg_parser.add_argument('-c', '--config',

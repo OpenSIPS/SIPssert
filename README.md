@@ -1,3 +1,5 @@
+![SIPssert](docs/images/sipssert-logo.png "SIPssert")
+
 # SIPssert Testing Framework
 
 SIPssert Testing Framework is a tool used for facilitating the automation and

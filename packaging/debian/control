@@ -17,6 +17,6 @@ Description: SIPssert Testing Framework
  components that can be easily scripted and orchestrate them in order to run,
  test/check their behavior and provide troubleshooting information to the goal
  of validating that a setup is running correctly for a particular set of
- defined scenarios. In a nutshell, SIP Flows is a framework able to execute a
+ defined scenarios. In a nutshell, SIPssert is a framework able to execute a
  set of tasks and check whether their execution lead to an expected behavior,
  defined in a scenario.

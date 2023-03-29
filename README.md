@@ -6,8 +6,8 @@ various interactions between them. Its purpose is to provide a set of
 components that can be easily scripted (through [YAML](https://yaml.org/)
 files) and orchestrate them in order to run, test/check their behavior and
 provide troubleshooting information to the goal of validating that a setup is
-running correctly for a particular set of defined scenarios. In a nutshell, SIP
-Flows is a framework able to execute a set of tasks and check whether their
+running correctly for a particular set of defined scenarios. In a nutshell,
+SIPssert is a framework able to execute a set of tasks and check whether their
 execution lead to an expected behavior, defined in a scenario.
 
 The framework relies on the [Docker](https://www.docker.com/) engine to manage
@@ -30,8 +30,8 @@ testing SIP setups, it can easily run any generic scenarios/setups.
 
 ### Structure
 
-The SIP Flows Testing Framework has a hierarchical structure, illustrated below:
-![SIP Flows Structure](docs/images/sipssert-structure.svg)
+The SIPssert Testing Framework has a hierarchical structure, illustrated below:
+![SIPssert Structure](docs/images/sipssert-structure.svg)
 
  * At the top level, is the main `sipssert` application; at this level you can
 tune a set of global parameters (such as logging settings); you can find
@@ -123,7 +123,7 @@ found in the [Troubleshooting](docs/troubleshooting.md) page.
 
 ### Logging
 
-By default, the SIP Flows Testing Framework logs at standard output only the
+By default, the SIPssert Testing Framework logs at standard output only the
 progress of the testing: the scenario that is being run along with their
 statuses. However, it can be tuned to display more information about internal
 events, as well as application logs. More information can be found in the
@@ -181,7 +181,7 @@ sipssert /home/tests/opensips
 The tool supports multiple tests sets passed as arguments, and will run each
 tests set sequentially (see [Execution](#execution)).
 
-The SIP Flows tool also accepts as parameters the following values:
+The SIPssert tool also accepts as parameters the following values:
 * `-h|--help` - used to display information about running `sipssert`
 * `-l|--logs-dir DIR` - directory where the logging files should be stored (Default
 is `logs/`)
@@ -197,7 +197,7 @@ will have to manually delete both containers and networks)
 * `-v|--version` - prints the current version
 
 ### Scenarios
-The SIP Flows Testing Framework provides a simple way of defining testing
+The SIPssert Testing Framework provides a simple way of defining testing
 scenario through [YAML](https://yaml.org/) files. You can find more information
 about running scenarios [here](docs/guide/scenarios.md).
 

@@ -64,6 +64,7 @@ setup(
     ],
     install_requires=[
         'docker',
+        'jinja2',
     ],
     classifiers = [
         "Programming Language :: Python :: 3",

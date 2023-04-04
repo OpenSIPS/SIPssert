@@ -125,8 +125,12 @@ class Testing:
         self.emit((f"{self.failed_no}").ljust((self.summary_size - len(summary_name))// 3, " "))
 
     def __init__(self, header):
-        self.tab_size = min(50, os.get_terminal_size().columns)
-        self.summary_size = min(40, os.get_terminal_size().columns)
+        try:
+            self.terminal_size = os.get_terminal_size().columns
+        except Exception:
+            self.terminal_size = 80
+        self.tab_size = min(50, self.terminal_size)
+        self.summary_size = min(40, self.terminal_size)
         self.max_status_len = 0
         for status_name in statuses:
             if len(status_name) > self.max_status_len:

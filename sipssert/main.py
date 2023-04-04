@@ -18,6 +18,7 @@
 ##
 
 import os
+import sys
 import argparse
 from sipssert import controller
 from sipssert import info

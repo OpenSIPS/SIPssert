@@ -123,7 +123,7 @@ class Testing:
         self.emit((f"{self.success_no + self.failed_no}").ljust((self.summary_size - len(summary_name)) // 3, " "), "")
         self.emit((f"{self.success_no}").ljust((self.summary_size - len(summary_name))// 3, " "), "")
         self.emit((f"{self.failed_no}").ljust((self.summary_size - len(summary_name))// 3, " "))
-        return self.failed_no
+        return self.failed_no != 0
 
     def __init__(self, header):
         try:

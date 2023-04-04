@@ -74,7 +74,8 @@ def main():
 
     # Open the Controller
     ctrl = controller.Controller(args)
-    ctrl.run()
+    if ctrl.run() != 0:
+        sys.exit(-1)
 
 if __name__ == '__main__':
     main()

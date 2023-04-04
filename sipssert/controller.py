@@ -55,6 +55,7 @@ class Controller:
         logger.init_logger(logging, self.run_logs_dir)
         self.docker = docker.from_env()
         self.tlogger = testing.Testing("Running SIPssert Testing Framework")
+        self.failed = -1
     
     def create_run_logs_dir(self):
         """Creates the current run logs directory"""
@@ -68,12 +69,13 @@ class Controller:
 
     def run(self):
         """Runs all test sets"""
+        self.failed = 0
         for test_set in self.sets_dirs:
             if not os.path.isdir(test_set):
                 continue
             test_set_obj = tests_set.TestsSet(test_set, self, self.filters)
             self.tlogger.test_set(f"Running test set: {test_set_obj.name}")
             test_set_obj.run()
-        self.tlogger.end()
+        self.failed = self.tlogger.end()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

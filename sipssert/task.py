@@ -59,10 +59,8 @@ class Task():
         self.delay_start = self.config.get("delay_start", 0)
         if int(self.delay_start) != 0:
             self.deps.append(dependencies.TaskDepDelay(self.delay_start))
-        if self.config.get("logging"):
-            self.console_log = self.config.get("logging").get("console", self.default_console_log)
-        else:
-            self.console_log = self.default_console_log
+        logging = self.config.get("logging")
+        self.console_log = logging.get("console", self.default_console_log) if isinstance(logging, dict) else self.default_console_log
         self.ready_deps = dependencies.parse_dependencies(self.config.get("ready"))
         self.stop_timeout = self.config.get("stop_timeout", self.default_stop_timeout)
         self.mount_point = self.config.get("mount_point", self.default_mount_point)

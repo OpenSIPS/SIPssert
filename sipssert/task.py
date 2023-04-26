@@ -35,6 +35,7 @@ class Task():
     default_config_file = None
     default_mount_point = '/home'
     default_stop_timeout = 0
+    default_console_log = False
 
     def __init__(self, test_dir, configuration):
         self.config = configuration
@@ -58,6 +59,8 @@ class Task():
         self.delay_start = self.config.get("delay_start", 0)
         if int(self.delay_start) != 0:
             self.deps.append(dependencies.TaskDepDelay(self.delay_start))
+        logging = self.config.get("logging")
+        self.console_log = logging.get("console", self.default_console_log) if isinstance(logging, dict) else self.default_console_log
         self.ready_deps = dependencies.parse_dependencies(self.config.get("ready"))
         self.stop_timeout = self.config.get("stop_timeout", self.default_stop_timeout)
         self.mount_point = self.config.get("mount_point", self.default_mount_point)
@@ -264,6 +267,8 @@ class Task():
     def write_logs(self):
         logs = self.container.logs().decode('UTF-8')
         self.write("log", logs)
+        if self.console_log:
+            self.log.debug(logs)
         self.log.debug("logs fetched")
 
     def write_status(self):

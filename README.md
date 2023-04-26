@@ -148,6 +148,8 @@ scenarios
 [SIPp](https://sipp.sourceforge.net/) User Agent Client scenario
  * [UAS SIPp](docs/tasks/uas-sipp.md): Executes a
 [SIPp](https://sipp.sourceforge.net/) User Agent Server scenario
+* [SipExer](docs/tasks/sipexer.md): Executes a 
+[SipExer](https://github.com/miconda/sipexer) User Agent, including WebRTC scenarios
  * [OSS API](docs/tasks/oss-api.md): Runs a command using the OpenSIPS Solutions
 API
  * [MySQL](docs/tasks/mysql.md): Runs a MySQL Server

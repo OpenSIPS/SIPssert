@@ -150,7 +150,7 @@ class SipExerTask(Task):
             self.template_body_file = os.path.join(self.mount_point, self.template_body_file)
         if self.template_fields_file:
             self.template_fields_file = os.path.join(self.mount_point, self.template_fields_file)
-
+            
     def get_task_args(self):
 
         """Returns the arguments the container uses to start"""

@@ -143,9 +143,13 @@ class SipExerTask(Task):
         self.logging_color = self.logging.get("color") if isinstance(self.logging, dict) else None
 
         self.target = config.get("target")
-        # self.port = config.get("port", None)
-        # if self.port:
-        #     self.port, _ = self.parse_port(self.port)
+
+        if self.template_file:
+            self.template_file = os.path.join(self.mount_point, self.template_file)
+        if self.template_body_file:
+            self.template_body_file = os.path.join(self.mount_point, self.template_body_file)
+        if self.template_fields_file:
+            self.template_fields_file = os.path.join(self.mount_point, self.template_fields_file)
 
     def get_task_args(self):
 

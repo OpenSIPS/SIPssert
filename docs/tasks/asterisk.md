@@ -1,4 +1,4 @@
-# SIPssert Testing Framework Asterisk CLI Task
+# SIPssert Testing Framework Asterisk PBX Task
 
 Task used to execute [Asterisk PBX](https://github.com/asterisk/asterisk) server.
 

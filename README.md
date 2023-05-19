@@ -150,8 +150,10 @@ scenarios
 [SIPp](https://sipp.sourceforge.net/) User Agent Server scenario
 * [SipExer](docs/tasks/sipexer.md): Executes a 
 [SipExer](https://github.com/miconda/sipexer) User Agent, including WebRTC scenarios
+ * [Asterisk](docs/tasks/asterisk.md): Runs an Asterisk PBX
  * [OSS API](docs/tasks/oss-api.md): Runs a command using the OpenSIPS Solutions
 API
+ * [MySQL client](docs/tasks/mysql-client.md): Runs a MySQL Client
  * [MySQL](docs/tasks/mysql.md): Runs a MySQL Server
  * [Sleep](docs/tasks/sleep.md): Sleeps for a certain amount of time
  * [Generic](docs/tasks/generic.md): Runs a generic task/container

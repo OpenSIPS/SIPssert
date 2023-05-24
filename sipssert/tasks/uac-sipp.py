@@ -19,6 +19,7 @@
 
 """SIPP User-Agent Client class"""
 
+from sipssert.config import ConfigParamNotFound
 from sipssert.tasks.sipp import SIPPTask
 
 class UacSIPPTask(SIPPTask):

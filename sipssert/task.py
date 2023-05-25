@@ -48,6 +48,7 @@ class Task():
         self.container = None
         self.root_password = None
         self.start_time = None
+        self.stop_signal = None
         self.name = self.config.get("name", self.__class__.__name__)
         self.set_container_name(self.name)
         self.log = logger.IdenfierAdapter(self.name)
@@ -157,6 +158,7 @@ class Task():
                         ports=self.ports,
                         name=self.container_name,
                         environment=env,
+                        stop_signal=self.stop_signal,
                         network_mode=self.host_network)
                 image_ok = True
             except docker.errors.ImageNotFound as e:

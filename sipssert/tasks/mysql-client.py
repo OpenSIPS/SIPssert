@@ -38,7 +38,7 @@ class MysqlClientTask(Task):
 
         if "user" in self.config:
             self.user = self.config["user"]
-            env_dict["MYSQL_user"] = self.user
+            env_dict["MYSQL_USER"] = self.user
 
         if "password" in self.config:
             self.password = self.config["password"]

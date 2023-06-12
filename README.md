@@ -206,6 +206,7 @@ that should be excluded from the execution; if both include and exclude match
 a test, the test will not be run
 * `-n|--no-delete` - do not delete the resources after run (**NOTICE**: you
 will have to manually delete both containers and networks)
+* `-x|--no-trace` - do not trace call
 * `-v|--version` - prints the current version
 
 ### Scenarios

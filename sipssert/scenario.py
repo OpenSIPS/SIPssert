@@ -55,7 +55,9 @@ class Scenario():
         nets = self.networks if self.networks else []
         if self.network:
             nets.append(self.network)
-        self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", nets, self.name)
+        self.no_trace = self.controller.no_trace
+        if not self.no_trace:
+            self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", nets, self.name)
         self.timeout = self.config.get("timeout", 0)
         container_prefix = f"{test_set.name}/{self.name}"
         self.tasks = tasks_list.TasksList("tasks", self.dirname, self.scen_logs_dir,
@@ -81,7 +83,8 @@ class Scenario():
         """Runs a scenario with all its prerequisits"""
         start_time = time.time()
         self.tlogger.test_start(self.name)
-        self.tracer.start()
+        if not self.no_trace:
+            self.tracer.start()
         try:
             self.init_tasks.run()
             try:
@@ -94,7 +97,8 @@ class Scenario():
             self.cleanup_tasks.run(force_all=True)
         except Exception:
             logger.slog.exception("Error occured during cleanup task")
-        self.tracer.stop()
+        if not self.no_trace:
+            self.tracer.stop()
         logger.slog.debug("scenario executed in {:.3f}s".format(time.time() - start_time))
         self.tlogger.status(self.tasks.status)
 

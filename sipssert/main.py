@@ -61,6 +61,11 @@ arg_parser.add_argument('-n', '--no-delete',
                         default=False,
                         action='store_true')
 
+arg_parser.add_argument('-x', '--no-trace',
+                        help='Do not trace call',
+                        default=False,
+                        action='store_true')
+
 arg_parser.add_argument('-v', '--version',
                         action='version',
                         help='Returns the version of the tool',

@@ -5,13 +5,13 @@ This is a particularization of the [SIPp](sipp.md) task for running a UAC
 
 ## Behavior
 
-Executes the `sipp` command in UAC mode.
+Executes the `sipp` command in UAC mode with Identity header generation (Stir and Shaken)
 
 ## Defaults
 
 The variables overwritten by default by the task are:
 
-* `image`: the default image to run is `allomediadocker/sipp:3.7.1`
+* `image`: the default image to run is `ctaloi/sipp` [latest version `allomediadocker/sipp:3.7.1`]
 
 ## Settings
 

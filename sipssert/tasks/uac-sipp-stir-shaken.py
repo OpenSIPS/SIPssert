@@ -67,14 +67,15 @@ class UacSIPPStirShakenTask(SIPPTask):
     def generate_jwt(self):
         return jwt.encode(
             {
+                "attest": self.stir_shaken_attest,
                 "dest": {
                     "tn": [
-                        self.service
+                        self.service.replace('+', '')
                     ]
                 },
                 "iat": int(time.time()),
                 "orig": {
-                    "tn": self.caller
+                    "tn": self.caller.replace('+', '')
                 },
                 "origid": self.stir_shaken_origid
             },

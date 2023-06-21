@@ -53,11 +53,12 @@ Execute a UAC scenario:
     remote: {{ uas_ip }}:{{ uas_port }}
     caller: "+33612345678"
     duration: 10000
-    stir_shaken_private_key: "-----BEGIN EC PRIVATE KEY-----
-    MHcCAQEEIIOvgr23lbJ5rIOhiF+LR/VU4piEc1EYLT1CF5SN5HtZoAoGCCqGSM49
-    AwEHoUQDQgAEuyQP0hteN1oKDUxo/2zvTp+0ppJ2IntNSdu36QFsUPDsCWlr4iTU
-    MsjPtD+XQ58xQEf6n/zTE9cwZhs46NJWdA==
-    -----END EC PRIVATE KEY-----"
+    stir_shaken_private_key: |
+      -----BEGIN EC PRIVATE KEY-----
+      MHcCAQEEIIOvgr23lbJ5rIOhiF+LR/VU4piEc1EYLT1CF5SN5HtZoAoGCCqGSM49
+      AwEHoUQDQgAEuyQP0hteN1oKDUxo/2zvTp+0ppJ2IntNSdu36QFsUPDsCWlr4iTU
+      MsjPtD+XQ58xQEf6n/zTE9cwZhs46NJWdA==
+      -----END EC PRIVATE KEY-----
     stir_shaken_info: "https://certs.example.org/cert.pem"
     stir_shaken_alg: "ES256"
     stir_shaken_ppt: "shaken"

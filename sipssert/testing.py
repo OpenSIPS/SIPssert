@@ -123,7 +123,10 @@ class Testing:
         self.emit((f"{self.success_no + self.failed_no}").ljust((self.summary_size - len(summary_name)) // 3, " "), "")
         self.emit((f"{self.success_no}").ljust((self.summary_size - len(summary_name))// 3, " "), "")
         self.emit((f"{self.failed_no}").ljust((self.summary_size - len(summary_name))// 3, " "))
-        return self.failed_no != 0
+        return self.failed_no != 0 or self.force_failed
+
+    def fail(self):
+        self.force_failed = True
 
     def __init__(self, header):
         try:
@@ -140,6 +143,7 @@ class Testing:
         self.test_name_avail = self.tab_size - self.max_status_len
         self.success_no = 0
         self.failed_no = 0
+        self.force_failed = False
         self.emit_header(header)
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

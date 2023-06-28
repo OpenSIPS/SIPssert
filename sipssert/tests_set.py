@@ -24,6 +24,7 @@ import time
 from sipssert import config
 from sipssert import scenario
 from sipssert import logger
+from sipssert import testing
 from sipssert import tasks_list
 from sipssert import tests_filters
 from sipssert.network import network
@@ -118,6 +119,12 @@ class TestsSet():
             self.init_tasks.run()
         except Exception as e:
             logger.slog.exception(e)
+            self.controller.tlogger.fail()
+            return
+        if self.init_tasks.status != testing.TestStatus.PASS:
+            self.controller.tlogger.fail()
+            logger.slog.warn("initializing tasks failed")
+            logger.slog.debug("tests set executed in {:.3f}s".format(time.time() - start_time))
             return
         try:
             for scen in self.scenarios:

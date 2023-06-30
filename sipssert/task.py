@@ -86,7 +86,7 @@ class Task():
         self.host_network = self.get_net_mode()
         if self.host_network:
             if self.ports:
-                self.log.warn("'port'/'ports' are incompatible with 'host' network")
+                #self.log.warn("'port'/'ports' are incompatible with 'host' network")
                 self.ports = None
             # if we have a host network, then no other networks can be used
             if self.networks and len(self.networks) > 0:

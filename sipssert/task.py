@@ -276,7 +276,10 @@ class Task():
     def write_status(self):
         status = self.get_exit_code()
         self.write("status", str(status))
-        self.log.debug("exited with status {}".format(status))
+        if status == 0:
+            self.log.debug("exited with status {}".format(status))
+        else:
+            self.log.error(f"{self.name} exited with status {status}")
 
     def has_finished(self):
         return self.state == State.ENDED

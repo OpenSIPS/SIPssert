@@ -106,6 +106,8 @@ class TasksList(list):
                 tsk.finish()
                 status = int(attrs["exitCode"])
                 self.update_status(TestStatus.PASS if status == 0 else TestStatus.FAIL)
+                if status != 0:
+                    logger.slog.error(f"{name} failed with exit code {status}")
                 if tsk.daemon:
                     self.daemon_tasks.remove(tsk)
                 else:

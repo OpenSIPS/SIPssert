@@ -24,7 +24,6 @@ import time
 from sipssert import config
 from sipssert import scenario
 from sipssert import logger
-from sipssert import testing
 from sipssert import tasks_list
 from sipssert import tests_filters
 from sipssert.network import network
@@ -115,23 +114,23 @@ class TestsSet():
     def run(self):
         """Runs one or all tests in a set"""
         start_time = time.time()
+        failure = False
         try:
             self.init_tasks.run()
         except Exception as e:
             logger.slog.exception(e)
             self.controller.tlogger.fail()
-            return
-        if self.init_tasks.status != testing.TestStatus.PASS:
+            failure = True
+        if failure:
             self.controller.tlogger.fail()
             logger.slog.warn("initializing tasks failed")
-            logger.slog.debug("tests set executed in {:.3f}s".format(time.time() - start_time))
-            return
-        try:
-            for scen in self.scenarios:
-                scen.run()
-        except Exception as e:
-            logger.slog.exception(e)
-        self.cleanup_tasks.run(force_all=True)
+        else:
+            try:
+                for scen in self.scenarios:
+                    scen.run()
+            except Exception as e:
+                logger.slog.exception(e)
+            self.cleanup_tasks.run(force_all=True)
         if not self.controller.no_delete:
             # cleanup networks
             for net in self.networks:

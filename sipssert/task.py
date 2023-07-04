@@ -279,7 +279,7 @@ class Task():
         if status == 0:
             self.log.debug("exited with status {}".format(status))
         else:
-            self.log.error(f"{self.name} exited with status {status}")
+            self.log.error("exited with status {}".format(status))
 
     def has_finished(self):
         return self.state == State.ENDED

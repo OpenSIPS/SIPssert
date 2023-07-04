@@ -1,0 +1,23 @@
+name: Run OpenSIPS Conformance Tests
+
+on:
+  # Triggers the workflow on all push or pull request events
+  push:
+  pull_request:
+
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Prepare SIPssert
+      uses: OpenSIPS/SIPssert/actions/Prepare_SIPssert@main
+      with:
+        sipssert-repo: ${{ github.repository }}
+        tests-repo: OpenSIPS/sipssert-opensips-tests
+
+    - name: Run All Tests
+      uses: OpenSIPS/SIPssert/actions/Run_All_Tests@main

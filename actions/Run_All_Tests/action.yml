@@ -1,0 +1,25 @@
+name: 'Run All Tests'
+description: 'Runs all tests, resolves the logs path, and uploads the logs'
+inputs: {}
+runs:
+  using: 'composite'
+  steps:
+    - name: Run All Tests
+      run: |
+        cd tests
+        sh -x ./run-all.sh
+      shell: bash
+
+    - name: Resolve logs path
+      if: always()
+      run: |
+        cd tests
+        echo "LOGS_PATH=$(readlink -f logs/latest)" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Publish logs
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: sipssert-logs
+        path: ${{ env.LOGS_PATH }}

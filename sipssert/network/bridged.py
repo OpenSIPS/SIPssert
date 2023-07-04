@@ -70,9 +70,11 @@ class BridgedNetwork(network.Network):
                                                    options=options)
             self.created = True
         except docker.errors.APIError as err:
-            raise BridgedNetworkOperation(f"cannot create bridged adapter {self.name}") from err
-        finally:
-            logger.slog.info("bridged adapter %s successfully created!", self.name)
+            emsg = f"cannot create bridged adapter {self.name}"
+            logger.slog.error(emsg)
+            logger.slog.exception(err)
+            raise BridgedNetworkOperation(emsg) from err
+        logger.slog.info("bridged adapter %s successfully created!", self.name)
 
 
     def destroy(self):

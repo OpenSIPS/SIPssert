@@ -146,6 +146,8 @@ The current tasks types available in the framework are
 scenarios
  * [UAC SIPp](docs/tasks/uac-sipp.md): Executes a
 [SIPp](https://sipp.sourceforge.net/) User Agent Client scenario
+* [UAC SIPp Stir and Shaken](docs/tasks/uac-sipp-stir-shaken.md): Executes a
+[SIPp](https://sipp.sourceforge.net/) User Agent Client for Stir and Shaken scenarios
  * [UAS SIPp](docs/tasks/uas-sipp.md): Executes a
 [SIPp](https://sipp.sourceforge.net/) User Agent Server scenario
 * [SipExer](docs/tasks/sipexer.md): Executes a 

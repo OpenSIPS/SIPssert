@@ -126,7 +126,7 @@ class TasksList(list):
             tsk.finish()
             self.update_status(TestStatus.TOUT)
 
-        for tsk in self.daemon_tasks:
+        for tsk in reversed(self.daemon_tasks):
             tsk.stop()
             tsk.finish()
             status = tsk.get_exit_code()

@@ -77,6 +77,34 @@ defaults:
 Check out [Example](#example) of defining default IP and port for all OpenSIPS
 tasks.
 
+## Extra variables
+
+Extra variables can be passed from command line, and then can be used as essential 
+template variables either in `config.yml` or `define.yml` or even directly in `scenario.yml`.
+It can be useful, for example, when you want to pass secrets from your github workflow, 
+retrieved from vault storage, github environment secrets, etc, as Task env variable.
+
+```
+defaults:
+  opensips:
+    ip: 192.168.52.52
+    port: 5060
+  args:
+    - -p
+    - envsubst
+  env:
+    DB_HOST: {{ db_host }}
+    DB_PASSWORD: {{ db_password }}
+```
+
+```bash
+sipssert -E db_host=${{ secrets.MYSQL_DB_HOST }} \
+-E db_password=${{ secrets.MYSQL_DB_PASSWORD }}
+```
+
+You can pass such a way some dynamic variables from your workflow, which values can 
+depend on environment.
+
 ## Example
 
 An example of a tests set that defines the osbr0 network and uses it by

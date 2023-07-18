@@ -155,6 +155,7 @@ scenarios
 * [SipExer](docs/tasks/sipexer.md): Executes a 
 [SipExer](https://github.com/miconda/sipexer) User Agent, including WebRTC scenarios
  * [Asterisk](docs/tasks/asterisk.md): Runs an Asterisk PBX
+ * [AMI Client](docs/tasks/ami-client.md): Executes an Asterisk AMI Client
  * [OSS API](docs/tasks/oss-api.md): Runs a command using the OpenSIPS Solutions
 API
  * [MySQL client](docs/tasks/mysql-client.md): Runs a MySQL Client

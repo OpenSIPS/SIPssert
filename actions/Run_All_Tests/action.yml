@@ -12,6 +12,8 @@ runs:
 
     - name: Resolve logs path
       if: always()
+      env:
+        ACTIONS_RUNNER_PRINT_LOG_TO_STDOUT: 1
       run: |
         cd tests
         echo "LOGS_PATH=$(readlink -f logs/latest)" >> $GITHUB_ENV

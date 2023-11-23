@@ -1,0 +1,20 @@
+name: 'Run Test'
+description: 'Runs specific test, resolves the logs path, and uploads the logs'
+inputs:
+  scenario:
+    description: "Name of scenario to run"
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Run All Tests
+      run: |
+        cd tests
+        SETS=${{ inputs.scenario }} sh -x ./run-all.sh
+      shell: bash
+
+    - name: Publish logs
+      if: always()
+      uses: ./sipssert/actions/Publish_Logs
+      with:
+        log_name: sipssert-${{ inputs.scenario }}-logs

@@ -10,16 +10,6 @@ runs:
         sh -x ./run-all.sh
       shell: bash
 
-    - name: Resolve logs path
-      if: always()
-      run: |
-        cd tests
-        echo "LOGS_PATH=$(readlink -f logs/latest)" >> $GITHUB_ENV
-      shell: bash
-
     - name: Publish logs
-      uses: actions/upload-artifact@v3
       if: always()
-      with:
-        name: sipssert-logs
-        path: ${{ env.LOGS_PATH }}
+      uses: ./sipssert/actions/Publish_Logs

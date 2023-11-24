@@ -40,3 +40,4 @@ jobs:
       uses: ./sipssert/actions/Run_Test
       with:
         test_set: ${{ matrix.test_set }}
+        params: ${{ matrix.params }}

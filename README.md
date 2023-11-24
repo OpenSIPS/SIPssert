@@ -157,6 +157,7 @@ scenarios
 API
  * [MySQL client](docs/tasks/mysql-client.md): Runs a MySQL Client
  * [MySQL](docs/tasks/mysql.md): Runs a MySQL Server
+ * [RTPProxy](docs/tasks/rtpproxy.md): Runs RTPProxy Media Proxy Server
  * [Sleep](docs/tasks/sleep.md): Sleeps for a certain amount of time
  * [Generic](docs/tasks/generic.md): Runs a generic task/container
 

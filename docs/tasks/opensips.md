@@ -33,5 +33,7 @@ Run a trunking setup, where the `trunking.cfg` file is located in the
 scenario's directory.
 
 ```
- - name: OpenSIPS Server type: opensips config_file: /etc/opensips/trunking.cfg
+ - name: OpenSIPS Server
+   type: opensips
+   config_file: /etc/opensips/trunking.cfg
 ```

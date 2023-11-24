@@ -4,16 +4,13 @@ inputs:
   test_set:
     description: "Name of the Test Set to run"
     required: true
-  params:
-    description: "params to be passed to the script"
-    required: false
 runs:
   using: 'composite'
   steps:
     - name: Run All Tests
       run: |
         cd tests
-        sipssert ${{ inputs.params }} ${{ inputs.test_set }}
+        sipssert ${{ inputs.test_set }}
       shell: bash
 
     - name: Publish logs

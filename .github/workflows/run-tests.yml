@@ -39,4 +39,4 @@ jobs:
     - name: Run Test
       uses: ./sipssert/actions/Run_Test
       with:
-        scenario: ${{ matrix.scenario }}
+        test_set: ${{ matrix.test_set }}

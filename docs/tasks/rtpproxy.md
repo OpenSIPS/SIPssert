@@ -10,7 +10,7 @@ The task runs the `rtpproxy` media server in a `daemon` container.
 
 The variables overwritten by default by the task are:
 
-* `image`: default image to run is `rtpproxy/rtpproxy:latest`
+* `image`: default image to run is `sippylabs/rtpproxy:latest`
 * `stop_timeout`: stopping the container is delayed with 2s
 
 ## Settings

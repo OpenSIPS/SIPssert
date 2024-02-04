@@ -29,7 +29,7 @@ class RTPProxyTask(Task):
 
     default_daemon = True
     default_stop_timeout = 2
-    default_image = "rtpproxy/rtpproxy:latest"
+    default_image = "sippylabs/rtpproxy:latest"
 
     def __init__(self, test_dir, config):
 

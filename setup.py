@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ##
-## This file is part of OpenSIPS CLI
-## (see https://github.com/OpenSIPS/opensips-cli).
+## This file is part of SIPssert
+## (see https://github.com/OpenSIPS/SIPssert).
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 ##
 
 """
-Installs OpenSIPS Command Line Interface
+Installs SIPssert framework tool
 """
 
 import os

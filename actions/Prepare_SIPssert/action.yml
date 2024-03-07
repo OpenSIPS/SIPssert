@@ -18,7 +18,12 @@ runs:
         repository: ${{ inputs.sipssert-repo }}
         path: sipssert
 
-    - name: Install SIPssert
+    - name: Install SIPssert requirements
+      run: |
+        sudo apt update && sudo apt install -y tcpdump
+      shell: bash
+      
+    - name: Install SIPssert framework
       run: |
         cd sipssert
         python3 setup.py install --user clean

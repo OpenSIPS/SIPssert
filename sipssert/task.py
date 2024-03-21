@@ -177,7 +177,10 @@ class Task():
                 try:
                     self.controller.docker.networks.get(network[0]).\
                             connect(self.container, ipv4_address = network[1])
-                    self.log.debug("attached ip {} in network {}".format(network[1], network[0]))
+                    if network[1]:
+                        self.log.debug("attached ip {} in network {}".format(network[1], network[0]))
+                    else:
+                        self.log.debug("attached to network {}".format(network[0]))
                 except docker.errors.APIError as err:
                     self.log.exception(err)
                     raise err

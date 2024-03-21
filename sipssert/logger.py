@@ -58,28 +58,19 @@ class ColoredLogger(logging.Logger):
         logging.Logger.__init__(self, name)
         if LOG_TIMESTAMP:
             self.FORMAT = "%(asctime)s " + self.FORMAT
-        color_format = formatter_message(self.FORMAT, True)
-        color_formatter = ColoredFormatter(color_format, self.TIME_FORMAT)
-        def build_handler_filters(handler: str):
-            def handler_filter(record: logging.LogRecord):
-                if hasattr(record, 'block'):
-                    if record.block == handler:
-                        return False
-                return True
-            return handler_filter
-        if LOG_CONSOLE:
-            console = logging.StreamHandler()
-            console.addFilter(build_handler_filters('console'))
-            console.setFormatter(color_formatter)
-            self.addHandler(console)
 
+        file_format = formatter_message(self.FORMAT, False)
+        file_formatter = ColoredFormatter(file_format, self.TIME_FORMAT, False)
         file_handler = logging.FileHandler(LOG_FILE)
-        file_handler.addFilter(build_handler_filters('file'))
+        file_handler.setFormatter(file_formatter)
         self.addHandler(file_handler)
 
-    def color(self, color, message): # pylint: disable=no-self-use
-        """returns the message coloured appropriately"""
-        return COLOR_SEQ % (30 + color) + message + RESET_SEQ
+        if LOG_CONSOLE:
+            color_format = formatter_message(self.FORMAT, True)
+            color_formatter = ColoredFormatter(color_format, self.TIME_FORMAT)
+            console = logging.StreamHandler()
+            console.setFormatter(color_formatter)
+            self.addHandler(console)
 
 class IdenfierAdapter(logging.LoggerAdapter):
 

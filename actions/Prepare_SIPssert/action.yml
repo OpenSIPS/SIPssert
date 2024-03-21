@@ -26,7 +26,7 @@ runs:
     - name: Install SIPssert framework
       run: |
         cd sipssert
-        python3 setup.py install clean
+        python3 setup.py install --user clean
       shell: bash
 
     - name: Checkout Tests repo

@@ -15,7 +15,7 @@ runs:
       shell: bash
 
     - name: Publish logs
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: ${{ inputs.log_name }}
         path: ${{ env.LOGS_PATH }}

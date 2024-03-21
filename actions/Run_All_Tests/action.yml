@@ -7,7 +7,7 @@ runs:
     - name: Run All Tests
       run: |
         cd tests
-        sudo sh -x ./run-all.sh
+        sh -x ./run-all.sh
       shell: bash
 
     - name: Publish logs

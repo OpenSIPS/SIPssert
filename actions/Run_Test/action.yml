@@ -10,7 +10,7 @@ runs:
     - name: Run All Tests
       run: |
         cd tests
-        SETS=${{ inputs.test_set }} sudo sh -x ./run-all.sh
+        SETS=${{ inputs.test_set }} sh -x ./run-all.sh
       shell: bash
 
     - name: Publish logs

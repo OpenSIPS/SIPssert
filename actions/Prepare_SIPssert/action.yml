@@ -13,7 +13,7 @@ runs:
   using: 'composite'
   steps:
     - name: Checkout SIPssert repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: ${{ inputs.sipssert-repo }}
         path: sipssert
@@ -22,7 +22,7 @@ runs:
       run: |
         sudo apt update && sudo apt install -y tcpdump
       shell: bash
-      
+
     - name: Install SIPssert framework
       run: |
         cd sipssert
@@ -30,7 +30,7 @@ runs:
       shell: bash
 
     - name: Checkout Tests repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: ${{ inputs.tests-repo }}
         path: tests

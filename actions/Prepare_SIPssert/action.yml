@@ -21,6 +21,7 @@ runs:
     - name: Install SIPssert requirements
       run: |
         sudo apt update && sudo apt install -y tcpdump
+        sudo chmod +s $(which tcpdump)
       shell: bash
       
     - name: Install SIPssert framework

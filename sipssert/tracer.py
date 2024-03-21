@@ -24,19 +24,33 @@ Implements an object that captures network communication
 import os
 import time
 import subprocess
+from sipssert import logger
 
 class Tracer():
 
     """Class that implements the network capturing"""
 
-    def __init__(self, directory, name, net=[]):
+    def __init__(self, directory, filename, net=[], name=None):
         # TODO: use tshark instead of tcpdump
         if len(net) == 0 or (len(net) == 1 and net == "host") or len(net) > 1:
             self.interface = "any"
         else:
             self.interface = net[0]
-        self.capture_file = os.path.join(directory, f"{name}.pcap")
+        self.name = name if name else filename
+        self.capture_file = os.path.join(directory, f"{filename}.pcap")
         self.process = None
+
+    def status(self):
+        if not self.process:
+            return None, None
+        rc = self.process.returncode
+        if rc and rc != 0:
+            ret = self.process.communicate()[1]
+            if ret:
+                ret = ret.decode('utf-8')
+        else:
+            ret = None
+        return rc, ret
 
     def stop(self):
         """Stops started tcpdump"""
@@ -44,7 +58,11 @@ class Tracer():
             return
         self.process.terminate()
         self.process.wait()
+        rc, err = self.status()
         self.process = None
+        logger.slog.debug(f"stopped tracer for {self.name}")
+        if rc and rc != 0:
+            logger.slog.error(f"tracer {self.name} failed with ({rc}):\n{err}")
 
     def start(self):
         """Starts a tcpdump for a scenario"""
@@ -52,9 +70,14 @@ class Tracer():
             '-i', self.interface,
             '-w', self.capture_file],
             stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL)
-        # wait for proc to start
-        time.sleep(0.5)
+            stderr=subprocess.PIPE)
+        rc, err = self.status()
+        if rc and rc != 0:
+            logger.slog.error(f"could not start tracer {self.name} ({rc}):\n{err}")
+            # wait for proc to start
+        else:
+            logger.slog.debug(f"started tracer for {self.name}")
+            time.sleep(0.5)
 
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

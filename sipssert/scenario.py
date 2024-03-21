@@ -55,7 +55,7 @@ class Scenario():
         nets = self.networks if self.networks else []
         if self.network:
             nets.append(self.network)
-        self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", nets)
+        self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", nets, self.name)
         self.timeout = self.config.get("timeout", 0)
         container_prefix = f"{test_set.name}/{self.name}"
         self.tasks = tasks_list.TasksList("tasks", self.dirname, self.scen_logs_dir,

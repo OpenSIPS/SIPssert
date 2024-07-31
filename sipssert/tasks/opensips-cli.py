@@ -54,6 +54,12 @@ class OpenSIPSCliTask(Task):
 
         if self.script:
             args.append(self.script)
+        
+        options = self.config.get("options", {})
+
+        for k, v in options.items():
+            args.append("-o")
+            args.append(f"{k}={v}")
 
         return args
 

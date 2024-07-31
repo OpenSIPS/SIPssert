@@ -31,7 +31,9 @@ if missing, the `opensips-cli` tool is executed
 * `mi_path`: optional, the path to the OpenSIPS http MI listener; if missing,
 `mi` is used
 * `config_file`: optional configuration file with default settings that is
-passed to `opensips-cli` as the `-f` parmeter
+passed to `opensips-cli` as the `-f` parameter
+* `options`: a list of key-value pairs that are passed to `opensips-cli` with
+`-o` parameter
 
 ## Example
 
@@ -40,5 +42,7 @@ Create a user using the OpenSIPS CLI tool.
 ```
  - name: Create a User
    type: opensips-cli
-   args: -x add user testing@opensips.org
+   args: -x user add testing@opensips.org
+   options:
+     database_user_url: mysql://opensips:opensipsrw@127.0.0.1/opensips
 ```

@@ -1,6 +1,6 @@
 ## Docker Image for SIPssert
 
-This image can be used to run the SIPssert tool for a test set provided by the user.
+This image can be used to run the [SIPssert](https://github.com/OpenSIPS/SIPssert) tool for a test set provided by the user.
 Build the image with the following command:
 
 ```bash
@@ -13,3 +13,5 @@ So, go to your test directory and run the following command:
 ```bash
 docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):$(pwd) -w $(pwd) opensips/sipssert .
 ```
+
+Sources of this docker image can he found on [GitHub](https://github.com/OpenSIPS/SIPssert/tree/main/docker).

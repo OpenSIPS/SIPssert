@@ -41,6 +41,8 @@ class SIPPTask(Task):
         if self.port:
             self.port, _ = self.parse_port(self.port)
         self.keys = config.get("keys", {})
+        if "scenario" in config:
+            self.keys["scenario"] = config["scenario"]
         self.calls = config.get("calls", "1")
         self.duration = str(config.get("duration", "5000"))
         self.proxy = config.get("proxy", None)

@@ -50,9 +50,6 @@ class TasksList(list):
         if task_set_key not in config:
             return
         for definition in config[task_set_key]:
-            scenario = config.get("scenario", None)
-            if scenario:
-                definition["scenario"] = scenario
             if self.network and "network" not in definition:
                 definition["network"] = self.network
             if self.networks and "networks" not in definition:

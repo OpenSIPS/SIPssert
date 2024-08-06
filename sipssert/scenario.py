@@ -49,7 +49,6 @@ class Scenario():
                     test_set.config.get_defines())
         except config.ConfigParseError:
             raise Exception("could not parse {}".format(self.scenario))
-        self.config.config["scenario"] = self.name
         self.create_scen_logs_dir()
         self.network = self.config.get("network", test_set.default_network)
         self.networks = self.config.get("networks", test_set.default_networks)

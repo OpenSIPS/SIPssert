@@ -38,6 +38,9 @@ scenario (see `sipp -d` parameter for more information).
 scenario runs in UAS mode
 * `service`: the destination service used to test; optional, default value is
 usually `sipp` (see `sipp -s` parameter for more information).
+* `scenario`: a variable that can be used in XML scenario files; it can be
+added to the `keys` dictionary as well, but the default value is the name of 
+the SIPssert scenario
 
 ## Example
 

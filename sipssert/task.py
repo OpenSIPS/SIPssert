@@ -55,6 +55,7 @@ class Task():
         self.image = self.config.get("image", self.default_image)
         self.ip = self.config.get("ip")
         self.resolve_networks()
+        self.healthcheck = self.config.get("healthcheck", {"test": []})
         self.deps = dependencies.parse_dependencies(self.config.get("require"))
         # keep this for backwards compatibility
         self.delay_start = self.config.get("delay_start", 0)
@@ -154,6 +155,7 @@ class Task():
                         self.image,
                         self.get_args(),
                         detach=True,
+                        healthcheck=self.healthcheck,
                         volumes=self.volumes,
                         ports=self.ports,
                         name=self.container_name,
@@ -306,6 +308,23 @@ class Task():
             if not dep.satisfied(self, task_list, current_time):
                 return False
         return True
+    
+    def healthy(self):
+        try:
+            inspect_results = docker.APIClient().inspect_container(self.container_name)
+        except docker.errors.APIError as e:
+            self.log.error("Error while inspecting container: {}".format(e))
+            return False
+        status = inspect_results['State'].get('Status', None)
+        if not status or status == 'created':
+            return False
+        health = inspect_results['State'].get('Health', None)
+        if status == 'running' and not health:
+            return True
+        if not health:
+            return False
+        self.log.debug("{}'s health status: {}".format(self.name, health['Status']))
+        return health['Status'] == 'healthy'
 
     def __del__(self):
         if self.controller and self.controller.no_delete:

@@ -80,7 +80,16 @@ class TaskDepReady(TaskDepAfter):
 
     def satisfied(self, task, task_list, current_time):
         return super().satisfied(task, task_list, current_time, True, True)
+    
+class TaskDepHealthy(TaskDep):
+    """Implements the 'Healthy' dependency"""
+    def __init__(self, info):
+        self.task_name = info
 
+    def satisfied(self, task, task_list, current_time):
+        task_dep = task_list.get_task(self.task_name)
+        flag = task_dep.healthy()
+        return flag
 
 class TaskDepWait(TaskDep):
     """Implements the 'Wait' dependency"""
@@ -141,6 +150,8 @@ def parse_dependencies(deps):
                 td = TaskDepWait(dep[keys_dict["wait"]])
             elif "ready" in keys_dict:
                 td = TaskDepReady(dep[keys_dict["ready"]])
+            elif "healthy" in keys_dict:
+                td = TaskDepHealthy(dep[keys_dict["healthy"]])
             else:
                 raise Exception("Unknown dependency {}".format(dep))
             if td:

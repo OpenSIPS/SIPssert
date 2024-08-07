@@ -149,3 +149,31 @@ tasks:
    require:
      Ready: MySQL
 ```
+
+## Healthy
+
+This dependency can be used to specify that a certain task should be executed after
+the health-check of a task passed successfully (status is `healthy`). 
+
+Content of the dependency is a string representing the name (or label) of the task 
+that needs to be healthy.
+
+### Example
+
+Start OpenSIPS after MySQL database is initialized:
+```
+tasks:
+  - name: MySQL
+    type: mysql
+    ...
+    healthcheck:
+      test: mysql opensips -e 'SHOW TABLES LIKE "version"' 2>&1 | grep -q version
+      interval: 1000000000
+      timeout: 1000000000
+      start_period: 0
+  
+  - name: OpenSIPS
+    type: opensips
+    require:
+      Healthy: MySQL
+```

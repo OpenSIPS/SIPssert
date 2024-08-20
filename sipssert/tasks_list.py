@@ -17,15 +17,15 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
-import os
+
+"""Implements the behavior of a list of tasks"""
+
 import time
 import importlib
 from sipssert import logger
 from sipssert.task import State
 from sipssert.testing import TestStatus
 from sipssert.config import ConfigLevel
-
-"""Implements the behavior of a list of tasks"""
 
 TIMEOUT_GRANULARITY = 0.1 # seconds
 

@@ -95,8 +95,9 @@ class TasksList(list):
             name = attrs['name']
             tsk = self.get_task_by_container(name)
             if not tsk:
-                logger.slog.warning("unknown task {} for event {}".
-                                    format(name, event))
+                # suppress events of tasks not owned by us
+                #logger.slog.warning("event {} for unknown task {}".
+                #                    format(event, name))
                 continue
             # fetch the task
             if event["Action"] == "die":

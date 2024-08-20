@@ -222,7 +222,7 @@ bin/sipssert path/to/tests/set
 ```
 
 Note that running the tool might require priviledged access, thus you may want
-to run the tool using sudo (as oposed to running it as `root); to do that, you
+to run the tool using sudo (as oposed to running it as `root`); to do that, you
 need to preserve the `PYTHONPATH` variable while lifting the privileges:
 
 ```

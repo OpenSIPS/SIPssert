@@ -89,10 +89,10 @@ class Config:
         yaml_stream = None
         with open(yaml_file, 'r') as stream:
             res = stream.read()
-            if template_vars:
-                environment = jinja2.Environment()
-                template = environment.from_string(res)
-                res = template.render(template_vars)
+            environment = jinja2.Environment()
+            environment.filters['getenv'] = os.environ.get
+            template = environment.from_string(res)
+            res = template.render(template_vars)
             try:
                 yaml_stream = yaml.safe_load(res)
             except yaml.YAMLError as exc:

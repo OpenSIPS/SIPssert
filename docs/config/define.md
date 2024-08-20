@@ -19,8 +19,23 @@ proxy_ip: 10.0.0.1
 proxy_port: 5060
 ```
 
-Note that the variables have to be final values, i.e. they cannot be expansions
+Note that the variables have to be final values (unless `getenv` filter is used), i.e. they cannot be expansions
 of other values.
+
+## Environment variables
+
+Environment variables can be used in `defines.yml` file, by using the `getenv` filter.
+For example, to use the value of some `MYSQL_IP` environment variable, you can define the following:
+
+```
+mysql_ip: {{ 'MYSQL_IP' | getenv }}
+```
+
+Default values can be provided as well, in case the environment variable is not set:
+
+```
+mysql_ip: {{ 'MYSQL_IP' | getenv('127.0.0.1') }}
+```
 
 ## Use case
 

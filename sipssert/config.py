@@ -23,8 +23,14 @@ import importlib
 import yaml
 import jinja2
 from sipssert import logger
+# import dotenv
 
 """Implements config layer"""
+# dotenv.load_dotenv("/home/darius/Desktop/OpenSIPS/softswitch/.env")
+
+def getenv(key):
+    """Returns the value of an environment variable"""
+    return os.environ.get(key, None)
 
 class ConfigParseError(yaml.YAMLError):
     """Throws exception when cannot parse yaml file"""
@@ -89,10 +95,11 @@ class Config:
         yaml_stream = None
         with open(yaml_file, 'r') as stream:
             res = stream.read()
-            if template_vars:
-                environment = jinja2.Environment()
-                template = environment.from_string(res)
-                res = template.render(template_vars)
+            # if template_vars:
+            environment = jinja2.Environment()
+            environment.filters['getenv'] = getenv
+            template = environment.from_string(res)
+            res = template.render(template_vars)
             try:
                 yaml_stream = yaml.safe_load(res)
             except yaml.YAMLError as exc:

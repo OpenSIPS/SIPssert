@@ -53,6 +53,7 @@ class Task():
         self.log = logger.IdenfierAdapter(self.name)
         self.image = self.config.get("image", self.default_image)
         self.ip = self.config.get("ip")
+        self.entrypoint = self.config.get("entrypoint")
         self.resolve_networks()
         self.healthcheck = self.config.get("healthcheck", {"test": []})
         self.deps = dependencies.parse_dependencies(self.config.get("require"))
@@ -153,6 +154,7 @@ class Task():
                 self.container = self.controller.docker.containers.create(
                         self.image,
                         self.get_args(),
+                        entrypoint=self.entrypoint,
                         detach=True,
                         healthcheck=self.healthcheck,
                         volumes=self.volumes,

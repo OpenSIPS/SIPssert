@@ -19,13 +19,13 @@
 
 """This file is the manager of a Docker container"""
 
+import re
 import os
+import time
 from sipssert import logger
 from sipssert import dependencies
 from sipssert.state import State
 import docker
-import time
-import re
 
 class Task():
     
@@ -148,50 +148,27 @@ class Task():
             self.set_container_name(prefix + "." + self.container_name)
 
         env = self.get_task_env()
-        image_ok = False
-        while not image_ok:
-            try:
-                self.container = self.controller.docker.containers.create(
-                        self.image,
-                        self.get_args(),
-                        entrypoint=self.entrypoint,
-                        detach=True,
-                        healthcheck=self.healthcheck,
-                        volumes=self.volumes,
-                        ports=self.ports,
-                        name=self.container_name,
-                        environment=env,
-                        stop_signal=self.stop_signal,
-                        network_mode=self.host_network)
-                image_ok = True
-            except docker.errors.ImageNotFound as e:
-                image_name = e.explanation.split(" ")[-1]
-                self.log.info("pulling image {}". format(image_name))
-                self.controller.docker.images.pull(image_name)
+        # make sure the image is available
+        try:
+            self.controller.docker.images.get(self.image);
+        except docker.errors.ImageNotFound as e:
+            self.log.info(f"pulling image {self.image}")
+            self.controller.docker.images.pull(self.image)
 
-        self.log.info("container {} created".format(self.container_name))
-        self.log.debug("running {}: {}".format(self.image, args))
+        self.args_dict = { 'image': self.image,
+                           'command': args,
+                           'entrypoint': self.entrypoint,
+                           'detach': True,
+                           'healthcheck': self.healthcheck,
+                           'volumes': self.volumes,
+                           'ports': self.ports,
+                           'name': self.container_name,
+                           'environment': env,
+                           'stop_signal': self.stop_signal,
+                           'network_mode': self.host_network
+                          }
 
-        if not self.host_network:
-            bridge = False
-            for network in self.networks:
-                if network == "bridge":
-                    bridge = True
-                try:
-                    self.controller.docker.networks.get(network[0]).\
-                            connect(self.container, ipv4_address = network[1])
-                    if network[1]:
-                        self.log.debug("attached ip {} in network {}".format(network[1], network[0]))
-                    else:
-                        self.log.debug("attached to network {}".format(network[0]))
-                except docker.errors.APIError as err:
-                    self.log.exception(err)
-                    raise err
-            if not bridge:
-                try:
-                    self.controller.docker.networks.get("bridge").disconnect(self.container)
-                except docker.errors.APIError as err:
-                    self.log.exception(err)
+        self.log.info("container {} prepared".format(self.container_name))
         self.state = State.CREATED
 
     def get_task_args(self):
@@ -258,6 +235,29 @@ class Task():
         return self.config.get("env", env_file_dict)
 
     def run(self):
+        self.log.debug(f"running {self.image}: {self.args_dict['command']}")
+        self.container = self.controller.docker.containers.create(**self.args_dict)
+
+        if not self.host_network:
+            bridge = False
+            for network in self.networks:
+                if network == "bridge":
+                    bridge = True
+                try:
+                    self.controller.docker.networks.get(network[0]).\
+                            connect(self.container, ipv4_address = network[1])
+                    if network[1]:
+                        self.log.debug("attached ip {} in network {}".format(network[1], network[0]))
+                    else:
+                        self.log.debug("attached to network {}".format(network[0]))
+                except docker.errors.APIError as err:
+                    self.log.exception(err)
+                    raise err
+            if not bridge:
+                try:
+                    self.controller.docker.networks.get("bridge").disconnect(self.container)
+                except docker.errors.APIError as err:
+                    self.log.exception(err)
         self.container.start()
         self.start_time = time.time()
         self.state = State.ACTIVE
@@ -283,8 +283,12 @@ class Task():
         self.container.reload()
 
     def remove(self):
-        #self.container.remove()
-        self.container = None
+        if self.container:
+            self.container.stop()
+            if self.controller and not self.controller.no_delete:
+                self.log.debug("removing container")
+                self.container.remove(v=True)
+            self.container = None
 
     def write(self, suffix, data):
         if not self.logs_dir:
@@ -318,6 +322,7 @@ class Task():
         self.write_status()
         self.end_time = time.time()
         self.state = State.ENDED
+        self.remove()
 
     def satisfied(self, task_list, current_time):
         for dep in self.deps:
@@ -350,10 +355,6 @@ class Task():
         return health['Status'] == 'healthy'
 
     def __del__(self):
-        if self.controller and self.controller.no_delete:
-            return
-        if self.container:
-            self.container.stop()
-            self.container.remove(v=True)
+        self.remove()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

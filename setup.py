@@ -66,6 +66,7 @@ setup(
         'docker',
         'jinja2',
         'pyjwt',
+        'pyaml',
     ],
     classifiers = [
         "Programming Language :: Python :: 3",

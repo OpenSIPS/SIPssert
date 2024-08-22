@@ -17,15 +17,14 @@
 ## along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##
 
+"""This file is the manager of a Docker container"""
+
 import os
-from datetime import datetime
 from sipssert import logger
-from sipssert import config
 from sipssert import dependencies
 from sipssert.state import State
-from enum import Enum
-import time
 import docker
+import time
 import re
 
 class Task():
@@ -62,7 +61,8 @@ class Task():
         if int(self.delay_start) != 0:
             self.deps.append(dependencies.TaskDepDelay(self.delay_start))
         logging = self.config.get("logging")
-        self.console_log = logging.get("console", self.default_console_log) if isinstance(logging, dict) else self.default_console_log
+        self.console_log = logging.get("console", self.default_console_log) \
+                if isinstance(logging, dict) else self.default_console_log
         self.ready_deps = dependencies.parse_dependencies(self.config.get("ready"))
         self.stop_timeout = self.config.get("stop_timeout", self.default_stop_timeout)
         self.mount_point = self.config.get("mount_point", self.default_mount_point)
@@ -72,8 +72,7 @@ class Task():
         self.labels = self.parse_labels()
         self.daemon = self.config.get("daemon", self.default_daemon)
         if self.image is None:
-            raise Exception("task {} does not have an image available".
-                    format(self.name))
+            raise Exception(f"task {self.name} does not have an image available")
         self.exit_code = None
         self.state = State.PENDING
 

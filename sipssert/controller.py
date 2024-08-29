@@ -34,24 +34,33 @@ class Controller:
     """Controller class that implements the logic"""
 
     def __init__(self, args):
-        self.sets_dirs = args.tests
-        self.filters = (tests_filters.ParseTestsFilters(args.test), 
-                        tests_filters.ParseTestsFilters(args.exclude))
-        self.logs_dir = args.logs_dir
         self.config_file = args.config
+        try:
+            self.config = config.Config(self.config_file, None, "defines.yml")
+        except config.ConfigParseError:
+            raise Exception(f"could not parse {self.config_file}")
+        if len(args.tests):
+            self.sets_dirs = args.tests
+        else:
+            self.sets_dirs = list(map(os.path.abspath,
+                                      self.config.get("tests", [])))
+        test_filters = args.test if len(args.test) else \
+                self.config.get("test", [])
+        exclude_filters = args.exclude if len(args.exclude) else \
+                self.config.get("exclude", [])
+        self.filters = (tests_filters.ParseTestsFilters(test_filters),
+                        tests_filters.ParseTestsFilters(exclude_filters))
+        self.logs_dir = args.logs_dir
         self.no_delete = args.no_delete
         current_date = datetime.now().strftime("%Y-%m-%d.%H:%M:%S.%f")
         self.run_logs_dir = os.path.join(self.logs_dir, current_date)
         self.link_file = os.path.join(self.logs_dir, "latest")
         self.create_run_logs_dir()
-        try:
-            self.config = config.Config(self.config_file, None, "defines.yml")
-        except config.ConfigParseError:
-            raise Exception("could not parse {}".format(self.config_file))
         if self.config.get("logging"):
             logging = self.config.get("logging").get("controller")
         else:
             logging = None
+
         logger.init_logger(logging, self.run_logs_dir)
         self.docker = docker.from_env()
         self.tlogger = testing.Testing("Running SIPssert Testing Framework")

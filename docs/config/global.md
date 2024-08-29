@@ -16,6 +16,12 @@ The global configuration file consists of the following settings:
     * `console`: boolean indicating whether the logging should be dumped at console or not (Default: `false`)
     * `level`: debugging level of the controller (Default: `INFO`)
     * `timestamp`: adds timestamp to genereated logs (Default: `true`)
+* `tests`: a list of tests sets to run - these represent the default set of
+tests to be run, unless specified as arguments otherwise (Default: empty)
+* `test`: a list of test filters to be used unless specified as arguments
+through the (`-t|--test` argument) (Default: empty)
+* `exclude`: a list of exclude filters to be used unless specified as
+arguments through the (`-e|--exclude` argument) (Default: empty)
 
 ## Example
 

@@ -28,7 +28,7 @@ arg_parser = argparse.ArgumentParser(description=info.__description__)
 arg_parser.add_argument('tests',
                         help='Absolute path of the tests director',
                         type=os.path.abspath,
-                        nargs='+')
+                        nargs='*')
 
 arg_parser.add_argument('-t', '--test',
                         help='Pattern that specify the tests to run. ' \

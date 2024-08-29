@@ -237,6 +237,10 @@ class Task():
         env_file_dict = {}
         path = os.path.join(self.test_dir, env_file)
 
+        if not os.path.exists(path):
+            self.log.error(f"environment file {path} does not exist")
+            return {}
+
         with open(path, 'r') as f:
             for line in f:
                 if line.startswith('#'):

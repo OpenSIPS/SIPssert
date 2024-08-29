@@ -233,8 +233,25 @@ class Task():
     def get_args(self):
         return self.get_task_args() + self.get_config_args()
 
+    def parse_env_file(self, env_file):
+        env_file_dict = {}
+        path = os.path.join(self.test_dir, env_file)
+
+        with open(path, 'r') as f:
+            for line in f:
+                if line.startswith('#'):
+                    continue
+                key, value = line.strip().split('=', 1)
+                env_file_dict[key] = value
+        return env_file_dict
+
     def get_task_env(self):
-        return {}
+        if "env_file" in self.config:
+            env_file_dict = self.parse_env_file(self.config["env_file"])
+        else:
+            env_file_dict = {}
+        
+        return self.config.get("env", env_file_dict)
 
     def run(self):
         self.container.start()

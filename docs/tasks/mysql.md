@@ -26,7 +26,9 @@ The variables overwritten by default by the task are:
 Additional settings that can be passed to the task:
 
 * `root_password`: optional value, represents the root password of the mysql
-server; if missing, the server will run without any password
+server; if missing, the server will run without any password (or with the
+password you set in the `MYSQL_ROOT_PASSWORD` environment variable via
+`env` or `env_file` nodes).
 
 ## Example
 

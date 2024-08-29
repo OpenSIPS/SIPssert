@@ -26,7 +26,8 @@ The variables overwritten by default by the task are:
 Additional settings that can be passed to the task:
 
 * `postgres_password`: optional value, represents the root password of the 
-postgres server; default value is `postgres`
+postgres server; default value is `postgres` (unless you set it using the 
+environment variable `POSTGRES_PASSWORD` via `env` or `env_file` nodes).
 
 ## Example
 

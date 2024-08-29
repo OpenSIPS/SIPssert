@@ -27,16 +27,21 @@ class MysqlTask(Task):
     default_mount_point = "/docker-entrypoint-initdb.d"
 
     def get_task_env(self):
+        if "env_file" in self.config:
+            env_file_dict = self.parse_env_file(self.config["env_file"])
+        else:
+            env_file_dict = {}
 
-        env_dict = {}
+        self.mysql_default_env.update(env_file_dict)
+        self.mysql_default_env.update(self.config.get("env", {}))
+
+        env_dict = self.mysql_default_env
 
         if "root_password" in self.config:
             self.root_password = self.config["root_password"]
 
         if self.root_password:
             env_dict["MYSQL_ROOT_PASSWORD"] = self.root_password
-        else:
-            env_dict = self.mysql_default_env
 
         return env_dict
 

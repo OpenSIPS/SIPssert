@@ -28,7 +28,7 @@ class PostgresqlTask(Task):
 
     def get_task_env(self):
 
-        env_dict = {}
+        env_dict = self.config.get("env", {})
 
         if "postgres_password" in self.config:
             self.root_password = self.config["postgres_password"]
@@ -36,7 +36,7 @@ class PostgresqlTask(Task):
         if self.root_password:
             env_dict["POSTGRES_PASSWORD"] = self.root_password
         else:
-            env_dict = self.postgresql_default_env
+            env_dict.update(self.postgresql_default_env)
 
         return env_dict
 

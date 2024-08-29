@@ -28,7 +28,7 @@ class MysqlTask(Task):
 
     def get_task_env(self):
 
-        env_dict = {}
+        env_dict = self.config.get("env", {})
 
         if "root_password" in self.config:
             self.root_password = self.config["root_password"]
@@ -36,7 +36,7 @@ class MysqlTask(Task):
         if self.root_password:
             env_dict["MYSQL_ROOT_PASSWORD"] = self.root_password
         else:
-            env_dict = self.mysql_default_env
+            env_dict.update(self.mysql_default_env)
 
         return env_dict
 

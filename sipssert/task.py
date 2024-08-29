@@ -234,7 +234,8 @@ class Task():
         return self.get_task_args() + self.get_config_args()
 
     def get_task_env(self):
-        return {}
+        env = self.config.get("env", {})
+        return env
 
     def run(self):
         self.container.start()

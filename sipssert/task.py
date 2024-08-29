@@ -274,7 +274,7 @@ class Task():
         self.container.stop(timeout=self.stop_timeout)
 
     def get_exit_code(self):
-        if not self.exit_code:
+        if self.exit_code is None:
             self.update()
             self.exit_code = int(self.container.attrs["State"]["ExitCode"])
         return self.exit_code
@@ -335,7 +335,7 @@ class Task():
         try:
             inspect_results = docker.APIClient().inspect_container(self.container_name)
         except docker.errors.APIError as e:
-            self.log.error("Error while inspecting container: {}".format(e))
+            self.log.debug(f"Error while inspecting container: {e}")
             return False
         status = inspect_results['State'].get('Status', None)
         if not status or status == 'created':
@@ -345,7 +345,8 @@ class Task():
             return True
         if not health:
             return False
-        self.log.debug("{}'s health status: {}".format(self.name, health['Status']))
+        if health['Status'] == 'healthy':
+            self.log.debug("task is healthy")
         return health['Status'] == 'healthy'
 
     def __del__(self):

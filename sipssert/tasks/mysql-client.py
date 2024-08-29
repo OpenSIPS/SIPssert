@@ -33,8 +33,7 @@ class MysqlClientTask(Task):
             self.script = os.path.join(self.mount_point, self.script)
 
     def get_task_env(self):
-        env_dict = self.config.get("env", {})
-
+        env_dict = {}
         if "user" in self.config:
             self.user = self.config["user"]
             env_dict["MYSQL_USER"] = self.user

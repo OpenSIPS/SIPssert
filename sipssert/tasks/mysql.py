@@ -35,7 +35,7 @@ class MysqlTask(Task):
 
         if self.root_password:
             env_dict["MYSQL_ROOT_PASSWORD"] = self.root_password
-        else:
+        elif "MYSQL_ROOT_PASSWORD" not in env_dict:
             env_dict.update(self.mysql_default_env)
 
         return env_dict

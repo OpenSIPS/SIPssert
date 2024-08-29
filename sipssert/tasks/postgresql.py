@@ -35,7 +35,7 @@ class PostgresqlTask(Task):
 
         if self.root_password:
             env_dict["POSTGRES_PASSWORD"] = self.root_password
-        else:
+        elif "POSTGRES_PASSWORD" not in env_dict:
             env_dict.update(self.postgresql_default_env)
 
         return env_dict

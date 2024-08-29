@@ -147,7 +147,12 @@ class Task():
         if prefix:
             self.set_container_name(prefix + "." + self.container_name)
 
-        env = self.get_task_env()
+        if "env_file" in self.config:
+            env = self.parse_env_file(self.config["env_file"])
+        else:
+            env = {}
+        env.update(self.get_task_env())
+
         image_ok = False
         while not image_ok:
             try:
@@ -232,6 +237,17 @@ class Task():
 
     def get_args(self):
         return self.get_task_args() + self.get_config_args()
+
+    def parse_env_file(self, path):
+        with open(path, 'r') as f:
+            lines = f.readlines()
+        env = {}
+        for line in lines:
+            if line.startswith("#"):
+                continue
+            key, value = line.split("=", 1)
+            env[key] = value.strip()
+        return env
 
     def get_task_env(self):
         env = self.config.get("env", {})

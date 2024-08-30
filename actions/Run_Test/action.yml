@@ -1,20 +1,21 @@
 name: 'Run Test'
 description: 'Runs specific test, resolves the logs path, and uploads the logs'
 inputs:
-  test_set:
-    description: "Name of the Test Set to run"
-    required: true
+  config:
+    description: "run.yml file"
+    required: false
+    default: run.yml
 runs:
   using: 'composite'
   steps:
     - name: Run All Tests
       run: |
         cd tests
-        SETS=${{ inputs.test_set }} sh -x ./run-all.sh
+        sipssert -c run.yml ${{ inputs.tests }}
       shell: bash
 
     - name: Publish logs
       if: always()
       uses: ./sipssert/actions/Publish_Logs
       with:
-        log_name: sipssert-${{ inputs.test_set }}-logs
+        log_name: sipssert-${{ inputs.tests }}-logs

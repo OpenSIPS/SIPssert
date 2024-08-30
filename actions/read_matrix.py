@@ -1,9 +1,9 @@
-"""Filters the OS and tests_set from the matrix file"""
+"""Filters the OS and tests from the matrix file"""
 import sys
 import json
 import yaml
 
-matrix_keys = [ "os", "test_set" ]
+matrix_keys = [ "os", "tests" ]
 
 matrix_dict = yaml.safe_load(open(sys.argv[1], encoding="utf-8"))
 

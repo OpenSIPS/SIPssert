@@ -37,8 +37,8 @@ logged at a different logging level.
 
 By default, the controller logging is dumped in the `RUNDIR/controller.log`
 file, and by default only *INFO* messages and higher are displayed. This,
-however, can be modified through the [Global
-Configuration](docs/config/global.md) file, which can also instruct to write
+however, can be modified through the [Running
+Configuration](docs/config/run.md) file, which can also instruct to write
 the logs at standard output. This option is however not recommended, as it
 hinders the visibility of the testing status. 
 

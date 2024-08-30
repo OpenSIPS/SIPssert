@@ -1,14 +1,14 @@
-# SIPssert Testing - Global Configuration File
+# SIPssert Testing - Run Configuration File
 
 This configuration file is used to tune global runtime parameters, such as
-logging. It should be defined as a [YAML](https://yaml.org/) and its path
-defaults to `global.yml`.
+logging, tests, etc. It should be defined as a [YAML](https://yaml.org/) and its path
+defaults to `run.yml`.
 If a `defines.yml` file exists in the same directory, it is loaded and its
 definitions are expanded according to the Jinja2 format.
 
 ## Settings
 
-The global configuration file consists of the following settings:
+The run configuration file consists of the following settings:
 
 * `logging`: contains information about logging
   * `controller`: provides information about controller logging
@@ -25,12 +25,12 @@ arguments through the (`-e|--exclude` argument) (Default: empty)
 
 ## Example
 
-The default global configuration file should look like this:
+The default running configuration file should look like this:
 ```
 ---
 logging:
   controller:
-    console: false 
+    console: false
     level: INFO
     file: controller.log
 ```

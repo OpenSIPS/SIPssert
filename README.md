@@ -36,8 +36,8 @@ The SIPssert Testing Framework has a hierarchical structure, illustrated below:
 ![SIPssert Structure](docs/images/sipssert-structure.svg)
 
  * At the top level, is the main `sipssert` application; at this level you can
-tune a set of global parameters (such as logging settings); you can find
-[here](docs/config/global.md) more information on the configuration file.
+tune a set of run parameters (such as logging settings); you can find
+[here](docs/config/run.md) more information on the configuration file.
 The application requires one or more **tests sets** to run. The `sipssert`
 application starts the engine controller, which then runs each **tests set**.
  * Each **tests set** provided as parameter represents a directory which
@@ -195,8 +195,8 @@ The SIPssert tool also accepts as parameters the following values:
 * `-h|--help` - used to display information about running `sipssert`
 * `-l|--logs-dir DIR` - directory where the logging files should be stored (Default
 is `logs/`)
-* `-c|--config CONFIG` - [Global Configuration](docs/config/global.md) file (Default
-is `global.yml')
+* `-c|--config CONFIG` - [Run Configuration](docs/config/run.md) file (Default
+is `run.yml')
 * `-t|--test [SET/]TEST` - pattern that specifies which scenarios/tests should
 be run; if `SET` is specified, only tests within that test set are being matched
 * `-e|--exclude [SET/]TEST` - similar to `-t/--test`, but specifies the tests
@@ -243,7 +243,7 @@ sudo bin/sipssert path/to/tests/set
 * [Write Scenarios](docs/guide/scenarios.md)
 
 ## Configuration Files:
- * [Global Configuration](docs/config/global.md)
+ * [Run Configuration](docs/config/run.md)
  * [Tests Set Configuration](docs/config/tests-set.md)
  * [Defines Configuration](docs/config/define.md)
  * [Scenario Definition](docs/config/scenario.md)

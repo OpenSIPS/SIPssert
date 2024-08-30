@@ -47,8 +47,8 @@ arg_parser.add_argument('-e', '--exclude',
                         default=[])
 
 arg_parser.add_argument('-c', '--config',
-                        help='Absolute path of the global config',
-                        default="global.yml",
+                        help='Absolute path of the running config',
+                        default="run.yml",
                         type=os.path.abspath)
 
 arg_parser.add_argument('-l', '--logs-dir',

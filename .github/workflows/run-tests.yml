@@ -39,3 +39,5 @@ jobs:
 
     - name: Run Test
       uses: ./sipssert/actions/Run_Test
+      with:
+        tests: ${{ matrix.tests }}

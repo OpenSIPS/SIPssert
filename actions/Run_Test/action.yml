@@ -5,6 +5,10 @@ inputs:
     description: "run.yml file"
     required: false
     default: run.yml
+  tests:
+    description: "tests to run"
+    required: false
+    default: ''
 runs:
   using: 'composite'
   steps:

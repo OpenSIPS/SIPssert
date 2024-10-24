@@ -27,3 +27,4 @@ runs:
       uses: ./sipssert/.github/actions/Publish_Logs
       with:
         log_name: sipssert-${{ inputs.tests }}-logs
+        directory: '{{ inputs.directory }}'

@@ -13,10 +13,6 @@ inputs:
     description: "tests directory"
     required: false
     default: 'tests'
-  config:
-    description: 'run.yml config file'
-    required: false
-    default: 'run.yml'
 runs:
   using: 'composite'
   steps:

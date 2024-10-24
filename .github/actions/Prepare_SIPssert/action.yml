@@ -8,7 +8,7 @@ inputs:
   tests-repo:
     description: 'Tests repository to checkout'
     required: false
-    default: ${{ github.repository }}
+    default: ''
   directory:
     description: "Directory to store tests checkout"
     required: false
@@ -36,6 +36,7 @@ runs:
 
     - name: Checkout Tests repo
       uses: actions/checkout@v4
+      if: inputs.tests-repo != ""
       with:
         repository: ${{ inputs.tests-repo }}
         path: ${{ inputs.directory }}

@@ -9,6 +9,10 @@ inputs:
     description: 'Tests repository to checkout'
     required: false
     default: ${{ github.repository }}
+  directory:
+    description: "Directory to store tests checkout"
+    required: false
+    default: 'tests'
 runs:
   using: 'composite'
   steps:
@@ -23,7 +27,7 @@ runs:
         sudo apt update && sudo apt install -y tcpdump
         sudo chmod +s $(which tcpdump)
       shell: bash
-      
+
     - name: Install SIPssert framework
       run: |
         cd sipssert
@@ -34,4 +38,4 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: ${{ inputs.tests-repo }}
-        path: tests
+        path: ${{ inputs.directory }}

@@ -12,15 +12,15 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
 
-    - name: Prepare SIPssert
-      uses: OpenSIPS/SIPssert/actions/Prepare_SIPssert@main
+    - name: Checkout Tests repo
+      uses: actions/checkout@v4
       with:
-        sipssert-repo: ${{ github.repository }}
-        tests-repo: OpenSIPS/sipssert-opensips-tests
+        repository: OpenSIPS/sipssert-opensips-tests
+        path: tests
 
     - name: Read and parse YAML file
       id: set-matrix
-      uses: ./sipssert/actions/Set_Matrix
+      uses: OpenSIPS/SIPssert/.github/actions/Set_Matrix
 
   test:
     needs: setup-matrix
@@ -32,12 +32,12 @@ jobs:
     steps:
 
     - name: Prepare SIPssert
-      uses: OpenSIPS/SIPssert/actions/Prepare_SIPssert@main
+      uses: OpenSIPS/SIPssert/.github/actions/Prepare_SIPssert@main
       with:
         sipssert-repo: ${{ github.repository }}
         tests-repo: OpenSIPS/sipssert-opensips-tests
 
     - name: Run Test
-      uses: ./sipssert/actions/Run_Test
+      uses: OpenSIPS/SIPssert/.github/actions/Run_Tests@main
       with:
         tests: ${{ matrix.tests }}

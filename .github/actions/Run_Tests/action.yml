@@ -1,0 +1,33 @@
+name: 'Run Tests'
+description: 'Runs the tests in a specific directory, resolves the logs path, and uploads the logs'
+inputs:
+  config:
+    description: "run.yml file"
+    required: false
+    default: run.yml
+  tests:
+    description: "tests to run"
+    required: false
+    default: ''
+  directory:
+    description: "tests directory"
+    required: false
+    default: 'tests'
+  config:
+    description: 'run.yml config file'
+    required: false
+    default: 'run.yml'
+runs:
+  using: 'composite'
+  steps:
+    - name: Run All Tests
+      run: |
+        cd ${{ inputs.directory }}
+        sipssert -c ${{ inputs.config }} ${{ inputs.tests }}
+      shell: bash
+
+    - name: Publish logs
+      if: always()
+      uses: ./sipssert/.github/actions/Publish_Logs
+      with:
+        log_name: sipssert-${{ inputs.tests }}-logs

@@ -5,12 +5,16 @@ inputs:
     description: "Name of logs after upload"
     default: sipssert-logs
     required: true
+  directory:
+    description: 'Directory where the logs are located'
+    required: false
+    default: 'tests'
 runs:
   using: 'composite'
   steps:
     - name: Resolve logs path
       run: |
-        cd tests
+        cd ${{ inputs.directory }}
         echo "LOGS_PATH=$(readlink -f logs/latest)" >> $GITHUB_ENV
       shell: bash
 

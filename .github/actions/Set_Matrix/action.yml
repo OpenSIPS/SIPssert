@@ -1,0 +1,35 @@
+name: 'Read Job Matrix'
+description: 'Read list of scenarious to run and output matrix.'
+inputs:
+  sipssert-repo:
+    description: 'SIPssert repository to checkout'
+    required: false
+    default: 'OpenSIPS/SIPssert'
+  directory:
+    description: 'Directory where the run.yml config file is located'
+    required: false
+    default: 'tests'
+  config:
+    description: 'run.yml config file'
+    required: false
+    default: 'run.yml'
+outputs:
+  matrix:
+    description: "The job matrix"
+    value: ${{ steps.set-matrix.outputs.matrix }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout SIPssert repo
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.sipssert-repo }}
+        path: sipssert
+
+    - name: Read and parse YAML file
+      id: set-matrix
+      run: |
+        echo "Reading YAML file to create matrix"
+        MATRIX=$(python3 sipssert/.github/actions/Set_Matrix/read_matrix.py ${{ inputs.directory }}/${{ inputs.config }})
+        echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
+      shell: bash

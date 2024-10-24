@@ -20,7 +20,7 @@ jobs:
 
     - name: Read and parse YAML file
       id: set-matrix
-      uses: OpenSIPS/SIPssert/.github/actions/Set_Matrix
+      uses: OpenSIPS/SIPssert/.github/actions/Set_Matrix@main
 
   test:
     needs: setup-matrix

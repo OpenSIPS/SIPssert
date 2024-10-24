@@ -1,18 +1,10 @@
-name: 'Checkout and Install SIPssert & Tests'
-description: 'Checks out and installs the SIPssert & Tests repos'
+name: 'Checkout and Install SIPssert'
+description: 'Checks out and installs the SIPssert repo'
 inputs:
   sipssert-repo:
     description: 'SIPssert repository to checkout'
     required: false
     default: 'OpenSIPS/SIPssert'
-  tests-repo:
-    description: 'Tests repository to checkout'
-    required: false
-    default: ${{ github.repository }}
-  directory:
-    description: "Directory to store tests checkout"
-    required: false
-    default: 'tests'
 runs:
   using: 'composite'
   steps:
@@ -33,9 +25,3 @@ runs:
         cd sipssert
         python3 setup.py install --user clean
       shell: bash
-
-    - name: Checkout Tests repo
-      uses: actions/checkout@v4
-      with:
-        repository: ${{ inputs.tests-repo }}
-        path: ${{ inputs.directory }}

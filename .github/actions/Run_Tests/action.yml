@@ -12,7 +12,7 @@ inputs:
   directory:
     description: "tests directory"
     required: false
-    default: '.'
+    default: 'tests'
 runs:
   using: 'composite'
   steps:

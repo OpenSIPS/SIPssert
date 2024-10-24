@@ -1,0 +1,10 @@
+name: Run OpenSIPS Conformance Tests
+
+on:
+  # Triggers the workflow on all push or pull request events
+  push:
+  pull_request:
+
+jobs:
+  test:
+    uses: OpenSIPS/sipssert-opensips-tests/.github/workflows/run-tests.yml@main

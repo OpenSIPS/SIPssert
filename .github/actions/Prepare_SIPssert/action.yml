@@ -36,7 +36,7 @@ runs:
 
     - name: Checkout Tests repo
       uses: actions/checkout@v4
-      if: inputs.tests-repo != ""
+      if: "${{ inputs.tests-repo != '' }"
       with:
         repository: ${{ inputs.tests-repo }}
         path: ${{ inputs.directory }}

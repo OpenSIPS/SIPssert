@@ -6,5 +6,5 @@ on:
   pull_request:
 
 jobs:
-  test:
+  opensips:
     uses: OpenSIPS/sipssert-opensips-tests/.github/workflows/run-tests.yml@main

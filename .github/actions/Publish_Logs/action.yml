@@ -14,7 +14,7 @@ runs:
   steps:
     - name: Resolve logs path
       run: |
-        cd ${{ inputs.directory }}
+        cd "${{ inputs.directory }}"
         echo "LOGS_PATH=$(readlink -f logs/latest)" >> $GITHUB_ENV
       shell: bash
 

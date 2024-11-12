@@ -6,7 +6,7 @@ RUN apt update && apt install -y git
 WORKDIR /usr/src
 RUN git clone https://github.com/OpenSIPS/SIPssert.git &&\
     cd SIPssert &&\
-    python3 setup.py install
+    pip install .
 
 FROM python:3.12-slim-bookworm AS sipssert
 LABEL maintainer="darius.stefan@opensips.org"

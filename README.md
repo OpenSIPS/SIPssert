@@ -142,6 +142,8 @@ The current tasks types available in the framework are
  * [OpenSIPS](docs/tasks/opensips.md): Runs OpenSIPS SIP Server
  * [OpenSIPS CLI](docs/tasks/opensips-cli.md): Executes commands using the
 [OpenSIPS CLI](https://github.com/OpenSIPS/opensips-cli) tool
+ * [OpenSIPS MI](docs/tasks/opensips-mi.md): Executes MI commands using the
+[Python OpenSIPS](https://github.com/OpenSIPS/python-opensips) module
  * [SIPp](docs/tasks/sipp.md): Runs [SIPp](https://sipp.sourceforge.net/)
 scenarios
  * [UAC SIPp](docs/tasks/uac-sipp.md): Executes a

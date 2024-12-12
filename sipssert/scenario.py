@@ -55,7 +55,7 @@ class Scenario():
         nets = self.networks if self.networks else []
         if self.network:
             nets.append(self.network)
-        self.no_trace = self.controller.no_trace
+        self.no_trace = self.is_no_trace(test_set)
         if not self.no_trace:
             self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", nets, self.name)
         self.timeout = self.config.get("timeout", 0)
@@ -78,6 +78,16 @@ class Scenario():
         """Creates current scenario logs directory"""
         if not os.path.isdir(self.scen_logs_dir):
             os.mkdir(self.scen_logs_dir)
+
+    def is_no_trace(self, test_set):
+        """Return True if scenario should not be traced"""
+        if self.controller.no_trace:
+            return True
+        if not test_set.config.get("tracer", True):
+            return True
+        if not self.config.get("tracer", True):
+            return True
+        return False
 
     def run(self):
         """Runs a scenario with all its prerequisits"""

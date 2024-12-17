@@ -34,9 +34,14 @@ class Controller:
     """Controller class that implements the logic"""
 
     def __init__(self, args):
+        # parse extra vars
+        extra_var_dict = {}
+        for var in args.extra_var:
+            k, v = var.split('=')
+            extra_var_dict[k] = v
         self.config_file = args.config
         try:
-            self.config = config.Config(self.config_file, None, "defines.yml")
+            self.config = config.Config(self.config_file, None, "defines.yml", template_vars=extra_var_dict)
         except config.ConfigParseError:
             raise Exception(f"could not parse {self.config_file}")
         if len(args.tests):

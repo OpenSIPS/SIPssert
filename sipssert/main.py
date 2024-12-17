@@ -46,6 +46,12 @@ arg_parser.add_argument('-e', '--exclude',
                         metavar='[SET/]TEST',
                         default=[])
 
+arg_parser.add_argument('-E', '--extra-var',
+                        help='Set additional variable as key=value. ' \
+                                'Can be specified multiple times',
+                        action='append',
+                        default=[])
+
 arg_parser.add_argument('-c', '--config',
                         help='Absolute path of the running config',
                         default="run.yml",

@@ -200,6 +200,7 @@ The SIPssert tool also accepts as parameters the following values:
 is `logs/`)
 * `-c|--config CONFIG` - [Run Configuration](docs/config/run.md) file (Default
 is `run.yml')
+* `-j|--junit-xml` - generate junit compatible report
 * `-t|--test [SET/]TEST` - pattern that specifies which scenarios/tests should
 be run; if `SET` is specified, only tests within that test set are being matched
 * `-e|--exclude [SET/]TEST` - similar to `-t/--test`, but specifies the tests

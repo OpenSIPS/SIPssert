@@ -57,6 +57,11 @@ arg_parser.add_argument('-c', '--config',
                         default="run.yml",
                         type=os.path.abspath)
 
+arg_parser.add_argument('-x', '--no-trace',
+                        help='Do not trace call',
+                        default=False,
+                        action='store_true')
+
 arg_parser.add_argument('-l', '--logs-dir',
                         help='Absolute path of the logs dir',
                         default="logs/",
@@ -67,8 +72,8 @@ arg_parser.add_argument('-n', '--no-delete',
                         default=False,
                         action='store_true')
 
-arg_parser.add_argument('-x', '--no-trace',
-                        help='Do not trace call',
+arg_parser.add_argument('-j', '--junit-xml',
+                        help='Generate junit compatible report',
                         default=False,
                         action='store_true')
 

@@ -24,6 +24,7 @@ import time
 from sipssert import config
 from sipssert import scenario
 from sipssert import logger
+from sipssert import junit_reporter
 from sipssert import tasks_list
 from sipssert import tests_filters
 from sipssert.network import network
@@ -93,14 +94,16 @@ class TestsSet():
         """Constructs all the scenarios"""
         scenarios = []
         scenarios_paths = []
+
         for test in sorted(os.listdir(self.set_path)):
-            if not tests_filters.CanExecute(self.name, test, self.filters):
-                continue
             test_dir = os.path.join(self.set_path, test)
-            if os.path.isdir(test_dir):
-                if SCENARIO in os.listdir(test_dir):
-                    scenario_path = os.path.join(test_dir, SCENARIO)
-                    scenarios_paths.append(scenario_path)
+            if os.path.isdir(test_dir) and SCENARIO in os.listdir(test_dir):
+                if not tests_filters.CanExecute(self.name, test, self.filters):
+                    if self.controller.junit_xml:
+                        self.controller.junit_reporter.skip_test_case(self.name, test)
+                    continue
+                scenario_path = os.path.join(test_dir, SCENARIO)
+                scenarios_paths.append(scenario_path)
         for scenario_path in scenarios_paths:
             scenarios.append(scenario.Scenario(scenario_path, self.controller, self, self.set_logs_dir, self.defaults))
 

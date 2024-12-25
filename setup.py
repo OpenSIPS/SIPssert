@@ -67,6 +67,7 @@ setup(
         'jinja2',
         'pyjwt',
         'pyaml',
+        'junit-xml',
     ],
     classifiers = [
         "Programming Language :: Python :: 3",

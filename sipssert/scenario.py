@@ -28,6 +28,7 @@ from sipssert import logger
 from sipssert import config
 from sipssert import tracer
 from sipssert import tasks_list
+from sipssert import junit_reporter
 
 LOGS_DIR = "logs"
 NETWORK_CAP = "net_capture"
@@ -43,6 +44,8 @@ class Scenario():
         self.dirname = os.path.dirname(scenario_file)
         self.scenario = os.path.basename(scenario_file)
         self.name = os.path.basename(self.dirname)
+        self.test_set_name = test_set.name
+
         self.scen_logs_dir = os.path.join(set_logs_dir, self.name)
         try:
             self.config = config.Config(self.dirname, self.scenario, VARIABLES,
@@ -109,8 +112,11 @@ class Scenario():
             logger.slog.exception("Error occured during cleanup task")
         if not self.no_trace:
             self.tracer.stop()
-        logger.slog.debug("scenario executed in {:.3f}s".format(time.time() - start_time))
+        elapsed_sec = time.time() - start_time
+        logger.slog.debug("scenario executed in {:.3f}s".format(elapsed_sec))
         self.tlogger.status(self.tasks.status)
+        if self.controller.junit_xml:
+            self.controller.junit_reporter.add_status(self.test_set_name, self.name, self.tasks.status, elapsed_sec)
 
     def __del__(self):
         pass

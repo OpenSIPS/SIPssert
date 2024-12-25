@@ -27,6 +27,7 @@ from sipssert import config
 from sipssert import logger
 from sipssert import testing
 from sipssert import tests_filters
+from sipssert import junit_reporter
 
 
 class Controller:
@@ -57,6 +58,8 @@ class Controller:
                         tests_filters.ParseTestsFilters(exclude_filters))
         self.logs_dir = args.logs_dir
         self.no_delete = args.no_delete
+        self.junit_xml = self.config.get("junit", False) \
+                if not args.junit_xml else args.junit_xml
         self.no_trace = not self.config.get("tracer", True) \
                 if not args.no_trace else args.no_trace
         current_date = datetime.now().strftime("%Y-%m-%d.%H:%M:%S.%f")
@@ -72,6 +75,9 @@ class Controller:
         self.docker = docker.from_env()
         self.tlogger = testing.Testing("Running SIPssert Testing Framework")
         self.failed = True
+
+        if self.junit_xml:
+            self.junit_reporter = junit_reporter.JUnitReporter("controller")
     
     def create_run_logs_dir(self):
         """Creates the current run logs directory"""
@@ -92,5 +98,7 @@ class Controller:
             self.tlogger.test_set(f"Running test set: {test_set_obj.name}")
             test_set_obj.run()
         self.failed = self.tlogger.end()
+        if self.junit_xml:
+            self.junit_reporter.save_report(os.path.join(self.run_logs_dir, "report.xml"))
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

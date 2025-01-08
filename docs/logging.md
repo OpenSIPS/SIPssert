@@ -74,6 +74,18 @@ Each task generates two files in the `SCENDIR` directory:
 * *`task_name`*`.log` - contains the logs of the application (fetched by the
 `docker logs` command)
 
+## JUnit report
+
+You are allowed to generate junit compatible test report in xml that can
+be read by any available junit test reporter action in GitHub. So you can set up
+your workflow by generating junit report from sipssert run and passing report
+into reporter action on your own to display test result in convinient way
+on GitHub run summary.
+
+Add `junit: yes` into `run.yml` config file or pass `--junit-xml` command-line
+parameter into sipssert command when running test to generate junit report.
+Generated report will be saved into `logs/latest` directory as `report.xml`.
+
 ## Example
 
 A common hierarchy of a run would look something like this:

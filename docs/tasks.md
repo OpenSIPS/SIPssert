@@ -100,7 +100,14 @@ may contain the following nodes (as explained [here](https://docker-py.readthedo
   * `retries`: the number of retries before considering the container unhealthy
   * `start_period`: the time to wait before starting the health checks
 * `logging`: contains information about task logging
-  * `console`: boolean indicating whether the logging should be dumped at console or not (Default: `false`)
+  * `console`: boolean indicating whether the logging should be dumped at
+  console or not (Default: `false`)
+* `checklogs`: RegEx patterns that should be checked for in the logs;
+when a check fails, the task is considered failed; this node can either be a
+list of strings, meaning that all of them should be found, or a dictionary with
+the following nodes:
+  * `all`: a list of strings that should be found in the logs
+  * `none`: a list of strings that should not be found in the logs
 
 You can find the specific settings for each task type in their corresponding
 file in the  [tasks](tasks) directory.
@@ -146,4 +153,47 @@ tasks:
       interval: 1000000000
       timeout: 1000000000
       start_period: 0
+```
+
+Running a task and check for patterns in the logs:
+
+```
+# patterns 1, 2 and 3 should be found, while patterns 4 and 5 should not be found
+
+tasks:
+  - name: MySQL
+    type: mysql
+    ...
+    checklogs:
+      all: regex1 regex2 regex3
+      none:
+        - regex4
+        - regex5
+
+# or
+
+tasks:
+  - name: MySQL
+    type: mysql
+    ...
+    checklogs:
+      all: regex1 regex2 regex3
+      none: regex4 regex5
+
+# if all patterns should be found
+
+tasks:
+  - name: MySQL
+    type: mysql
+    ...
+    checklogs: regex1 regex2 regex3 regex4 regex5
+
+# or
+
+tasks:
+  - name: MySQL
+    type: mysql
+    ...
+    checklogs:
+      all: regex1 regex2 regex3 regex4 regex5
 ```

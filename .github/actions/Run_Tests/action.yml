@@ -28,3 +28,22 @@ runs:
       with:
         log_name: sipssert-${{ inputs.tests }}-logs
         directory: ${{ inputs.directory }}
+    
+    - name: Print test summary
+      uses: mikepenz/action-junit-report@v3
+      if: success() || failure()
+      with:
+        check_name: 'SIPssert test report'
+        report_paths: ${{ inputs.directory }}/logs/latest/report.xml
+        annotate_only: true
+        fail_on_failure: true
+
+    - name: Print detail test report
+      uses: dorny/test-reporter@v1
+      if: success() || failure()
+      with:
+        name: 'SIPssert report: ${{ inputs.tests }}'
+        path: ${{ inputs.directory }}/logs/latest/report.xml
+        reporter: java-junit
+        fail_on_error: false
+        max-annotations: 0

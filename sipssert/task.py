@@ -56,6 +56,7 @@ class Task():
         self.entrypoint = self.config.get("entrypoint")
         self.resolve_networks()
         self.healthcheck = self.config.get("healthcheck", {"test": []})
+        self.checklogs = self.get_checklogs()
         self.deps = dependencies.parse_dependencies(self.config.get("require"))
         # keep this for backwards compatibility
         self.delay_start = self.config.get("delay_start", 0)
@@ -74,6 +75,7 @@ class Task():
         self.daemon = self.config.get("daemon", self.default_daemon)
         if self.image is None:
             raise Exception(f"task {self.name} does not have an image available")
+        self.logs_ok = True
         self.exit_code = None
         self.state = State.PENDING
 
@@ -312,12 +314,50 @@ class Task():
         else:
             self.log.error("exited with status {}".format(status))
 
+    def get_checklogs(self):
+        checklogs = self.config.get("checklogs", {})
+        if isinstance(checklogs, str):
+            return {"all": checklogs.split(" "), "none": []}
+        elif isinstance(checklogs, list):
+            return {"all": [str(x) for x in checklogs], "none": []}
+        elif isinstance(checklogs, dict):
+            all = checklogs.get("all", [])
+            none = checklogs.get("none", [])
+            if isinstance(all, str):
+                all = all.split(" ")
+            if isinstance(none, str):
+                none = none.split(" ")
+            return {"all": all, "none": none}
+        else:
+            return {"all": [], "none": []}
+
+    def check_logs(self):
+        self.log.info(self.checklogs)
+        for regex in self.checklogs["all"]:
+            try:
+                if not re.search(regex, self.container.logs().decode('UTF-8')):
+                    self.log.error(f"logs check failed for {regex}; should match")
+                    return False
+            except Exception as e:
+                self.log.error(f"error while checking logs: {e}")
+                return False
+        for regex in self.checklogs["none"]:
+            try:
+                if re.search(regex, self.container.logs().decode('UTF-8')):
+                    self.log.error(f"logs check failed for {regex}; shouldn't match")
+                    return False
+            except Exception as e:
+                self.log.error(f"error while checking logs: {e}")
+                return False
+        return True
+
     def has_finished(self):
         return self.state == State.ENDED
 
     def finish(self):
         if self.has_finished():
             return
+        self.logs_ok = self.check_logs()
         self.write_logs()
         self.write_status()
         self.end_time = time.time()

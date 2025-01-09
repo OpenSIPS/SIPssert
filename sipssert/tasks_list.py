@@ -107,7 +107,7 @@ class TasksList(list):
                 logger.slog.debug("handing stop event for {}".format(name))
                 tsk.finish()
                 status = int(attrs["exitCode"])
-                self.update_status(TestStatus.PASS if status == 0 else TestStatus.FAIL)
+                self.update_status(TestStatus.PASS if status == 0 and tsk.logs_ok else TestStatus.FAIL)
                 if status != 0:
                     logger.slog.error(f"{name} failed with exit code {status}")
                 if tsk.daemon:
@@ -132,7 +132,7 @@ class TasksList(list):
             tsk.stop()
             tsk.finish()
             status = tsk.get_exit_code()
-            self.update_status(TestStatus.PASS if status == 0 else TestStatus.FAIL)
+            self.update_status(TestStatus.PASS if status == 0 and tsk.logs_ok else TestStatus.FAIL)
 
         if exc:
             logger.slog.error(exc)

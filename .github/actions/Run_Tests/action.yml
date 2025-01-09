@@ -19,7 +19,7 @@ runs:
     - name: Run All Tests
       run: |
         cd ${{ inputs.directory }}
-        sipssert -c ${{ inputs.config }} ${{ inputs.tests }}
+        sipssert --junit-xml -c ${{ inputs.config }} ${{ inputs.tests }}
       shell: bash
 
     - name: Publish logs

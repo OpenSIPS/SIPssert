@@ -45,5 +45,5 @@ runs:
         name: 'SIPssert report: ${{ inputs.tests }}'
         path: ${{ inputs.directory }}/logs/latest/report.xml
         reporter: java-junit
-        fail_on_error: false
+        fail-on-error: false
         max-annotations: 0

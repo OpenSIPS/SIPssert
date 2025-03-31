@@ -33,7 +33,7 @@ class TasksList(list):
     """Handles a list of Tasks"""
 
     def __init__(self, task_set_key, task_dir, logs_dir,
-            config, controller, network, networks, container_prefix=None, defaults={}):
+            config, controller, network, networks, volumes, container_prefix=None, defaults={}):
         super().__init__([])
         self.timeout = 0
         self.status = TestStatus.UNKN
@@ -41,6 +41,7 @@ class TasksList(list):
         self.logs_dir = logs_dir
         self.network = network
         self.networks = networks
+        self.volumes = volumes
         self.controller = controller
         self.container_prefix = container_prefix
         self.defaults = defaults
@@ -54,6 +55,27 @@ class TasksList(list):
                 definition["network"] = self.network
             if self.networks and "networks" not in definition:
                 definition["networks"] = self.networks
+            if "volumes" in definition:
+                if isinstance(definition["volumes"], list):
+                    complete_def = {}
+                    for vol in definition["volumes"]:
+                        if vol not in self.volumes:
+                            raise Exception(f"volume {vol} not defined")
+                        complete_def[vol] = self.volumes[vol]
+                        if "bind" not in complete_def[vol] or "mode" not in complete_def[vol]:
+                            raise Exception(f"volume {vol} incomplete defined")
+                    definition["volumes"] = complete_def
+                elif isinstance(definition["volumes"], dict):
+                    for vol in definition["volumes"]:
+                        if vol not in self.volumes:
+                            raise Exception(f"volume {vol} not defined")
+                        definition["volumes"][vol].setdefault("bind", self.volumes[vol].get("bind", None))
+                        definition["volumes"][vol].setdefault("mode", self.volumes[vol].get("mode", None))
+
+                        if definition["volumes"][vol]["bind"] is None or definition["volumes"][vol]["mode"] is None:
+                            raise Exception(f"volume {vol} incomplete defined")
+                else:
+                    raise Exception(f"volumes should be a list or a dictionary")
             task = self.create_task(definition)
             if task:
                 self.append(task)

@@ -108,6 +108,16 @@ list of strings, meaning that all of them should be found, or a dictionary with
 the following nodes:
   * `all`: a list of strings that should be found in the logs
   * `none`: a list of strings that should not be found in the logs
+* `volumes`: either a list of volumes that should be mounted in the container, or a
+dictionary of volumes, each with the following nodes:
+  * `bind`: the path to the directory where the volume should be mounted
+  * `mode`: the permissions of the mounted volume; can be either `rw` or `ro`
+if missing, these values are inherited from the scenario's `volumes` settings, but
+they must be defined at some level (either scenario or task level); the volumes
+attached to the task must be created at the scenario level, and they are mounted
+in the container only if they are specified here; examples can be found in the
+[Scenario](/docs/config/scenario.md) page.
+
 
 You can find the specific settings for each task type in their corresponding
 file in the  [tasks](tasks) directory.

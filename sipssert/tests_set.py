@@ -58,11 +58,11 @@ class TestsSet():
         self.setup_networks()
         self.init_tasks = tasks_list.TasksList("init_tasks", self.set_path,
                 self.init_tasks_logs_dir, self.config, self.controller,
-                self.default_network, self.default_networks,
+                self.default_network, self.default_networks, None,
                 f"{self.name}/init_tasks", self.defaults)
         self.cleanup_tasks = tasks_list.TasksList("cleanup_tasks", self.set_path,
                 self.cleanup_tasks_logs_dir, self.config, self.controller,
-                self.default_network, self.default_networks,
+                self.default_network, self.default_networks, None,
                 f"{self.name}/cleanup_tasks", self.defaults)
         self.create_set_logs_dir()
         self.build_scenarios()

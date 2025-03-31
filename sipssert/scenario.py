@@ -58,19 +58,22 @@ class Scenario():
         nets = self.networks if self.networks else []
         if self.network:
             nets.append(self.network)
+        self.volumes = self.config.get("volumes", [])
+        if self.volumes:
+            self.create_volumes()
         self.no_trace = self.is_no_trace(test_set)
         if not self.no_trace:
             self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", nets, self.name)
         self.timeout = self.config.get("timeout", 0)
         container_prefix = f"{test_set.name}/{self.name}"
         self.tasks = tasks_list.TasksList("tasks", self.dirname, self.scen_logs_dir,
-                self.config, self.controller, self.network, self.networks,
+                self.config, self.controller, self.network, self.networks, self.volumes,
                 container_prefix, set_defaults_dict)
         self.init_tasks = tasks_list.TasksList("init_tasks", self.dirname, self.scen_logs_dir,
-                self.config, self.controller, self.network, self.networks,
+                self.config, self.controller, self.network, self.networks, self.volumes,
                 container_prefix, set_defaults_dict)
         self.cleanup_tasks = tasks_list.TasksList("cleanup_tasks", self.dirname, self.scen_logs_dir,
-                self.config, self.controller, self.network, self.networks,
+                self.config, self.controller, self.network, self.networks, self.volumes,
                 container_prefix, set_defaults_dict)
         if self.timeout != 0:
             self.init_tasks.set_timeout(self.timeout)
@@ -81,6 +84,18 @@ class Scenario():
         """Creates current scenario logs directory"""
         if not os.path.isdir(self.scen_logs_dir):
             os.mkdir(self.scen_logs_dir)
+
+    def create_volumes(self):
+        for volume_name in self.volumes:
+            try:
+                self.controller.docker.volumes.create(name=volume_name,
+                                                      driver='local',
+                                                      labels={'scenario': self.name})
+                logger.slog.info(f"volume {volume_name} created in scenario {self.name}")
+            except Exception as exc:
+                logger.slog.error(f"could not create volume {volume_name} in scenario {self.name}")
+                logger.slog.exception(exc)
+                self.volumes.pop(volume_name)
 
     def is_no_trace(self, test_set):
         """Return True if scenario should not be traced"""
@@ -110,6 +125,13 @@ class Scenario():
             self.cleanup_tasks.run(force_all=True)
         except Exception:
             logger.slog.exception("Error occured during cleanup task")
+        for volume in self.volumes:
+            try:
+                self.controller.docker.volumes.get(volume).remove()
+                logger.slog.info(f"volume {volume} removed")
+            except Exception as exc:
+                logger.slog.error(f"could not remove volume {volume}")
+                logger.slog.exception(exc)
         if not self.no_trace:
             self.tracer.stop()
         elapsed_sec = time.time() - start_time

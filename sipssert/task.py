@@ -42,7 +42,7 @@ class Task():
         self.networks = self.config.get("networks", [])
         self.controller = None
         self.test_dir = test_dir
-        self.volumes = {}
+        self.volumes = self.config.get("volumes", {})
         self.logs_dir = None
         self.container = None
         self.root_password = None

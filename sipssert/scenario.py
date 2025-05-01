@@ -128,8 +128,9 @@ class Scenario():
         for volume_name in self.volumes:
             try:
                 volume = self.controller.docker.volumes.get(volume_name)
-                if volume.labels.get('scenario') == self.name:
-                    self.controller.docker.volumes.get(volume).remove()
+                volume_labels = volume.attrs.get('Labels', {})
+                if volume_labels.get('scenario') == self.name:
+                    self.controller.docker.volumes.get(volume.name).remove()
                     logger.slog.info(f"volume {volume} removed")
             except Exception as exc:
                 logger.slog.error(f"could not remove volume {volume}")

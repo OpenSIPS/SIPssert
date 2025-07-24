@@ -86,6 +86,8 @@ class Scenario():
             os.mkdir(self.scen_logs_dir)
 
     def create_volumes(self):
+        if isinstance(self.volumes, list):
+            self.volumes = {volume: {} for volume in self.volumes}
         for volume_name in self.volumes:
             try:
                 self.controller.docker.volumes.create(name=volume_name,

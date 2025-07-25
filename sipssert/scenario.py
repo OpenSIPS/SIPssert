@@ -125,10 +125,13 @@ class Scenario():
             self.cleanup_tasks.run(force_all=True)
         except Exception:
             logger.slog.exception("Error occured during cleanup task")
-        for volume in self.volumes:
+        for volume_name in self.volumes:
             try:
-                self.controller.docker.volumes.get(volume).remove()
-                logger.slog.info(f"volume {volume} removed")
+                volume = self.controller.docker.volumes.get(volume_name)
+                volume_labels = volume.attrs.get('Labels', {})
+                if volume_labels.get('scenario') == self.name:
+                    self.controller.docker.volumes.get(volume.name).remove()
+                    logger.slog.info(f"volume {volume} removed")
             except Exception as exc:
                 logger.slog.error(f"could not remove volume {volume}")
                 logger.slog.exception(exc)

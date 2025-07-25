@@ -32,7 +32,8 @@ values will be used as defaults when a task is using the volume, but they can be
 overridden in the task definition; these values can also be omitted at the
 scenario level, but in this case, the task should define them; volumes are created
 at the beginning of the scenario, **used only by the tasks that have them specified**,
-and removed at the end of the scenario;
+and removed at the end of the scenario; if any volume is already defined it will
+be used;
 
 ## Example
 

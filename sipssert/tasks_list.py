@@ -60,15 +60,27 @@ class TasksList(list):
                     complete_def = {}
                     for vol in definition["volumes"]:
                         if vol not in self.volumes:
-                            raise Exception(f"volume {vol} not defined")
-                        complete_def[vol] = self.volumes[vol]
+                            if not self.controller.docker.volumes.get(vol):
+                                raise Exception(f"volume {vol} not defined in scenario or outside of it")
+                            # if the volume is defined outside of the scenario, but is passed in a list,
+                            # we don't know `bind` and `mode` keys, so we raise an exception
+                            raise Exception(f"volume {vol} incomplete declared: use 'bind' and 'mode' keys")
+                        else:
+                            complete_def[vol] = self.volumes[vol]
                         if "bind" not in complete_def[vol] or "mode" not in complete_def[vol]:
                             raise Exception(f"volume {vol} incomplete defined")
                     definition["volumes"] = complete_def
                 elif isinstance(definition["volumes"], dict):
                     for vol in definition["volumes"]:
                         if vol not in self.volumes:
-                            raise Exception(f"volume {vol} not defined")
+                            if not self.controller.docker.volumes.get(vol):
+                                raise Exception(f"volume {vol} not defined in scenario or outside of it")
+                            self.volumes[vol] = {}
+
+                        if definition["volumes"][vol] is None:
+                            definition["volumes"][vol] = {}
+
+                        # if the volume is declared as a dict, it should have 'bind' and 'mode' keys
                         definition["volumes"][vol].setdefault("bind", self.volumes[vol].get("bind", None))
                         definition["volumes"][vol].setdefault("mode", self.volumes[vol].get("mode", None))
 

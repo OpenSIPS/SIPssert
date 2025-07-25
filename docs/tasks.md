@@ -112,12 +112,10 @@ the following nodes:
 dictionary of volumes, each with the following nodes:
   * `bind`: the path to the directory where the volume should be mounted
   * `mode`: the permissions of the mounted volume; can be either `rw` or `ro`
-if missing, these values are inherited from the scenario's `volumes` settings, but
-they must be defined at some level (either scenario or task level); the volumes
-attached to the task must be created at the scenario level, and they are mounted
-in the container only if they are specified here; examples can be found in the
-[Scenario](/docs/config/scenario.md) page.
-
+omitting these keys works only if the volume is defined in the scenario
+(see [Scenario](config/scenario.md#volumes) for more details);  if the
+volume is defined outside of the scenario, it should be declared as a dictionary
+with the `bind` and `mode` keys, otherwise an exception is raised.
 
 You can find the specific settings for each task type in their corresponding
 file in the  [tasks](tasks) directory.
@@ -138,7 +136,7 @@ tasks:
     args: -M32
 ```
 
-Logging configuration shoud look like this:
+Logging configuration should look like this:
 
 ```
 tasks:
@@ -206,4 +204,17 @@ tasks:
     ...
     checklogs:
       all: regex1 regex2 regex3 regex4 regex5
+```
+
+Mounting an external volume in the container:
+
+```
+tasks:
+  - name: MySQL
+    type: mysql
+    ...
+    volumes:
+      db_data:  # this is a volume defined outside the context of the scenario
+        bind: /var/lib/mysql
+        mode: rw
 ```

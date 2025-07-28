@@ -116,6 +116,9 @@ omitting these keys works only if the volume is defined in the scenario
 (see [Scenario](config/scenario.md#volumes) for more details);  if the
 volume is defined outside of the scenario, it should be declared as a dictionary
 with the `bind` and `mode` keys, otherwise an exception is raised.
+* `extra_hosts`: a dictionary of additional hosts that should be added to the
+container's `/etc/hosts` file; the keys are the hostnames, and the values
+are the IP addresses;
 
 You can find the specific settings for each task type in their corresponding
 file in the  [tasks](tasks) directory.

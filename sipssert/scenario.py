@@ -63,7 +63,9 @@ class Scenario():
             self.create_volumes()
         self.no_trace = self.is_no_trace(test_set)
         if not self.no_trace:
-            self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", nets, self.name)
+            self.tracing = self.config.get("tracing", test_set.tracing)
+            self.tracer = tracer.Tracer(self.scen_logs_dir, "capture", nets,
+                                        self.name, self.tracing)
         self.timeout = self.config.get("timeout", 0)
         container_prefix = f"{test_set.name}/{self.name}"
         self.tasks = tasks_list.TasksList("tasks", self.dirname, self.scen_logs_dir,

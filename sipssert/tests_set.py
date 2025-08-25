@@ -53,6 +53,7 @@ class TestsSet():
         # we need to create the networks before creating the tasks
         self.default_network = self.config.get("network")
         self.default_networks = self.config.get("networks")
+        self.tracing = self.config.get("tracing", {})
         if self.default_networks and not isinstance(self.default_networks, list):
             self.default_networks = [self.default_networks]
         self.setup_networks()

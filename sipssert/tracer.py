@@ -30,14 +30,27 @@ class Tracer():
 
     """Class that implements the network capturing"""
 
-    def __init__(self, directory, filename, net=[], name=None):
+    def __init__(self, directory, filename, net=[], name=None, options={}):
         # TODO: use tshark instead of tcpdump
-        if len(net) == 0 or (len(net) == 1 and net == "host") or len(net) > 1:
+        if "interface" in options:
+            self.interface = options["interface"]
+        elif len(net) == 0 or (len(net) == 1 and net == "host") or len(net) > 1:
             self.interface = "any"
         else:
             self.interface = net[0]
+        if "name" in options:
+            self.pcap = options["name"]
+        else:
+            self.pcap = f"{filename}.pcap"
+        self.params = options["params"] if "params" in options else []
+        if "filters" in options:
+            self.filters = [ "--", options["filters"] ]
+            logger.slog.debug("tracing with filters='{}'".format(self.filters))
+        else:
+            self.filters = []
+            logger.slog.debug("tracing with no filters")
         self.name = name if name else filename
-        self.capture_file = os.path.join(directory, f"{filename}.pcap")
+        self.capture_file = os.path.join(directory, self.pcap)
         self.process = None
 
     def status(self):
@@ -68,7 +81,7 @@ class Tracer():
         """Starts a tcpdump for a scenario"""
         self.process = subprocess.Popen(['tcpdump',
             '-i', self.interface,
-            '-w', self.capture_file],
+            '-w', self.capture_file] + self.params + self.filters,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.PIPE)
         rc, err = self.status()

@@ -33,7 +33,16 @@ overridden in the task definition; these values can also be omitted at the
 scenario level, but in this case, the task should define them; volumes are created
 at the beginning of the scenario, **used only by the tasks that have them specified**,
 and removed at the end of the scenario; if any volume is already defined it will
-be used;
+be used
+* `tracing`: an optional dictionary containing information about the pcap
+traces created. Possible values are:
+  * `name`: the name of the capture file; defaults to `capture.pcap`
+  * `interface`: interface that should be used to filter; defaults to `any` if
+  multiple interfaces are involed, or host network, otherwise the interface
+  the scenario runs on
+  * `filters`: the BFP filter used by tcpdump; defaults to anything
+  * `params`: (list) extra params passed to tcpdump; defaults to empty list
+
 
 ## Example
 

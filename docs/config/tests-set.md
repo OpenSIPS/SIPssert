@@ -42,6 +42,8 @@ Each bridged network should consist of the following settings:
 * `gateway`: the gateway that should be used, mandatory (example: `192.168.52.1`)
 * `device`: the name of the device, optional, and if missing the `name` of the
 bridge is assumed
+* `internal`: whether the bridge should run only internally, or can allow
+external inbound traffic
 
 ### Bridge Example
 

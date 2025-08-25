@@ -45,6 +45,7 @@ class BridgedNetwork(network.Network):
             self.subnet = network_config["subnet"]
             self.gateway = network_config["gateway"]
             self.created = False
+            self.internal = False
         except KeyError as exc:
             raise BridgedNetworkBadConfig("invalid setting") from exc
 
@@ -52,6 +53,8 @@ class BridgedNetwork(network.Network):
             self.device = network_config["device"]
         else:
             self.device = self.name
+        if "internal" in network_config.keys():
+            self.internal = network_config["internal"]
         self.setup()
 
     def setup(self):
@@ -67,6 +70,7 @@ class BridgedNetwork(network.Network):
             self.controller.docker.networks.create(self.name,
                                                    driver="bridge",
                                                    ipam=ipam_config,
+                                                   internal=self.internal,
                                                    options=options)
             self.created = True
         except docker.errors.APIError as err:

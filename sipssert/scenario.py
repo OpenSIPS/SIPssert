@@ -55,6 +55,7 @@ class Scenario():
         self.create_scen_logs_dir()
         self.network = self.config.get("network", test_set.default_network)
         self.networks = self.config.get("networks", test_set.default_networks)
+        self.task_templates = self.config.get("task_templates", test_set.task_templates)
         nets = self.networks if self.networks else []
         if self.network:
             nets.append(self.network)
@@ -69,13 +70,13 @@ class Scenario():
         self.timeout = self.config.get("timeout", 0)
         container_prefix = f"{test_set.name}/{self.name}"
         self.tasks = tasks_list.TasksList("tasks", self.dirname, self.scen_logs_dir,
-                self.config, self.controller, self.network, self.networks, self.volumes,
+                self.config, self.controller, self.network, self.networks, self.volumes, self.task_templates,
                 container_prefix, set_defaults_dict)
         self.init_tasks = tasks_list.TasksList("init_tasks", self.dirname, self.scen_logs_dir,
-                self.config, self.controller, self.network, self.networks, self.volumes,
+                self.config, self.controller, self.network, self.networks, self.volumes, self.task_templates,
                 container_prefix, set_defaults_dict)
         self.cleanup_tasks = tasks_list.TasksList("cleanup_tasks", self.dirname, self.scen_logs_dir,
-                self.config, self.controller, self.network, self.networks, self.volumes,
+                self.config, self.controller, self.network, self.networks, self.volumes, self.task_templates,
                 container_prefix, set_defaults_dict)
         if self.timeout != 0:
             self.init_tasks.set_timeout(self.timeout)

@@ -20,6 +20,13 @@ within this tests set. If missing, no aditional networks are being assigned.
 * `defaults`: consists of a dictionary that specify a set of default settings
 for the tasks that are being initiated within this tests set; more about this in
 [Defaults](#defaults) section.
+* `task_templates`: a dictionary of task templates that can be used within the
+scenarios of this tests set; each key is the name of the template, and the value
+is a dictionary describing the task as in [Tasks](../tasks.md); this value is
+optional; this can be useful to define common tasks that are used in multiple
+scenarios within the tests set; it is different from defaults, as templates
+define entire tasks, while defaults define only default settings for specific
+task types.
 * `init_tasks`: a list of tasks as described in [Tasks](../tasks.md) that
 should be run before running any scenario within this tests set; this value is
 optional, and if it is missing, no initial tasks are executed
@@ -78,6 +85,37 @@ defaults:
 
 Check out [Example](#example) of defining default IP and port for all OpenSIPS
 tasks.
+
+## Task Templates
+Task templates are useful to define common tasks that are used in multiple
+scenarios within the tests set. They are defined as a dictionary, where each key
+is the name of the template, and the value is a dictionary describing the task
+as in [Tasks](../tasks.md). They can be used within scenarios by using the
+`use` or `type` keys within a task definition.
+For example, if you have multiple SIPp tasks that perform registrations with
+the same credentials, you can define a template for that SIPp task and then use it
+in multiple scenarios.
+```
+task_templates:
+  sipp_register_caller:
+    type: uac_sipp
+    config_file: register.xml
+    username: caller
+    password: callerpass
+    ip: 192.168.52.53
+    port: 5160
+```
+
+Then, within a scenario, you can use this template as follows:
+```
+tasks:
+  - name: Caller Registration
+    use: sipp_register_caller
+
+# or
+  - name: Caller Registration
+    type: sipp_register_caller
+```
 
 ## Extra variables
 

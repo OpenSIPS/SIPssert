@@ -48,6 +48,7 @@ class TestsSet():
         except config.ConfigParseError:
             raise Exception("could not parse {}".format(CONFIG))
         self.defaults = self.config.get("defaults", {})
+        self.task_templates = self.config.get("task_templates", {})
         self.init_tasks_logs_dir = os.path.join(self.set_logs_dir, "init_tasks")
         self.cleanup_tasks_logs_dir = os.path.join(self.set_logs_dir, "cleanup_tasks")
         # we need to create the networks before creating the tasks
@@ -59,11 +60,11 @@ class TestsSet():
         self.setup_networks()
         self.init_tasks = tasks_list.TasksList("init_tasks", self.set_path,
                 self.init_tasks_logs_dir, self.config, self.controller,
-                self.default_network, self.default_networks, None,
+                self.default_network, self.default_networks, None, self.task_templates,
                 f"{self.name}/init_tasks", self.defaults)
         self.cleanup_tasks = tasks_list.TasksList("cleanup_tasks", self.set_path,
                 self.cleanup_tasks_logs_dir, self.config, self.controller,
-                self.default_network, self.default_networks, None,
+                self.default_network, self.default_networks, None, self.task_templates,
                 f"{self.name}/cleanup_tasks", self.defaults)
         self.create_set_logs_dir()
         self.build_scenarios()

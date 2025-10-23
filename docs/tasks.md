@@ -28,9 +28,13 @@ only the `name` node is mandatory, all the others are optional.
 
 * `name`: mandatory, represents the name of the task, which should be unique
 among the scenario.
-* `type`: the task type, which indicates how the task should be executed. if
-missing, the `generic` type is assumed. Available tasks type can be found in
-the [tasks](tasks) directory.
+* `type`: the task type, which indicates how the task should be executed. It can
+also specify a task template defined in the tests set
+[task_templates](config/tests-set.md#task_templates). Available tasks type can be found in the [tasks](tasks) directory.
+* `use`: indicates what task template to be used for this task, as defined in the
+tests set [task_templates](config/tests-set.md#task_templates); if both `type` and
+`use` are not specified, the `generic` type is assumed. Choose either `type` or
+`use`, not both.
 * `image`: the Docker image that should be used to run this task; if missing,
 the image declared in the specific task's implementation is used; if there is
 no image defined in the task (such as for the `generic` case), the execution

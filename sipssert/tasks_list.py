@@ -33,7 +33,7 @@ class TasksList(list):
     """Handles a list of Tasks"""
 
     def __init__(self, task_set_key, task_dir, logs_dir,
-            config, controller, network, networks, volumes, container_prefix=None, defaults={}):
+            config, controller, network, networks, volumes, task_templates={}, container_prefix=None, defaults={}):
         super().__init__([])
         self.timeout = 0
         self.status = TestStatus.UNKN
@@ -48,6 +48,7 @@ class TasksList(list):
         self.daemon_tasks = []
         self.running_tasks = []
         self.pending_tasks = []
+        self.task_templates = task_templates
         if task_set_key not in config:
             return
         for definition in config[task_set_key]:
@@ -236,11 +237,23 @@ class TasksList(list):
 
     def create_task(self, definition):
         """Creates a task based on its definition"""
+        tmpl_key = None
         if "type" in definition.keys():
             task_type = definition["type"].lower()
-        else:
-            # create a generic task
-            task_type = "generic"
+            if task_type in self.task_templates:
+                tmpl_key = task_type
+                definition.pop("type")
+        elif "use" in definition.keys():
+            tmpl_key = definition["use"].lower()
+            if tmpl_key not in self.task_templates:
+                raise Exception(f"unknown task template {tmpl_key}")
+
+        if tmpl_key:
+            template_def = self.task_templates[tmpl_key]
+            definition = self.merge_dicts(dict(template_def), dict(definition))
+
+        task_type = definition.get("type", "generic").lower()
+
         if task_type in self.defaults.keys():
             definition = ConfigLevel(self.merge_dicts(self.defaults[task_type], dict(definition)))
 

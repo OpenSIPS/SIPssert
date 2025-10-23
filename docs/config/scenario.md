@@ -13,6 +13,11 @@ values are described in tests set [Networks](tests-set.md#neworks); this value
 is optional, and if missing, the tests set `network` value is considered
 * `networks`: similar with `network`, but defines additional networks to be
 used; if missing, no extra network is being used
+* `task_templates`: a dictionary of task templates that can be used within this
+scenario; each key is the name of the template, and the value is a dictionary
+describing the task as in [Tasks](../tasks.md); this value is optional; here,
+it can override or extend the templates defined at the tests set level; this can
+be useful to define common parts of tasks;
 * `timeout`: a timeout, expressed in seconds, for running the entire scenario;
 this value is optional, and if it is missing, the tasks do not timeout ever
 * `init_tasks`: a list of tasks as described in [Tasks](../tasks.md) that

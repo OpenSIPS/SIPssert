@@ -104,7 +104,7 @@ class Config:
         return self.config.get(key, None, True)
 
     def __contains__(self, key):
-        """checkes whether a key is part of the config"""
+        """checks whether a key is part of the config"""
         return key in self.config
 
     def __str__(self):

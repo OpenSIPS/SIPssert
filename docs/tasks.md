@@ -123,6 +123,8 @@ with the `bind` and `mode` keys, otherwise an exception is raised.
 * `extra_hosts`: a dictionary of additional hosts that should be added to the
 container's `/etc/hosts` file; the keys are the hostnames, and the values
 are the IP addresses;
+* `sysctls`: a dictionary of kernel sysctl parameters to add to the container;
+keys are the names of the kernel parameters and values are their values;
 
 You can find the specific settings for each task type in their corresponding
 file in the  [tasks](tasks) directory.

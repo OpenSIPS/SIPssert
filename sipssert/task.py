@@ -58,6 +58,7 @@ class Task():
         self.healthcheck = self.config.get("healthcheck", {"test": []})
         self.checklogs = self.get_checklogs()
         self.extra_hosts = self.config.get("extra_hosts", {})
+        self.sysctls = self.config.get("sysctls", {})
         self.deps = dependencies.parse_dependencies(self.config.get("require"))
         # keep this for backwards compatibility
         self.delay_start = self.config.get("delay_start", 0)
@@ -169,7 +170,8 @@ class Task():
                            'environment': env,
                            'stop_signal': self.stop_signal,
                            'network_mode': self.host_network,
-                           'extra_hosts': self.extra_hosts
+                           'extra_hosts': self.extra_hosts,
+                           'sysctls': self.sysctls
                           }
 
         self.log.info("container {} prepared".format(self.container_name))

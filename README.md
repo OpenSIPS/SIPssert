@@ -40,6 +40,7 @@ tune a set of run parameters (such as logging settings); you can find
 [here](docs/config/run.md) more information on the configuration file.
 The application requires one or more **tests sets** to run. The `sipssert`
 application starts the engine controller, which then runs each **tests set**.
+If no **test set** is provided, the current working directory is used.
  * Each **tests set** provided as parameter represents a directory which
 consists of multiple **scenarios**; it may also contain a
 [`config.yml`](docs/config/tests-set.md) file and

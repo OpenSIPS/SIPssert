@@ -17,7 +17,8 @@ The run configuration file consists of the following settings:
     * `level`: debugging level of the controller (Default: `INFO`)
     * `timestamp`: adds timestamp to genereated logs (Default: `true`)
 * `tests`: a list of tests sets to run - these represent the default set of
-tests to be run, unless specified as arguments otherwise (Default: empty)
+tests to be run, unless specified as arguments otherwise (Default: current
+working directory)
 * `test`: a list of test filters to be used unless specified as arguments
 through the (`-t|--test` argument) (Default: empty)
 * `exclude`: a list of exclude filters to be used unless specified as
@@ -33,4 +34,6 @@ logging:
     console: false
     level: INFO
     file: controller.log
+tests:
+  - .
 ```

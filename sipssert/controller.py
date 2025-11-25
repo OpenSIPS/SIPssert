@@ -49,7 +49,7 @@ class Controller:
             self.sets_dirs = args.tests
         else:
             self.sets_dirs = list(map(os.path.abspath,
-                                      self.config.get("tests", [])))
+                                      self.config.get("tests", ["."])))
         test_filters = args.test if len(args.test) else \
                 self.config.get("test", [])
         exclude_filters = args.exclude if len(args.exclude) else \

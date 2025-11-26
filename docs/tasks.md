@@ -110,7 +110,9 @@ may contain the following nodes (as explained [here](https://docker-py.readthedo
 when a check fails, the task is considered failed; this node can either be a
 list of strings, meaning that all of them should be found, or a dictionary with
 the following nodes:
-  * `all`: a list of strings that should be found in the logs
+  * `all`: a list of strings that should be found in the logs or a list of
+dictionaries with two keys: `expr`, for the string, and `cnt`, to specify how many
+time it appears; you can skip `cnt`;
   * `none`: a list of strings that should not be found in the logs
 * `volumes`: either a list of volumes that should be mounted in the container, or a
 dictionary of volumes, each with the following nodes:
@@ -214,6 +216,22 @@ tasks:
     checklogs:
       all: regex1 regex2 regex3 regex4 regex5
 ```
+
+If you want to control the number of each pattern:
+
+```
+tasks:
+  - name: MySQL
+    type: mysql
+    ...
+    checklogs:
+      all:
+        - expr: regex1
+          cnt: 2
+        - expr: regex2
+          cnt: 1
+```
+
 
 Mounting an external volume in the container:
 

@@ -336,18 +336,48 @@ class Task():
             return {"all": [], "none": []}
 
     def check_logs(self):
+        logs = self.container.logs().decode("UTF-8")
         self.log.info(self.checklogs)
-        for regex in self.checklogs["all"]:
+        for rule in self.checklogs["all"]:
             try:
-                if not re.search(regex, self.container.logs().decode('UTF-8')):
-                    self.log.error(f"logs check failed for {regex}; should match")
-                    return False
+                if isinstance(rule, dict):
+                    pattern = rule.get("expr", "")
+                    expected = rule.get("cnt", None)
+
+                    if not pattern:
+                        self.log.error("logs check: empty pattern in rule")
+                        return False
+
+                    matches = re.findall(pattern, logs)
+                    count = len(matches)
+
+                    if expected is not None and count != expected:
+                        self.log.error(
+                            f"logs check failed for {pattern}; "
+                            f"expected {expected} matches, got {count}"
+                        )
+                        return False
+                    elif expected is None and count == 0:
+                        self.log.error(
+                            f"logs check failed for {pattern}; should match"
+                        )
+                        return False
+                else:
+                    pattern = rule
+                    if not re.search(pattern, logs):
+                        self.log.error(
+                            f"logs check failed for {pattern}; should match"
+                        )
+                        return False
+
             except Exception as e:
                 self.log.error(f"error while checking logs: {e}")
                 return False
+
+
         for regex in self.checklogs["none"]:
             try:
-                if re.search(regex, self.container.logs().decode('UTF-8')):
+                if re.search(regex, logs):
                     self.log.error(f"logs check failed for {regex}; shouldn't match")
                     return False
             except Exception as e:

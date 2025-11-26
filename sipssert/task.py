@@ -357,6 +357,11 @@ class Task():
                             f"expected {expected} matches, got {count}"
                         )
                         return False
+                    elif expected is None and count == 0:
+                        self.log.error(
+                            f"logs check failed for {pattern}; should match"
+                        )
+                        return False
                 else:
                     pattern = rule
                     if not re.search(pattern, logs):

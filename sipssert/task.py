@@ -59,6 +59,7 @@ class Task():
         self.checklogs = self.get_checklogs()
         self.extra_hosts = self.config.get("extra_hosts", {})
         self.sysctls = self.config.get("sysctls", {})
+        self.working_dir = self.config.get("working_dir", {})
         self.deps = dependencies.parse_dependencies(self.config.get("require"))
         # keep this for backwards compatibility
         self.delay_start = self.config.get("delay_start", 0)
@@ -171,6 +172,7 @@ class Task():
                            'stop_signal': self.stop_signal,
                            'network_mode': self.host_network,
                            'extra_hosts': self.extra_hosts,
+                           'working_dir': self.working_dir,
                            'sysctls': self.sysctls
                           }
 

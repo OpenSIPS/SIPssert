@@ -42,7 +42,9 @@ usually `sipp` (see `sipp -s` parameter for more information).
 added to the `keys` dictionary as well, but the default value is the name of 
 the SIPssert scenario
 
-## Example
+## Examples
+
+### SIPp scenario with config_file
 
 Execute a sipp scenario defined in the `cancel.xml` file, with a domain key:
 
@@ -52,4 +54,31 @@ Execute a sipp scenario defined in the `cancel.xml` file, with a domain key:
    config_file: cancel.xml
    keys:
      domain: opensips.org
+```
+
+### SIPp with TLS transport
+
+When using TLS transport, SIPp will expect to have two files in the current directory: a certificate (cacert.pem) and a key (cakey.pem). If one is protected with a password, SIPp will ask for it.
+
+Create a docker volume and place the certificate files in it.
+Mount volume with certificates to the container and setup working_dir to that folder.
+Specify in the args to use the TLS transport with options "-t l1".
+
+```
+tasks:
+...
+  - name: tls client
+    type sipp
+    config_file: invite.xml
+    working_dir: /certs
+    args: "-t l1"
+    volumes:
+      - sipp-certs
+...
+
+volumes:
+  sipp-certs:
+    bind: /certs
+    mode: ro
+
 ```

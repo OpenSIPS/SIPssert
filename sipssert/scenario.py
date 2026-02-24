@@ -29,6 +29,7 @@ from sipssert import config
 from sipssert import tracer
 from sipssert import tasks_list
 from sipssert import junit_reporter
+from docker.errors import NotFound, APIError
 
 LOGS_DIR = "logs"
 NETWORK_CAP = "net_capture"
@@ -91,13 +92,20 @@ class Scenario():
     def create_volumes(self):
         if isinstance(self.volumes, list):
             self.volumes = {volume: {} for volume in self.volumes}
+
+        self.created_volumes = set()
+
         for volume_name in self.volumes:
             try:
+                self.controller.docker.volumes.get(volume_name)
+                logger.slog.info(f"volume {volume_name} already exists")
+            except NotFound:
                 self.controller.docker.volumes.create(name=volume_name,
-                                                      driver='local',
-                                                      labels={'scenario': self.name})
+                                        driver='local',
+                                        labels={'scenario': self.name})
+                self.created_volumes.add(volume_name)
                 logger.slog.info(f"volume {volume_name} created in scenario {self.name}")
-            except Exception as exc:
+            except APIError as exc:
                 logger.slog.error(f"could not create volume {volume_name} in scenario {self.name}")
                 logger.slog.exception(exc)
                 self.volumes.pop(volume_name)
@@ -130,14 +138,14 @@ class Scenario():
             self.cleanup_tasks.run(force_all=True)
         except Exception:
             logger.slog.exception("Error occured during cleanup task")
-        for volume_name in self.volumes:
+        for volume_name in self.created_volumes:
             try:
                 volume = self.controller.docker.volumes.get(volume_name)
-                volume_labels = volume.attrs.get('Labels', {})
-                if volume_labels.get('scenario') == self.name:
-                    self.controller.docker.volumes.get(volume.name).remove()
-                    logger.slog.info(f"volume {volume} removed")
-            except Exception as exc:
+                volume.remove()
+                logger.slog.info(f"volume {volume_name} removed")
+            except NotFound:
+                logger.slog.warning(f"volume {volume_name} not found during cleanup")
+            except APIError as exc:
                 logger.slog.error(f"could not remove volume {volume}")
                 logger.slog.exception(exc)
         if not self.no_trace:

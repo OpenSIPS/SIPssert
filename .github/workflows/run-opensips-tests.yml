@@ -8,3 +8,5 @@ on:
 jobs:
   opensips:
     uses: OpenSIPS/sipssert-opensips-tests/.github/workflows/run-tests.yml@main
+    with:
+      tests-repo: OpenSIPS/sipssert-opensips-tests

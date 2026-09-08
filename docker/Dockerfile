@@ -1,4 +1,4 @@
-FROM python:3.12-slim-bookworm AS build
+FROM python:3.12-slim-trixie AS build
 LABEL maintainer="darius.stefan@opensips.org"
 
 RUN apt update && apt install -y git
@@ -8,7 +8,7 @@ RUN git clone https://github.com/OpenSIPS/SIPssert.git &&\
     cd SIPssert &&\
     pip install .
 
-FROM python:3.12-slim-bookworm AS sipssert
+FROM python:3.12-slim-trixie AS sipssert
 LABEL maintainer="darius.stefan@opensips.org"
 
 RUN apt update && apt install -y tcpdump

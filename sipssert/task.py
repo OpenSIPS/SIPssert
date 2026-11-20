@@ -249,7 +249,7 @@ class Task():
         if not self.host_network:
             bridge = False
             for network in self.networks:
-                if network == "bridge":
+                if network[0] == "bridge":
                     bridge = True
                 try:
                     self.controller.docker.networks.get(network[0]).\

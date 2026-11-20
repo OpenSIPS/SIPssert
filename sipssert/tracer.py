@@ -34,7 +34,7 @@ class Tracer():
         # TODO: use tshark instead of tcpdump
         if "interface" in options:
             self.interface = options["interface"]
-        elif len(net) == 0 or (len(net) == 1 and net == "host") or len(net) > 1:
+        elif len(net) == 0 or (len(net) == 1 and net[0] == "host") or len(net) > 1:
             self.interface = "any"
         else:
             self.interface = net[0]

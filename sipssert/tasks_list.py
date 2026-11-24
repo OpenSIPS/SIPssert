@@ -20,6 +20,8 @@
 
 """Implements the behavior of a list of tasks"""
 
+import queue
+import threading
 import time
 import importlib
 from sipssert import logger
@@ -48,6 +50,10 @@ class TasksList(list):
         self.daemon_tasks = []
         self.running_tasks = []
         self.pending_tasks = []
+        self._event_queue = None
+        self._event_thread = None
+        self._event_gen = None
+        self._event_started = threading.Event()
         self.task_templates = task_templates
         if task_set_key not in config:
             return
@@ -121,9 +127,14 @@ class TasksList(list):
         if self.status == TestStatus.UNKN or status > self.status:
             self.status = status
 
-    def handle_events(self, start, stop):
-        #logger.slog.debug("handling events from {} to {}".format(start, stop))
-        for event in self.controller.docker.events(start, stop, decode=True):
+    def handle_events(self):
+        if not self._event_queue:
+            return
+        while True:
+            try:
+                event = self._event_queue.get_nowait()
+            except queue.Empty:
+                return
             if event['Type'] != "container":
                 continue
             attrs = event['Actor']['Attributes']
@@ -150,6 +161,51 @@ class TasksList(list):
                 else:
                     self.running_tasks.remove(tsk)
 
+    def _start_event_stream(self):
+        """Starts a single live docker events stream, pumped into a queue.
+
+        The previous implementation polled windowed
+        docker.events(since, until) calls on every scheduling iteration.
+        The `until` argument makes the docker daemon hold the HTTP stream
+        open until that wall-clock time is reached by the daemon itself,
+        so any clock skew between the host and the docker daemon (common
+        with desktop hypervisors after host sleep) blocked the scheduling
+        loop for the whole duration of the skew. Moreover, event
+        timestamps follow the daemon clock and, filtered against
+        host-clock windows, were systematically missed. A single live
+        stream consumed by a background thread depends on no clock
+        arithmetic at all.
+        """
+        self._event_queue = queue.Queue()
+
+        def pump():
+            try:
+                gen = self.controller.docker.events(decode=True)
+            except Exception:
+                self._event_started.set()
+                return
+            self._event_gen = gen
+            self._event_started.set()
+            try:
+                for event in gen:
+                    self._event_queue.put(event)
+            except Exception:
+                pass
+
+        self._event_thread = threading.Thread(target=pump, daemon=True)
+        self._event_thread.start()
+
+    def _stop_event_stream(self):
+        self._event_started.wait(timeout=2)
+        gen = self._event_gen
+        if gen is not None:
+            try:
+                gen.close()
+            except Exception:
+                pass
+        self._event_thread.join(timeout=2)
+        self._event_queue = None
+
     def terminate(self, exc):
         if len(self.pending_tasks) > 0:
             logger.slog.warning("tasks {} not scheduled".
@@ -159,15 +215,22 @@ class TasksList(list):
                         format(self.running_tasks))
         for tsk in self.running_tasks:
             logger.slog.warning("forcefully stopping {}".format(tsk))
-            tsk.stop()
-            tsk.finish()
+            try:
+                tsk.stop()
+                tsk.finish()
+            except Exception:
+                logger.slog.exception("error while stopping task {}".format(tsk))
             self.update_status(TestStatus.TOUT)
 
         for tsk in reversed(self.daemon_tasks):
-            tsk.stop()
-            tsk.finish()
-            status = tsk.get_exit_code()
-            self.update_status(TestStatus.PASS if status == 0 and tsk.logs_ok else TestStatus.FAIL)
+            try:
+                tsk.stop()
+                tsk.finish()
+                status = tsk.get_exit_code()
+                self.update_status(TestStatus.PASS if status == 0 and tsk.logs_ok else TestStatus.FAIL)
+            except Exception:
+                logger.slog.exception("error while stopping daemon task {}".format(tsk))
+                self.update_status(TestStatus.FAIL)
 
         if exc:
             logger.slog.error(exc)
@@ -175,41 +238,44 @@ class TasksList(list):
 
     def run(self, force_all=False):
         self.start_time = time.time()
-        last_events_time = self.start_time
-        exc = None
-        while (len(self.pending_tasks) > 0 or len(self.running_tasks) > 0) and exc is None:
+        self._event_started.clear()
+        self._start_event_stream()
+        try:
+            exc = None
+            while (len(self.pending_tasks) > 0 or len(self.running_tasks) > 0) and exc is None:
 
-            current_time = time.time()
-            self.handle_events(last_events_time, current_time)
-            last_events_time = current_time
-            tasks_to_run = self.get_tasks_to_run(current_time)
-            if len(tasks_to_run) > 0:
-                logger.slog.debug("running tasks {}".format(tasks_to_run))
-            for task in tasks_to_run:
-                try:
-                    task.run()
-                    if task.daemon:
-                        self.daemon_tasks.append(task)
-                    else:
-                        self.running_tasks.append(task)
-                except Exception as e:
-                    if not force_all:
-                        exc = e
-                        break
-                self.pending_tasks.remove(task)
-            if exc:
-                break
-            # if there are no other pending tasks, check to see if
-            # we have any more non-daemon tasks to run
-            finish_time = time.time()
-            if self.timeout and finish_time - self.start_time >= self.timeout:
-                logger.slog.warning("timeout {} reached".
-                        format(self.timeout))
-                break
-            else:
-                timeout = TIMEOUT_GRANULARITY - finish_time - current_time
-                if timeout > 0:
-                    time.sleep(timeout)
+                current_time = time.time()
+                self.handle_events()
+                tasks_to_run = self.get_tasks_to_run(current_time)
+                if len(tasks_to_run) > 0:
+                    logger.slog.debug("running tasks {}".format(tasks_to_run))
+                for task in tasks_to_run:
+                    try:
+                        task.run()
+                        if task.daemon:
+                            self.daemon_tasks.append(task)
+                        else:
+                            self.running_tasks.append(task)
+                    except Exception as e:
+                        if not force_all:
+                            exc = e
+                            break
+                    self.pending_tasks.remove(task)
+                if exc:
+                    break
+                # if there are no other pending tasks, check to see if
+                # we have any more non-daemon tasks to run
+                finish_time = time.time()
+                if self.timeout and finish_time - self.start_time >= self.timeout:
+                    logger.slog.warning("timeout {} reached".
+                            format(self.timeout))
+                    break
+                else:
+                    timeout = TIMEOUT_GRANULARITY - (finish_time - current_time)
+                    if timeout > 0:
+                        time.sleep(timeout)
+        finally:
+            self._stop_event_stream()
 
         self.terminate(exc)
         if len(self) > 0:

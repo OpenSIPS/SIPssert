@@ -154,6 +154,7 @@ class TasksList(list):
         if len(self.pending_tasks) > 0:
             logger.slog.warning("tasks {} not scheduled".
                     format(self.pending_tasks))
+            self.update_status(TestStatus.FAIL)
         if len(self.running_tasks) > 0:
              logger.slog.warning("remaining tasks {}".
                         format(self.running_tasks))
@@ -213,7 +214,9 @@ class TasksList(list):
 
         self.terminate(exc)
         if len(self) > 0:
-            logger.slog.debug("finished running tasks {}".format(self))
+            logger.slog.debug("finished tasks: {} scheduled, {} not scheduled".
+                    format(len(self) - len(self.pending_tasks),
+                           len(self.pending_tasks)))
             logger.slog.debug("tasks executed in {:.3f}s".format(time.time() - self.start_time))
 
     def merge_dicts(self, dict1, dict2):
